@@ -1,0 +1,10 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =8
+let g:netrw_dirhist_1='/home/satgo1546/repositories/animations/what-i-did-on-2014-12-30'
+let g:netrw_dirhist_2='/home/satgo1546/repositories/animations/what-i-did-on-2014-12-30/coffee'
+let g:netrw_dirhist_3='/home/satgo1546'
+let g:netrw_dirhist_4='/home'
+let g:netrw_dirhist_5='/'
+let g:netrw_dirhist_6='/home/satgo1546'
+let g:netrw_dirhist_7='/home/satgo1546/tmp/nct'
+let g:netrw_dirhist_8='/home/satgo1546'

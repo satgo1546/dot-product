@@ -16,7 +16,8 @@ endif
 
 "-------------------------------------------------------------------------------
 " Maximize the window
-autocmd GUIEnter * silent !wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz
+autocmd GUIEnter * silent !wmctrl
+\ -r :ACTIVE: -b add,maximized_vert,maximized_horz
 
 "-------------------------------------------------------------------------------
 " These are from the .vimrc example by Bram Moolenaar
@@ -174,7 +175,8 @@ let s:lang_commit_message_prompt = printf(s:lang_prompt, s:lang_commit_message)
 let s:lang_stopped_committing = v:lang =~# "^zh_CN\\." ?
 \ "取消提交操作。" : "Stopped committing."
 let s:lang_configuration_prompt = v:lang =~# "^zh_CN\\." ?
-\ "你想把当前文件复制到你的Git仓库中吗？" : "Do you want to copy the current file to your Git repository?"
+\ "你想把当前文件复制到你的Git仓库中吗？" :
+\ "Do you want to copy the current file to your Git repository?"
 
 "-------------------------------------------------------------------------------
 " Shortcuts

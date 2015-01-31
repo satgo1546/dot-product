@@ -71,6 +71,12 @@ if !exists(":DiffOrig")
 endif
 
 "-------------------------------------------------------------------------------
+" Configuration
+
+" No trailing slash is allowed here.
+let g:dot_product_location = "$HOME/repositories/dot-product"
+
+"-------------------------------------------------------------------------------
 " A set of 'set's (see :option)
 
 " 2 moving around, searching and patterns
@@ -167,6 +173,8 @@ let s:lang_argument_prompt = printf(s:lang_prompt, s:lang_argument)
 let s:lang_commit_message_prompt = printf(s:lang_prompt, s:lang_commit_message)
 let s:lang_stopped_committing = v:lang =~# "^zh_CN\\." ?
 \ "取消提交操作。" : "Stoppped committing."
+let s:lang_configuration_prompt = v:lang =~# "^zh_CN\\." ?
+\ "你想把当前文件复制到你的Git仓库中吗？" : "Do you want to copy the current file to your Git repository?"
 
 "-------------------------------------------------------------------------------
 " Shortcuts
@@ -320,6 +328,19 @@ nmap <Leader>gaA :!git add -A :/<CR>
 nmap <Leader>gcs :call GitCommit("", 0)<CR>
 nmap <Leader>gca :call GitCommit("", 1)<CR>
 nmap <Leader>gl :!git fancync<CR>
+
+" While I would like to keep this file on GitHub...
+function PromptForKeepingConfiguration()
+	if input(s:lang_configuration_prompt) !=? "y"
+		return
+	endif
+	let l:filename = expand("%:t")
+	let l:target_filename = strpart(l:filename, 0, 1) != "." ?
+	\ l:filename : strpart(l:filename, 1)
+	execute printf(":!cp \"%s\" \"%s\"", expand("%"),
+	\ g:dot_product_location . "/" . l:target_filename)
+endfunction
+autocmd BufWritePost ~/.{vim,bash}rc call PromptForKeepingConfiguration()
 
 "-------------------------------------------------------------------------------
 " Plugins' world

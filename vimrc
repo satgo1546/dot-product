@@ -347,6 +347,24 @@ autocmd BufWritePost ~/.{vim,bash}rc call PromptForKeepingConfiguration()
 "-------------------------------------------------------------------------------
 " Plugins' world
 
+" vim-airline
+let g:airline_theme = "light"
+if v:lang =~# "^zh_CN\\."
+	let g:airline_mode_map = {
+		\ "__": " —— ",
+		\ "n" : "～",
+		\ "i" : "插入",
+		\ "R" : "替换",
+		\ "c" : "命令",
+		\ "v" : "可视",
+		\ "V" : "可视 行",
+		\ "": "可视 块",
+		\ "s" : "选择",
+		\ "S" : "选择 行",
+		\ "": "选择 列",
+	\ }
+endif
+
 " Emmet
 let g:user_emmet_expandabbr_key = '<C-Space>'
 

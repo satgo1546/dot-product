@@ -240,24 +240,6 @@ nmap <Leader><C-7> :tabnext 7<CR>
 nmap <Leader><C-8> :tabnext 8<CR>
 nmap <Leader><C-9> :tablast<CR>
 
-" Whitespace: <Space><1><2>
-" 1 -> <Space> Write
-"      <Tab>   Close
-"      <CR>    Undefined
-" 2 -> <Space> This window
-"      <Tab>   All windows in this tab
-"      <CR>    All windows
-" Now I don't like the design. It's too complex.
-"nmap <Space><Space><Space> :w<CR>
-"nmap <Space><Space><Tab> :echo "暂不支持\<Space\>\<Space\>\<Tab\>"
-"nmap <Space><Space><CR> :wa<CR>
-"nmap <Space><Tab><Space> :q<CR>
-"nmap <Space><Tab><Tab> :tablose<CR>
-"nmap <Space><Tab><CR> :qa<CR>
-"nmap <Space><CR><Space>
-"nmap <Space><CR><Tab>
-"nmap <Space><CR><CR>
-
 " Creating something new
 "nmap <Leader>ne :????<CR>
 nmap <Leader>ns :split<CR>

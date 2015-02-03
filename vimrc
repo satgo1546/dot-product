@@ -247,10 +247,13 @@ nmap <Leader>nv :vsplit<CR>
 nmap <Leader>nt :tabnew<CR>
 
 " Editing files
-nmap <Leader>ee :call PromptForArg(":e", s:lang_filename_prompt, "file")<CR>
-nmap <Leader>es :call PromptForArg(":split", s:lang_filename_prompt, "file")<CR>
-nmap <Leader>ev :call PromptForArg(":vsplit", s:lang_filename_prompt, "file")<CR>
-nmap <Leader>et :call PromptForArg(":tabnew", s:lang_filename_prompt, "file")<CR>
+function LangFilenamePrompt()
+	return s:lang_filename_prompt
+endfunction
+nmap <Leader>ee :call PromptForArg(":e", LangFilenamePrompt(), "file")<CR>
+nmap <Leader>es :call PromptForArg(":split", LangFilenamePrompt(), "file")<CR>
+nmap <Leader>ev :call PromptForArg(":vsplit", LangFilenamePrompt(), "file")<CR>
+nmap <Leader>et :call PromptForArg(":tabnew", LangFilenamePrompt(), "file")<CR>
 
 " Editing the .vimrc
 nmap <Leader>8e :e $MYVIMRC<CR>

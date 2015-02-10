@@ -186,13 +186,13 @@ let s:lang_configuration_prompt = v:lang =~# "^zh_CN\\." ?
 let g:mapleader = "\<Space>"
 
 " These is because a whitespace on the bottom-right corner can't be seen.
-function ExpiredSpace()
+function! ExpiredSpace()
 	echo printf(s:lang_expired_space, strftime("%s"))
 endfunction
 nmap <Leader> :call ExpiredSpace()<CR>
 imap <C-Space> <C-o>:call ExpiredSpace()<CR>
 
-function PromptForArg(command, prompt, completion)
+function! PromptForArg(command, prompt, completion)
 	let l:arg = input(a:prompt, "", a:completion)
 	if l:arg == ""
 		echo s:lang_missing_argument
@@ -247,7 +247,7 @@ nmap <Leader>nv :vsplit<CR>
 nmap <Leader>nt :tabnew<CR>
 
 " Editing files
-function LangFilenamePrompt()
+function! LangFilenamePrompt()
 	return s:lang_filename_prompt
 endfunction
 nmap <Leader>ee :call PromptForArg(":e", LangFilenamePrompt(), "file")<CR>
@@ -290,7 +290,7 @@ else
 endif
 
 " The Crafting Guide Git
-function GitCommit(message, all)
+function! GitCommit(message, all)
 	if a:message == ""
 		let l:message = input(s:lang_commit_message_prompt)
 		if l:message == ""
@@ -317,7 +317,7 @@ nmap <Leader>gca :call GitCommit("", 1)<CR>
 nmap <Leader>gl :!git fancync<CR>
 
 " While I would like to keep this file on GitHub...
-function PromptForKeepingConfiguration()
+function! PromptForKeepingConfiguration()
 	if input(s:lang_configuration_prompt) !=? "y"
 		return
 	endif
@@ -330,7 +330,7 @@ endfunction
 autocmd BufWritePost ~/.{vim,bash}rc,~/.bash_aliases call PromptForKeepingConfiguration()
 
 " Running programs
-function RunProgram(prog, term)
+function! RunProgram(prog, term)
 	let l:command = ":!"
 	if a:term
 		let l:command .= "gnome-terminal --maximize --command="

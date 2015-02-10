@@ -284,7 +284,7 @@ nmap <Leader>vb <C-v>
 
 " Opening the terminal quickly
 if has("gui_running")
-	nmap <Leader>1 :!gnome-terminal --maximize dev/null 2>&1 &<CR><CR>
+	nmap <Leader>1 :!gnome-terminal --maximize &<CR><CR>
 else
 	nmap <Leader>1 :shell<CR>
 endif

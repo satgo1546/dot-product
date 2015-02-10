@@ -333,12 +333,9 @@ autocmd BufWritePost ~/.{vim,bash}rc,~/.bash_aliases call PromptForKeepingConfig
 function RunProgram(prog, term)
 	let l:command = ":!"
 	if a:term
-		let l:command .= "gnome-terminal --maximize --command=\""
+		let l:command .= "gnome-terminal --maximize --command="
 	endif
 	let l:command .= shellescape(a:prog, a:term)
-	if a:term
-		let l:command .= "\""
-	endif
 	execute l:command
 endfunction
 " The normal way: run programs in a terminal in the current directory

@@ -336,7 +336,7 @@ autocmd BufWritePost ~/.{vim,bash}rc call PromptForKeepingConfiguration()
 let g:airline_theme = "light"
 if v:lang =~# "^zh_CN\\."
 	let g:airline_mode_map = {
-		\ "__": " —— ",
+		\ "__": "——",
 		\ "n" : "～",
 		\ "i" : "插入",
 		\ "R" : "替换",

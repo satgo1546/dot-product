@@ -120,7 +120,9 @@ set guioptions=acimgtrl
 " 12 messages and info
 set shortmess=l
 set showcmd
-set noshowmode
+if has("gui_running")
+	set noshowmode
+endif
 set ruler
 
 " 13 selecting text

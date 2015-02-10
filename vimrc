@@ -327,7 +327,7 @@ function PromptForKeepingConfiguration()
 	execute printf(":!cp \"%s\" \"%s\"", expand("%"),
 	\ g:dot_product_location . "/" . l:target_filename)
 endfunction
-autocmd BufWritePost ~/.{vim,bash}rc call PromptForKeepingConfiguration()
+autocmd BufWritePost ~/.{vim,bash}rc,~/.bash_aliases call PromptForKeepingConfiguration()
 
 " Running programs
 function RunProgram(prog, term)

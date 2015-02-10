@@ -337,7 +337,13 @@ function! RunProgram(prog, term)
 	if a:term
 		let l:command .= "gnome-terminal --maximize --command="
 	endif
-	let l:command .= shellescape(a:prog, a:term)
+	" './' is needed to run a program directly
+	if a:prog =~ "/"
+		let l:prog = a:prog
+	else
+		let l:prog = "./" . a:prog
+	endif
+	let l:command .= shellescape(l:prog, a:term)
 	execute l:command
 endfunction
 " The normal way: run programs in a terminal in the current directory

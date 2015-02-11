@@ -347,7 +347,9 @@ function! RunProgram(prog, term)
 	execute l:command
 endfunction
 " The normal way: run programs in a terminal in the current directory
-nmap <Leader>r :call RunProgram(expand("%"), 1)<CR><CR>
+" Most of the mistakes can be prevented by saving all the files before running
+" any files, so I added :wa here.
+nmap <Leader>r :wa<CR>:call RunProgram(expand("%"), 1)<CR><CR>
 
 "-------------------------------------------------------------------------------
 " Plugins' world

@@ -74,6 +74,7 @@ endif
 "-------------------------------------------------------------------------------
 " Configuration
 
+" The location of dot-product repository
 " No trailing slash is allowed here.
 let g:dot_product_location = "$HOME/repositories/dot-product"
 

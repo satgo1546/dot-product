@@ -285,9 +285,7 @@ nmap <Leader>mv :vsplit ./Makefile<CR>
 nmap <Leader>mt :tabnew ./Makefile<CR>
 
 " Entering visual mode
-nmap <Leader>vv V
 nmap <Leader>va ggVG
-nmap <Leader>vb <C-v>
 
 " Opening the terminal quickly
 if has("gui_running")

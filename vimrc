@@ -230,6 +230,7 @@ nmap <Leader>wh <C-w>h
 nmap <Leader>wj <C-w>j
 nmap <Leader>wk <C-w>k
 nmap <Leader>wl <C-w>l
+nmap <Leader>wt <C-w>t
 
 " Switching between tabs
 nmap <Leader><C-w> :tabclose<CR>

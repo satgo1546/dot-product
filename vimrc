@@ -207,11 +207,6 @@ function! PromptForArg(command, prompt, completion)
 	execute a:command . " " . l:arg
 endfunction
 
-" *t - Edit in a new tab
-" *v - Split vertically
-" *s - Split horizontally
-" *e - Edit directly
-
 " Essentials
 nmap <Leader><Leader> :w<CR>
 nmap <Leader>q :q<CR>
@@ -253,14 +248,25 @@ nmap <Leader>ns :split<CR>
 nmap <Leader>nv :vsplit<CR>
 nmap <Leader>nt :tabnew<CR>
 
-" Editing files
-function! LangFilenamePrompt()
-	return s:lang_filename_prompt
+" Edit files
+" a:command can be "e", "tabe", etc.
+function! PromptForEditingFile(command)
+	let l:filename = input(":" . a:command . " ")
+	if l:filename == ""
+		echo s:lang_missing_argument
+	else
+		execute a:command . " " . l:filename
+	endif
 endfunction
-nmap <Leader>ee :call PromptForArg(":e", LangFilenamePrompt(), "file")<CR>
-nmap <Leader>es :call PromptForArg(":split", LangFilenamePrompt(), "file")<CR>
-nmap <Leader>ev :call PromptForArg(":vsplit", LangFilenamePrompt(), "file")<CR>
-nmap <Leader>et :call PromptForArg(":tabnew", LangFilenamePrompt(), "file")<CR>
+
+" e - Edit directly
+nmap <Leader>e :call PromptForEditingFile("edit")<CR>
+" s - Split horizontally
+nmap <Leader>s :call PromptForEditingFile("split")<CR>
+" v - Split vertically
+nmap <Leader>v :call PromptForEditingFile("vsplit")<CR>
+" t - Edit in a new tab
+nmap <Leader>t :call PromptForEditingFile("tabnew")<CR>
 
 " Editing the .vimrc
 nmap <Leader>8e :e $MYVIMRC<CR>

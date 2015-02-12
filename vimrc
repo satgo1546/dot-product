@@ -77,6 +77,9 @@ endif
 " No trailing slash is allowed here.
 let g:dot_product_location = "$HOME/repositories/dot-product"
 
+" How to pause
+let g:pause_command = 'read -n 1 -p "……(.) "'
+
 "-------------------------------------------------------------------------------
 " A set of 'set's (see :option)
 
@@ -343,7 +346,11 @@ function! RunProgram(prog, term)
 	else
 		let l:prog = "./" . a:prog
 	endif
-	let l:command .= shellescape(l:prog, a:term)
+	let l:command .= shellescape(l:prog, a:term) . ";" . g:pause_command
+	" Run in background
+	if a:term
+		let l:command .= "&"
+	end
 	execute l:command
 endfunction
 " The normal way: run programs in a terminal in the current directory

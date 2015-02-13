@@ -251,6 +251,9 @@ function! ExpandMore(filename)
 	elseif a:filename =~? "^\\.\\=b\\(ash\\)\\=rc$"
 		" [.]b[ash]rc
 		let l:expanded = "~/.bashrc"
+	elseif a:filename =~? "^dir\\|^ls"
+		" dir[ectory] or l[i]s[t]
+		let l:expanded = "./"
 	endif
 	return expand(l:expanded)
 endfunction

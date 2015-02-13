@@ -262,7 +262,7 @@ function! PromptForEditingFile(command)
 	if l:filename == ""
 		echo s:lang_missing_argument
 	else
-		execute a:command . " " . l:filename
+		execute a:command . " " . ExpandMore(l:filename)
 	endif
 endfunction
 

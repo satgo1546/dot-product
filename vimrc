@@ -276,12 +276,6 @@ nmap <Leader>v :call PromptForEditingFile("vsplit")<CR>
 " t - Edit in a new tab
 nmap <Leader>t :call PromptForEditingFile("tabnew")<CR>
 
-" Editing the .vimrc
-nmap <Leader>8e :e $MYVIMRC<CR>
-nmap <Leader>8s :split $MYVIMRC<CR>
-nmap <Leader>8v :vsplit $MYVIMRC<CR>
-nmap <Leader>8t :tabnew $MYVIMRC<CR>
-
 " Directory listing
 nmap <Leader>de :e ./<CR>
 nmap <Leader>ds :split ./<CR>

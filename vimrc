@@ -289,7 +289,7 @@ nmap <Leader>ms :split ./Makefile<CR>
 nmap <Leader>mv :vsplit ./Makefile<CR>
 nmap <Leader>mt :tabnew ./Makefile<CR>
 
-" Entering visual mode
+" Select the whole buffer
 nmap <Leader>va ggVG
 
 " Opening the terminal quickly

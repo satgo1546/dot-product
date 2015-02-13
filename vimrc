@@ -242,11 +242,6 @@ nmap <Leader><C-7> :tabnext 7<CR>
 nmap <Leader><C-8> :tabnext 8<CR>
 nmap <Leader><C-9> :tablast<CR>
 
-" Creating something new
-"nmap <Leader>ne :????<CR>
-nmap <Leader>ns :split<CR>
-nmap <Leader>nv :vsplit<CR>
-nmap <Leader>nt :tabnew<CR>
 
 " Edit files
 " a:command can be "e", "tabe", etc.

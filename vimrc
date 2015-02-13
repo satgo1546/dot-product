@@ -279,12 +279,6 @@ nmap <Leader>v :call PromptForEditingFile("vsplit")<CR>
 " t - Edit in a new tab
 nmap <Leader>t :call PromptForEditingFile("tabnew")<CR>
 
-" Directory listing
-nmap <Leader>de :e ./<CR>
-nmap <Leader>ds :split ./<CR>
-nmap <Leader>dv :vsplit ./<CR>
-nmap <Leader>dt :tabnew ./<CR>
-
 " Making
 nmap <Leader>m :!make -v<CR>
 nmap <Leader>mk :wa<CR>:make<CR>

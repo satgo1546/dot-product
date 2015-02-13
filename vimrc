@@ -242,6 +242,18 @@ nmap <Leader><C-7> :tabnext 7<CR>
 nmap <Leader><C-8> :tabnext 8<CR>
 nmap <Leader><C-9> :tablast<CR>
 
+" Expand more
+function! ExpandMore(filename)
+	let l:expanded = a:filename
+	if a:filename =~? "^\\.\\=v\\(im\\)\\=rc$"
+		" [.]v[im]rc
+		let l:expanded = "$MYVIMRC"
+	elseif a:filename =~? "^\\.\\=b\\(ash\\)\\=rc$"
+		" [.]b[ash]rc
+		let l:expanded = "~/.bashrc"
+	endif
+	return expand(l:expanded)
+endfunction
 
 " Edit files
 " a:command can be "e", "tabe", etc.

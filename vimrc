@@ -346,7 +346,13 @@ autocmd BufWritePost ~/.{vim,bash}rc,~/.bash_aliases call PromptForKeepingConfig
 " Running programs
 function! RunProgram(prog, term)
 	let l:command = ":!"
-	if a:term
+	" Disable a:term option when running without GUI
+	if a:term && has("gui_running")
+		let l:term = 1
+	else
+		let l:term = 0
+	endif
+	if l:term
 		let l:command .= "gnome-terminal --maximize --command="
 	endif
 	" './' is needed to run a program directly
@@ -355,9 +361,9 @@ function! RunProgram(prog, term)
 	else
 		let l:prog = "./" . a:prog
 	endif
-	let l:command .= shellescape(l:prog, a:term) . ";" . g:pause_command
+	let l:command .= shellescape(l:prog, l:term) . ";" . g:pause_command
 	" Run in background
-	if a:term
+	if l:term
 		let l:command .= "&"
 	end
 	execute l:command

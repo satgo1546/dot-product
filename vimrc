@@ -146,8 +146,8 @@ set autoindent
 "set foldmethod syntax
 
 " 18 mapping
-set timeoutlen=0
-set ttimeoutlen=1000
+set timeoutlen=1000
+set ttimeoutlen=0
 
 " 19 reading and writing files
 if has("vms")

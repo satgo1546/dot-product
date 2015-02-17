@@ -283,6 +283,9 @@ nmap <Leader>v :call PromptForEditingFile("vsplit")<CR>
 " t - Edit in a new tab
 nmap <Leader>t :call PromptForEditingFile("tabnew")<CR>
 
+" Changing current directory
+nmap <Leader>c :call PromptForArg("cd", ":cd ", "dir")<CR>
+
 " Making
 nmap <Leader>m :!make -v<CR>
 nmap <Leader>mk :wa<CR>:make<CR>

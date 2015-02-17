@@ -145,6 +145,10 @@ set autoindent
 " something weird like 'foldmethod=manual syntax=' in my terminal.
 "set foldmethod syntax
 
+" 18 mapping
+set timeoutlen=0
+set ttimeoutlen=1000
+
 " 19 reading and writing files
 if has("vms")
 	set nobackup

@@ -258,6 +258,9 @@ function! ExpandMore(filename)
 	elseif a:filename =~? "^dir\\|^ls"
 		" dir[ectory] or l[i]s[t]
 		let l:expanded = "./"
+	elseif a:filename =~? "^\\.\\=f\\(bterm\\)\\=rc$"
+		" [.]f[bterm]rc
+		let l:expanded = "~/.fbtermrc"
 	endif
 	return expand(l:expanded)
 endfunction
@@ -344,7 +347,7 @@ function! PromptForKeepingConfiguration()
 	execute printf(":!cp \"%s\" \"%s\"", expand("%"),
 	\ g:dot_product_location . "/" . l:target_filename)
 endfunction
-autocmd BufWritePost ~/.{vim,bash}rc,~/.bash_aliases call PromptForKeepingConfiguration()
+autocmd BufWritePost ~/.{vim,bash,fbterm}rc,~/.bash_aliases call PromptForKeepingConfiguration()
 
 " Running programs
 function! RunProgram(prog, term)

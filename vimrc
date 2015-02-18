@@ -161,6 +161,11 @@ set history=42
 set wildmenu
 set wildignore=*~
 
+" Some highlights
+" These usually aren't in color scheme files, so I include these here.
+hi CursorLine term=underline cterm=bold
+hi CursorLineNr term=underline cterm=bold
+hi CursorColumn term=underline cterm=bold
 
 "-------------------------------------------------------------------------------
 " Translations

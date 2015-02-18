@@ -9,12 +9,7 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # A shortcut for listing all files
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-alias dirl='dir -alF'
 alias dira='dir -A'
-alias dircf='ls -CF'
 
 # Alert
 # Usage:

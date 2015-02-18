@@ -161,8 +161,6 @@ set history=42
 set wildmenu
 set wildignore=*~
 
-" 26 various
-" set virtualedit=onemore
 
 "-------------------------------------------------------------------------------
 " Translations

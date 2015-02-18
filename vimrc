@@ -268,7 +268,7 @@ endfunction
 " Edit files
 " a:command can be "e", "tabe", etc.
 function! PromptForEditingFile(command)
-	let l:filename = input(":" . a:command . " ")
+	let l:filename = input(":" . a:command . " ", "", "file")
 	if l:filename == ""
 		echo s:lang_missing_argument
 	else

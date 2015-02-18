@@ -81,6 +81,12 @@ let g:dot_product_location = "$HOME/repositories/dot-product"
 " How to pause
 let g:pause_command = 'read -n 1 -p "……(.) "'
 
+let g:rcnames = {
+	\ "b": "bash",
+	\ "v": "vim",
+	\ "f": "fbterm",
+\ }
+
 "-------------------------------------------------------------------------------
 " A set of 'set's (see :option)
 
@@ -251,19 +257,26 @@ nmap <Leader><C-9> :tablast<CR>
 
 " Expand more
 function! ExpandMore(filename)
-	let l:expanded = a:filename
-	if a:filename =~? "^\\.\\=v\\(im\\)\\=rc$"
-		" [.]v[im]rc
-		let l:expanded = "$MYVIMRC"
-	elseif a:filename =~? "^\\.\\=b\\(ash\\)\\=rc$"
-		" [.]b[ash]rc
-		let l:expanded = "~/.bashrc"
-	elseif a:filename =~? "^dir\\|^ls"
+	" Trim whitespace first
+	let l:expanded = substitute(a:filename, "^\\s\\+\\|\\s\\+$", "", "g")
+	if l:expanded == ""
+		return ""
+	elseif l:expanded =~? "^\\.\\=.*rc$"
+		" This removes the dot and 'rc'
+		let l:rcname = strpart(l:expanded, strpart(l:expanded, 0, 1) == ".",
+		\ strlen(l:expanded) - 2)
+		" Expand shortcuts
+		if has_key(g:rcnames, l:rcname)
+			let l:rcname = g:rcnames[l:rcname]
+		endif
+		if l:rcname ==? "vim"
+			let l:expanded = "$MYVIMRC"
+		else
+			let l:expanded = "~/." . l:rcname . "rc"
+		endif
+	elseif l:expanded =~? "^dir\\|^ls"
 		" dir[ectory] or l[i]s[t]
 		let l:expanded = "./"
-	elseif a:filename =~? "^\\.\\=f\\(bterm\\)\\=rc$"
-		" [.]f[bterm]rc
-		let l:expanded = "~/.fbtermrc"
 	endif
 	return expand(l:expanded)
 endfunction

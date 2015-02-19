@@ -130,9 +130,7 @@ set guioptions=aimgt
 " 12 messages and info
 set shortmess=l
 set showcmd
-if has("gui_running")
-	set noshowmode
-endif
+set noshowmode
 set ruler
 
 " 13 selecting text

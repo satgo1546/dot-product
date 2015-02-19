@@ -411,27 +411,23 @@ if v:lang =~# "^zh_CN\\."
 endif
 
 " Emmet
-let g:user_emmet_expandabbr_key = '<C-Space>'
+autocmd FileType html,css imap <Tab> <Plug>(emmet-expand-abbr)
 
 " delimitMate
 let g:delimitMate_expand_cr = 2
 
 " EasyMotion
-map <Leader>em <Plug>(easymotion-prefix)
+map <Leader>j <Plug>(easymotion-prefix)
 map / <Plug>(easymotion-sn)
-map <Leader>// <Plug>(easymotion-jumptoanywhere)
-map <Leader>/1 <Plug>(easymotion-s)
-map <Leader>/2 <Plug>(easymotion-s2)
-map <Leader>/w <Plug>(easymotion-bd-w)
-map <Leader>/W <Plug>(easymotion-bd-W)
-map <Leader>/e <Plug>(easymotion-bd-e)
-map <Leader>/E <Plug>(easymotion-bd-E)
-map <Leader>/g <Plug>(easymotion-bd-jk)
+map <Tab> <Plug>(easymotion-jumptoanywhere)
+let g:EasyMotion_re_anywhere = '\v.{4}|$'
 
 " NERD Commenter
-nmap <Leader>cc <Plug>NERDCommenterToggle
-vmap <Leader>cc <Plug>NERDCommenterToggle
+" I can't remember such complex key mappings.
+let g:NERDCreateDefaultMappings = 0
+nmap <Leader>c <Plug>NERDCommenterToggle
+vmap <Leader>c <Plug>NERDCommenterToggle
 
 " vim-expand-region
 vmap v <Plug>(expand_region_expand)
-vmap <C-v> <Plug>(expand_region_shrink)
+vmap V <Plug>(expand_region_shrink)

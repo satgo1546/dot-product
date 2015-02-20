@@ -154,11 +154,9 @@ set timeoutlen=1000
 set ttimeoutlen=0
 
 " 19 reading and writing files
-if has("vms")
-	set nobackup
-else
-	set backup
-endif
+" Since *~ files are annoying and I found has("vms") has no use, I turned this
+" off. Maybe someday when I lose some file I'll turn this on back.
+set nobackup
 
 " 21 command line editing
 set history=42

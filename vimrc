@@ -165,9 +165,13 @@ set wildignore=*~
 
 " Some highlights
 " These usually aren't in color scheme files, so I include these here.
-hi CursorLine term=underline cterm=bold
-hi CursorLineNr term=underline cterm=bold
-hi CursorColumn term=underline cterm=bold
+hi CursorLine              cterm=bold
+hi CursorLineNr            cterm=bold
+hi CursorColumn            cterm=bold
+hi EasyMotionShade         cterm=bold ctermfg=0 gui=none guifg=#999999
+hi EasyMotionTarget        cterm=bold ctermfg=3 gui=bold guifg=#ffb400
+hi EasyMotionTarget2First  cterm=bold ctermfg=3 gui=bold guifg=#ffb400
+hi EasyMotionTarget2Second cterm=none ctermfg=3 gui=none guifg=#b98300
 
 "-------------------------------------------------------------------------------
 " Translations

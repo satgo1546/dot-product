@@ -420,10 +420,13 @@ autocmd FileType html,css imap <Tab> <Plug>(emmet-expand-abbr)
 let g:delimitMate_expand_cr = 2
 
 " EasyMotion
+let g:EasyMotion_use_upper = 1
+let g:EasyMotion_keys = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+let g:EasyMotion_prompt = "{n} ⧖ "
 map <Leader>j <Plug>(easymotion-prefix)
 map / <Plug>(easymotion-sn)
-map <Tab> <Plug>(easymotion-jumptoanywhere)
-let g:EasyMotion_re_anywhere = '\v.{4}|$'
+map <Tab> <Plug>(easymotion-s)
+map <S-Tab> <Plug>(easymotion-s2)
 
 " NERD Commenter
 " I can't remember such complex key mappings.

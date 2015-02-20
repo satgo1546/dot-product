@@ -225,6 +225,7 @@ nmap <Leader><Leader> :w<CR>
 nmap <Leader>q :q<CR>
 nmap <Leader><S-q> :q!<CR>
 nmap <Leader><BS> :nohlsearch<CR>
+nmap <Leader><CR> :wq<CR>
 
 " Clipboard
 nmap <Leader>p "+p

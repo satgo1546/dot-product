@@ -124,7 +124,7 @@ set nomousefocus
 set nomousehide
 
 " 10 GUI
-set guifont=Source\ Code\ Pro\ Regular\ 13
+set guifont=Monospace\ 14
 set guioptions=aimgt
 
 " 12 messages and info

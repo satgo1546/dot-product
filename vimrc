@@ -404,7 +404,7 @@ let g:delimitMate_expand_cr = 2
 
 " EasyMotion
 let g:EasyMotion_use_upper = 1
-let g:EasyMotion_keys = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+let g:EasyMotion_keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 let g:EasyMotion_prompt = "{n} ⧖ "
 map <Leader>j <Plug>(easymotion-prefix)
 map / <Plug>(easymotion-sn)

@@ -187,7 +187,7 @@ let s:lang_commit_message = v:lang =~# "^zh_CN\\." ?
 \ "提交信息" : "Commit message"
 let s:lang_missing_argument = v:lang =~# "^zh_CN\\." ?
 \ "未输入参数，因此停止执行。"
-\ : "Stopped executing the command because of no argument specified."
+\ : "Stopped executing because no argument is specified."
 let s:lang_filename_prompt = printf(s:lang_prompt, s:lang_filename)
 let s:lang_argument_prompt = printf(s:lang_prompt, s:lang_argument)
 let s:lang_commit_message_prompt = printf(s:lang_prompt, s:lang_commit_message)
@@ -201,10 +201,9 @@ let s:lang_configuration_prompt = v:lang =~# "^zh_CN\\." ?
 " Shortcuts
 
 " I love <Space>!
-" Note that the backslash here is important.
 let g:mapleader = "\<Space>"
 
-" These is because a whitespace on the bottom-right corner can't be seen.
+" These are because a whitespace on the bottom-right corner can't be seen.
 function! ExpiredSpace()
 	echo printf(s:lang_expired_space, strftime("%s"))
 endfunction

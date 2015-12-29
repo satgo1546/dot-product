@@ -192,10 +192,10 @@ let s:lang_filename_prompt = printf(s:lang_prompt, s:lang_filename)
 let s:lang_argument_prompt = printf(s:lang_prompt, s:lang_argument)
 let s:lang_commit_message_prompt = printf(s:lang_prompt, s:lang_commit_message)
 let s:lang_stopped_committing = v:lang =~# "^zh_CN\\." ?
-\ "取消提交操作。" : "Stopped committing."
 let s:lang_configuration_prompt = v:lang =~# "^zh_CN\\." ?
 \ "你想把当前文件复制到你的Git仓库中吗？" :
 \ "Do you want to copy the current file to your Git repository?"
+\ "取消提交操作。" : "Cancelled committing."
 
 "-------------------------------------------------------------------------------
 " Shortcuts

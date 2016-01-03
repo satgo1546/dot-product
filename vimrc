@@ -1,28 +1,23 @@
-"===============================================================================
-" satgo's .vimrc
+"==============================================================================
+" ■ satgo's .vimrc
+"==============================================================================
+
+"----------------------------------------------------------------------------
+" Initialization
 
 set nocompatible
+set guioptions=aimMg
+
+" Why to turn this off?
 filetype off
 
-"-------------------------------------------------------------------------------
-" pathogen.vim
-execute pathogen#infect()
-
-"-------------------------------------------------------------------------------
-" evim
 if v:progname =~? "evim"
 	finish
 endif
 
-"-------------------------------------------------------------------------------
-" Maximize the window
-autocmd GUIEnter * silent !wmctrl
-\ -r :ACTIVE: -b add,maximized_vert,maximized_horz
+execute pathogen#infect()
 
-"-------------------------------------------------------------------------------
-" These are from the .vimrc example by Bram Moolenaar
-
-" CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
+" CTRL-U in insert mode deletes a lot. Use CTRL-G u to first break undo,
 " so that you can undo CTRL-U after inserting a line break.
 inoremap <C-U> <C-G>u<C-U>
 
@@ -57,11 +52,11 @@ if has("autocmd")
 		\ if line("'\"") > 1 && line("'\"") <= line("$") |
 		\   exe "normal! g`\"" |
 		\ endif
-
 	augroup END
 else
-	set autoindent		" always set autoindenting on
-endif " has("autocmd")
+	" always set autoindenting on
+	set autoindent
+endif
 
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
@@ -71,12 +66,8 @@ if !exists(":DiffOrig")
 	\ wincmd p | diffthis
 endif
 
-"-------------------------------------------------------------------------------
-" Configuration
-
-" The location of dot-product repository
-" No trailing slash is allowed here.
-let g:dot_product_location = "$HOME/repositories/dot-product"
+"----------------------------------------------------------------------------
+" Configuration for functions in this file
 
 " How to pause
 let g:pause_command = 'read -n 1 -p "……(.) "'
@@ -87,28 +78,27 @@ let g:rcnames = {
 	\ "f": "fbterm",
 \ }
 
-"-------------------------------------------------------------------------------
-" A set of 'set's (see :option)
+"----------------------------------------------------------------------------
+" :option
 
 " 2 moving around, searching and patterns
 set incsearch
 set smartcase
 
 " 4 displaying text
-set scrolloff=1
+set scrolloff=0
 set wrap
-set list
-set listchars=tab:▏\ ,trail:·,extends:↩,precedes:↪
+set list listchars=tab:▏\ ,trail:·,extends:↩,precedes:↪
 set fillchars=vert:\ ,fold:·,diff:·
 set lazyredraw
-set number
-set norelativenumber
+set number norelativenumber
 set numberwidth=6
 
 " 5 syntax, highlighting and spelling
 set background=light
 set cursorline
 set colorcolumn=80
+colorscheme Tomorrow
 
 " 6 multiple windows
 set laststatus=2
@@ -116,22 +106,28 @@ set laststatus=2
 " 7 multiple tab pages
 set showtabline=2
 
+" 8 terminal
+set guicursor=a:blinkon0-Cursor/lCursor,
+\n-v-c-sm:block,ve:ver35,o:hor50,i-ci:ver10,r-cr:hor5
+
 " 9 using the mouse
 if has('mouse')
 	set mouse=a
 endif
-set nomousefocus
-set nomousehide
+set nomousefocus nomousehide
 
 " 10 GUI
+" 'guioptions' has been set before.
 set guifont=Monospace\ 14
-set guioptions=aimgt
+set linespace=2
+set browsedir=current
 
 " 12 messages and info
 set shortmess=l
 set showcmd
 set noshowmode
 set ruler
+set errorbells
 
 " 13 selecting text
 set clipboard=unnamed,autoselect
@@ -140,18 +136,11 @@ set clipboard=unnamed,autoselect
 set backspace=indent,eol,start
 
 " 15 tabs and indenting
-set tabstop=2
-set shiftwidth=2
+set tabstop=2 shiftwidth=2
 set autoindent
 
-" 16 folding
-" I don't know why the following line doesn't work at all and outputs
-" something weird like 'foldmethod=manual syntax=' in my terminal.
-"set foldmethod syntax
-
 " 18 mapping
-set timeoutlen=1000
-set ttimeoutlen=0
+set timeoutlen=1000 ttimeoutlen=0
 
 " 19 reading and writing files
 " Since *~ files are annoying and I found has("vms") has no use, I turned this
@@ -160,12 +149,11 @@ set nobackup
 
 " 21 command line editing
 set history=42
-set wildmenu
-set wildignore=*~
+set wildmenu wildignore=*~
 
 " Some highlights
 " These usually aren't in color scheme files, so I include these here.
-hi CursorLine              cterm=bold
+hi CursorLine              cterm=bold                    guibg=#f9f9f9
 hi CursorLineNr            cterm=bold
 hi CursorColumn            cterm=bold
 hi EasyMotionShade         cterm=bold ctermfg=0 gui=none guifg=#999999
@@ -173,7 +161,7 @@ hi EasyMotionTarget        cterm=bold ctermfg=3 gui=bold guifg=#ffb400
 hi EasyMotionTarget2First  cterm=bold ctermfg=3 gui=bold guifg=#ffb400
 hi EasyMotionTarget2Second cterm=none ctermfg=3 gui=none guifg=#b98300
 
-"-------------------------------------------------------------------------------
+"----------------------------------------------------------------------------
 " Translations
 let s:lang_prompt = v:lang =~# "^zh_CN\\." ?
 \ "%s：" : "%s: "
@@ -194,13 +182,11 @@ let s:lang_commit_message_prompt = printf(s:lang_prompt, s:lang_commit_message)
 let s:lang_stopped_committing = v:lang =~# "^zh_CN\\." ?
 \ "取消提交操作。" : "Cancelled committing."
 
-"-------------------------------------------------------------------------------
+"----------------------------------------------------------------------------
 " Shortcuts
 
-" I love <Space>!
 let g:mapleader = "\<Space>"
 
-" These are because a whitespace on the bottom-right corner can't be seen.
 function! ExpiredSpace()
 	echo printf(s:lang_expired_space, strftime("%s"))
 endfunction
@@ -221,7 +207,7 @@ nmap <Leader><Leader> :w<CR>
 nmap <Leader>q :q<CR>
 nmap <Leader><S-q> :q!<CR>
 nmap <Leader><BS> :nohlsearch<CR>
-nmap <Leader><CR> :wq<CR>
+nmap <C-CR> :wq<CR>
 
 " Clipboard
 nmap <Leader>p "+p
@@ -230,27 +216,29 @@ nmap <Leader>y "+y
 vmap <Leader>y "+y
 
 " Switching between windows
-nmap <Leader>ww <C-w><C-w>
-nmap <Leader>wh <C-w>h
-nmap <Leader>wj <C-w>j
-nmap <Leader>wk <C-w>k
-nmap <Leader>wl <C-w>l
-nmap <Leader>wt <C-w>t
+nmap <A-h> <C-w>h
+nmap <A-j> <C-w>j
+nmap <A-k> <C-w>k
+nmap <A-l> <C-w>l
+
+" Quick movement in insert mode
+imap <A-h> <Left>
+imap <A-j> <Down>
+imap <A-k> <Up>
+imap <A-l> <Right>
 
 " Switching between tabs
-nmap <Leader><C-w> :tabclose<CR>
-nmap <Leader><C-F4> :tabclose<CR>
-nmap <Leader><C-t> :tabnew<CR>
+nmap <A-w> :tabclose<CR>
 nmap <Leader><Tab> :tabs<CR>
-nmap <Leader><C-1> :tabfirst<CR>
-nmap <Leader><C-2> :tabnext 2<CR>
-nmap <Leader><C-3> :tabnext 3<CR>
-nmap <Leader><C-4> :tabnext 4<CR>
-nmap <Leader><C-5> :tabnext 5<CR>
-nmap <Leader><C-6> :tabnext 6<CR>
-nmap <Leader><C-7> :tabnext 7<CR>
-nmap <Leader><C-8> :tabnext 8<CR>
-nmap <Leader><C-9> :tablast<CR>
+nmap <A-1> :tabfirst<CR>
+nmap <A-2> :tabnext 2<CR>
+nmap <A-3> :tabnext 3<CR>
+nmap <A-4> :tabnext 4<CR>
+nmap <A-5> :tabnext 5<CR>
+nmap <A-6> :tabnext 6<CR>
+nmap <A-7> :tabnext 7<CR>
+nmap <A-8> :tabnext 8<CR>
+nmap <A-9> :tablast<CR>
 
 " Expand more
 function! ExpandMore(filename)
@@ -258,6 +246,8 @@ function! ExpandMore(filename)
 	let l:expanded = substitute(a:filename, "^\\s\\+\\|\\s\\+$", "", "g")
 	if l:expanded == ""
 		return ""
+	elseif l:expanded =~? "mkf\\|makefile"
+		return "Makefile"
 	elseif l:expanded =~? "^\\.\\=.*rc$"
 		" This removes the dot and 'rc'
 		let l:rcname = strpart(l:expanded, strpart(l:expanded, 0, 1) == ".",
@@ -271,9 +261,6 @@ function! ExpandMore(filename)
 		else
 			let l:expanded = "~/." . l:rcname . "rc"
 		endif
-	elseif l:expanded =~? "^dir\\|^ls"
-		" dir[ectory] or l[i]s[t]
-		let l:expanded = "./"
 	endif
 	return expand(l:expanded)
 endfunction
@@ -296,22 +283,18 @@ nmap <Leader>v :call PromptForEditingFile("vsplit")<CR>
 nmap <Leader>t :call PromptForEditingFile("tabnew")<CR>
 
 " Changing current directory
-nmap <Leader>c :call PromptForArg("cd", ":cd ", "dir")<CR>
+nmap <Leader>d :call PromptForArg("cd", ":cd ", "dir")<CR>
 
 " Making
 nmap <Leader>m :!make -v<CR>
 nmap <Leader>mk :wa<CR>:make<CR>
 nmap <Leader>mf :call PromptForArg(":make", s:lang_argument_prompt, "file")<CR>
 nmap <Leader>mc :make clean<CR>
-nmap <Leader>me :e ./Makefile<CR>
-nmap <Leader>ms :split ./Makefile<CR>
-nmap <Leader>mv :vsplit ./Makefile<CR>
-nmap <Leader>mt :tabnew ./Makefile<CR>
 
 " Select the whole buffer
-nmap <Leader>va ggVG
+nmap <Leader>a ggVG
 
-" Opening the terminal quickly
+" Open the terminal
 if has("gui_running")
 	nmap <Leader>1 :!gnome-terminal --maximize &<CR><CR>
 else
@@ -347,13 +330,13 @@ nmap <Leader>gl :!git fancync<CR>
 
 " Running programs
 function! RunProgram(prog, term)
+	" Most of the mistakes can be prevented by saving all the files before running
+	" any files, so I added :wa here.
+	wa
+	" The base command
 	let l:command = ":!"
 	" Disable a:term option when running without GUI
-	if a:term && has("gui_running")
-		let l:term = 1
-	else
-		let l:term = 0
-	endif
+	let l:term = a:term && has("gui_running")
 	if l:term
 		let l:command .= "gnome-terminal --maximize --command="
 	endif
@@ -370,12 +353,12 @@ function! RunProgram(prog, term)
 	end
 	execute l:command
 endfunction
-" The normal way: run programs in a terminal in the current directory
-" Most of the mistakes can be prevented by saving all the files before running
-" any files, so I added :wa here.
-nmap <Leader>r :wa<CR>:call RunProgram(expand("%"), 1)<CR><CR>
 
-"-------------------------------------------------------------------------------
+" The normal way: run programs in a terminal in the current directory
+nmap <F5> :make run<CR>
+autocmd FileType sh nmap <buffer> <F5> :call RunProgram(expand("%"), 1)<CR><CR>
+
+"----------------------------------------------------------------------------
 " Plugins' world
 
 " vim-airline
@@ -397,7 +380,7 @@ if v:lang =~# "^zh_CN\\."
 endif
 
 " Emmet
-autocmd FileType html,css imap <Tab> <Plug>(emmet-expand-abbr)
+autocmd FileType html,css imap <buffer> <Tab> <Plug>(emmet-expand-abbr)
 
 " delimitMate
 let g:delimitMate_expand_cr = 2

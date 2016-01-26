@@ -26,4 +26,4 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 alias cmd="xfce4-terminal"
 
 # $PATH
-export PATH="$HOME/.gem/ruby/2.2.0/bin:$HOME/local/jdk1.8.0_65/bin:$PATH"
+export PATH="$HOME/opt/cross/bin:$HOME/.gem/ruby/2.3.0/bin:$HOME/local/jdk1.8.0_65/bin:$PATH"

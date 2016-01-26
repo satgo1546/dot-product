@@ -98,7 +98,10 @@ set numberwidth=6
 set background=light
 set cursorline
 set colorcolumn=80
-colorscheme Tomorrow
+if has("gui_running")
+	" Everything looks terrible without a GUI
+	colorscheme Tomorrow
+endif
 
 " 6 multiple windows
 set laststatus=2
@@ -107,8 +110,7 @@ set laststatus=2
 set showtabline=2
 
 " 8 terminal
-set guicursor=a:blinkon0-Cursor/lCursor,
-\n-v-c-sm:block,ve:ver35,o:hor50,i-ci:ver10,r-cr:hor5
+set guicursor=a:block-blinkon0,ve:ver35,o:hor50,i-ci:ver10,r-cr:hor5
 
 " 9 using the mouse
 if has('mouse')
@@ -149,7 +151,7 @@ set nobackup
 
 " 21 command line editing
 set history=42
-set wildmenu wildignore=*~
+set wildmenu wildignore=*~,*.o,*.obj,*.bin,*.exe
 
 " Some highlights
 " These usually aren't in color scheme files, so I include these here.
@@ -246,7 +248,7 @@ function! ExpandMore(filename)
 	let l:expanded = substitute(a:filename, "^\\s\\+\\|\\s\\+$", "", "g")
 	if l:expanded == ""
 		return ""
-	elseif l:expanded =~? "mkf\\|makefile"
+	elseif l:expanded =~? "^\\(mkf\\|makefile\\)$"
 		return "Makefile"
 	elseif l:expanded =~? "^\\.\\=.*rc$"
 		" This removes the dot and 'rc'
@@ -354,8 +356,7 @@ function! RunProgram(prog, term)
 	execute l:command
 endfunction
 
-" The normal way: run programs in a terminal in the current directory
-nmap <F5> :make run<CR>
+nmap <F5> :!make run<CR>
 autocmd FileType sh nmap <buffer> <F5> :call RunProgram(expand("%"), 1)<CR><CR>
 
 "----------------------------------------------------------------------------
@@ -390,7 +391,6 @@ let g:EasyMotion_use_upper = 1
 let g:EasyMotion_keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 let g:EasyMotion_prompt = "{n} ⧖ "
 map <Leader>j <Plug>(easymotion-prefix)
-map / <Plug>(easymotion-sn)
 map <Tab> <Plug>(easymotion-s)
 map <S-Tab> <Plug>(easymotion-s2)
 

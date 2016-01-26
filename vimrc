@@ -88,7 +88,7 @@ set smartcase
 " 4 displaying text
 set scrolloff=0
 set wrap
-set list listchars=tab:▏\ ,trail:·,extends:↩,precedes:↪
+set list listchars=tab:»\ ,trail:·,extends:↩,precedes:↪
 set fillchars=vert:\ ,fold:·,diff:·
 set lazyredraw
 set number norelativenumber

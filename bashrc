@@ -14,8 +14,8 @@ HISTCONTROL=ignoredups
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # set colorful prompts
-PS1='\[\033[0;1;36;46m\]${debian_chroot:+($debian_chroot)} \u \[\033[0;7;36m\]│ #\# │ $? │ \W \[\033[0;96m\]\$⧖\[\033[0m\] '
-PS2='  \[\033[0;36m\]┃\[\033[0m\] '
+PS1='\[\033[0;1;32;42m\]${debian_chroot:+($debian_chroot)} \u \[\033[0;7;32m\]│ #\# │ $? │ \W \[\033[0;92m\]\$⧖\[\033[0m\] '
+PS2='  \[\033[0;32m\]┃\[\033[0m\] '
 
 # aliases
 alias ls="ls --color=auto"

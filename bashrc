@@ -32,3 +32,6 @@ export PATH="$HOME/opt/cross/bin:$HOME/.gem/ruby/2.3.0/bin:$HOME/local/jdk1.8.0_
 export GTK_IM_MODULE=ibus
 export XMODIFIERS=@im=ibus
 export QT_IM_MODULE=ibus
+
+# completion.sh
+source /usr/share/git/completion/git-completion.bash

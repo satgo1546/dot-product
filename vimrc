@@ -155,7 +155,7 @@ set wildmenu wildignore=*~,*.o,*.obj,*.bin,*.exe
 
 " Some highlights
 " These usually aren't in color scheme files, so I include these here.
-hi CursorLine              cterm=bold                    guibg=#f9f9f9
+hi CursorLine              cterm=underline                    guibg=#f9f9f9
 hi CursorLineNr            cterm=bold
 hi CursorColumn            cterm=bold
 hi EasyMotionShade         cterm=bold ctermfg=0 gui=none guifg=#999999
@@ -363,7 +363,7 @@ autocmd FileType sh nmap <buffer> <F5> :call RunProgram(expand("%"), 1)<CR><CR>
 " Plugins' world
 
 " vim-airline
-let g:airline_theme = "light"
+let g:airline_theme = "sats"
 if v:lang =~# "^zh_CN\\."
 	let g:airline_mode_map = {
 		\ "__": "——",
@@ -403,3 +403,6 @@ vmap <Leader>c <Plug>NERDCommenterToggle
 " vim-expand-region
 vmap v <Plug>(expand_region_expand)
 vmap V <Plug>(expand_region_shrink)
+
+" vim-css-color
+let g:cssColorVimDoNotMessMyUpdatetime = 1

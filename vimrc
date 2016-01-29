@@ -72,6 +72,8 @@ endif
 " How to pause
 let g:pause_command = 'read -n 1 -p "……(.) "'
 
+let g:terminal = "xfce4-terminal"
+
 let g:rcnames = {
 	\ "b": "bash",
 	\ "v": "vim",
@@ -298,7 +300,7 @@ nmap <Leader>a ggVG
 
 " Open the terminal
 if has("gui_running")
-	nmap <Leader>1 :!gnome-terminal --maximize &<CR><CR>
+	nmap <Leader>1 :!xfce4-terminal --maximize &<CR><CR>
 else
 	nmap <Leader>1 :shell<CR>
 endif
@@ -340,7 +342,7 @@ function! RunProgram(prog, term)
 	" Disable a:term option when running without GUI
 	let l:term = a:term && has("gui_running")
 	if l:term
-		let l:command .= "gnome-terminal --maximize --command="
+		let l:command .= "xfce4-terminal --maximize --command="
 	endif
 	" './' is needed to run a program directly
 	if a:prog =~ "/"
@@ -366,17 +368,17 @@ autocmd FileType sh nmap <buffer> <F5> :call RunProgram(expand("%"), 1)<CR><CR>
 let g:airline_theme = "sats"
 if v:lang =~# "^zh_CN\\."
 	let g:airline_mode_map = {
-		\ "__": "——",
-		\ "n" : "～",
+		\ "__": " － ",
+		\ "n" : " ～ ",
 		\ "i" : "插入",
 		\ "R" : "替换",
 		\ "c" : "命令",
 		\ "v" : "可视",
-		\ "V" : "可视 行",
-		\ "": "可视 块",
+		\ "V" : "(行)",
+		\ "": "(块)",
 		\ "s" : "选择",
-		\ "S" : "选择 行",
-		\ "": "选择 列",
+		\ "S" : "(行)",
+		\ "": "(块)",
 	\ }
 endif
 

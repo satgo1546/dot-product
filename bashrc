@@ -1,7 +1,7 @@
 #===============================================================================
 # ■ ~/.bashrc
 #-------------------------------------------------------------------------------
-# Executed by bash(1) for non-login shells.
+#   Executed by bash(1) for non-login shells.
 #===============================================================================
 
 # if not running interactively, don't do anything
@@ -26,7 +26,7 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 alias cmd="xfce4-terminal"
 
 # $PATH
-export PATH="$HOME/opt/cross/bin:$HOME/.gem/ruby/2.3.0/bin:$HOME/local/jdk1.8.0_65/bin:$PATH"
+export PATH="$HOME/miscellaneous/scripts:$HOME/.gem/ruby/2.3.0/bin:$HOME/local/jdk1.8.0_65/bin:$PATH"
 
 # IME
 export GTK_IM_MODULE=ibus

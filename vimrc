@@ -6,7 +6,7 @@
 " Initialization
 
 set nocompatible
-set guioptions=aimMg
+set guioptions=imMg
 
 " Why to turn this off?
 filetype off
@@ -69,11 +69,8 @@ endif
 "----------------------------------------------------------------------------
 " Configuration for functions in this file
 
-" How to pause
 let g:pause_command = 'read -n 1 -p "……(.) "'
-
 let g:terminal = "xfce4-terminal"
-
 let g:rcnames = {
 	\ "b": "bash",
 	\ "v": "vim",
@@ -112,7 +109,7 @@ set laststatus=2
 set showtabline=2
 
 " 8 terminal
-set guicursor=a:block-blinkon0,ve:ver35,o:hor50,i-ci:ver10,r-cr:hor5
+set guicursor=a:block-blinkon0,ve:ver35,o:hor50,i-ci:ver20,r-cr:hor5
 
 " 9 using the mouse
 if has('mouse')
@@ -134,7 +131,7 @@ set ruler
 set errorbells
 
 " 13 selecting text
-set clipboard=unnamed,autoselect
+set clipboard=unnamed
 
 " 14 editing text
 set backspace=indent,eol,start
@@ -157,9 +154,11 @@ set wildmenu wildignore=*~,*.o,*.obj,*.bin,*.exe
 
 " Some highlights
 " These usually aren't in color scheme files, so I include these here.
-hi CursorLine              cterm=underline                    guibg=#f9f9f9
-hi CursorLineNr            cterm=bold
+hi CursorLine              cterm=underline               guibg=#f9f9f9
+hi CursorLineNr            cterm=bold           gui=bold
 hi CursorColumn            cterm=bold
+hi clear Error
+hi Error                   cterm=inverse        gui=undercurl guisp=red
 hi EasyMotionShade         cterm=bold ctermfg=0 gui=none guifg=#999999
 hi EasyMotionTarget        cterm=bold ctermfg=3 gui=bold guifg=#ffb400
 hi EasyMotionTarget2First  cterm=bold ctermfg=3 gui=bold guifg=#ffb400
@@ -212,6 +211,7 @@ nmap <Leader>q :q<CR>
 nmap <Leader><S-q> :q!<CR>
 nmap <Leader><BS> :nohlsearch<CR>
 nmap <C-CR> :wq<CR>
+map Y y$
 
 " Clipboard
 nmap <Leader>p "+p
@@ -278,13 +278,13 @@ function! PromptForEditingFile(command)
 endfunction
 
 " e - Edit directly
-nmap <Leader>e :call PromptForEditingFile("edit")<CR>
+nmap <Leader>e :edit<Space>
 " s - Split horizontally
-nmap <Leader>s :call PromptForEditingFile("split")<CR>
+nmap <Leader>s :split<Space>
 " v - Split vertically
-nmap <Leader>v :call PromptForEditingFile("vsplit")<CR>
+nmap <Leader>v :vsplit<Space>
 " t - Edit in a new tab
-nmap <Leader>t :call PromptForEditingFile("tabnew")<CR>
+nmap <Leader>t :tabnew<Space>
 
 " Changing current directory
 nmap <Leader>d :call PromptForArg("cd", ":cd ", "dir")<CR>
@@ -300,7 +300,7 @@ nmap <Leader>a ggVG
 
 " Open the terminal
 if has("gui_running")
-	nmap <Leader>1 :!xfce4-terminal --maximize &<CR><CR>
+	execute "nmap <Leader>1 :!" . g:terminal . " --maximize &<CR><CR>"
 else
 	nmap <Leader>1 :shell<CR>
 endif
@@ -330,41 +330,26 @@ nmap <Leader>gaa :!git add -A<CR>
 nmap <Leader>gaA :!git add -A :/<CR>
 nmap <Leader>gcs :call GitCommit("", 0)<CR>
 nmap <Leader>gca :call GitCommit("", 1)<CR>
-nmap <Leader>gl :!git fancync<CR>
+nmap <Leader>gl :!git graph<CR>
 
 " Running programs
-function! RunProgram(prog, term)
-	" Most of the mistakes can be prevented by saving all the files before running
-	" any files, so I added :wa here.
+function! MakeRun()
 	wa
-	" The base command
-	let l:command = ":!"
-	" Disable a:term option when running without GUI
-	let l:term = a:term && has("gui_running")
-	if l:term
-		let l:command .= "xfce4-terminal --maximize --command="
-	endif
-	" './' is needed to run a program directly
-	if a:prog =~ "/"
-		let l:prog = a:prog
-	else
-		let l:prog = "./" . a:prog
-	endif
-	let l:command .= shellescape(l:prog, l:term) . ";" . g:pause_command
-	" Run in background
-	if l:term
-		let l:command .= "&"
-	end
+	let l:command = ":!false"
+	let l:command .= "|| ./run.sh " . shellescape(expand("%"), 1)
+	let l:command .= "|| make run"
+	"let l:command .= "|| " . g:terminal . " --hide-menubar --geometry 80x25"
+	let l:command .= "|| cd .. && make run"
 	execute l:command
 endfunction
 
-nmap <F5> :!make run<CR>
-autocmd FileType sh nmap <buffer> <F5> :call RunProgram(expand("%"), 1)<CR><CR>
+nmap <F5> :call MakeRun()<CR>
 
 "----------------------------------------------------------------------------
 " Plugins' world
 
 " vim-airline
+let g:loaded_airline_themes = 1
 let g:airline_theme = "sats"
 if v:lang =~# "^zh_CN\\."
 	let g:airline_mode_map = {
@@ -381,6 +366,15 @@ if v:lang =~# "^zh_CN\\."
 		\ "": "(块)",
 	\ }
 endif
+if !exists('g:airline_symbols')
+	let g:airline_symbols = {}
+endif
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
 
 " Emmet
 autocmd FileType html,css imap <buffer> <Tab> <Plug>(emmet-expand-abbr)

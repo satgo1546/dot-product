@@ -6,7 +6,7 @@
 " Initialization
 
 set nocompatible
-set guioptions=imMg
+set guioptions=fimMglr
 
 " Why to turn this off?
 filetype off
@@ -87,7 +87,8 @@ set smartcase
 " 4 displaying text
 set scrolloff=0
 set wrap
-set list listchars=tab:»\ ,trail:·,extends:↩,precedes:↪
+set list listchars=tab:»\ ,trail:·,extends:►,precedes:◄,nbsp:◦
+
 set fillchars=vert:\ ,fold:·,diff:·
 set lazyredraw
 set number norelativenumber

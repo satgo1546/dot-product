@@ -11,10 +11,6 @@ set guioptions=fimMglr
 " Why to turn this off?
 filetype off
 
-if v:progname =~? "evim"
-	finish
-endif
-
 execute pathogen#infect()
 
 " CTRL-U in insert mode deletes a lot. Use CTRL-G u to first break undo,
@@ -148,6 +144,7 @@ set timeoutlen=1000 ttimeoutlen=0
 " Since *~ files are annoying and I found has("vms") has no use, I turned this
 " off. Maybe someday when I lose some file I'll turn this on back.
 set nobackup
+set autowrite
 
 " 21 command line editing
 set history=42
@@ -367,15 +364,7 @@ if v:lang =~# "^zh_CN\\."
 		\ "": "(块)",
 	\ }
 endif
-if !exists('g:airline_symbols')
-	let g:airline_symbols = {}
-endif
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
-let g:airline_symbols.branch = ''
-let g:airline_symbols.readonly = ''
+let g:airline_powerline_fonts = 1
 
 " Emmet
 autocmd FileType html,css imap <buffer> <Tab> <Plug>(emmet-expand-abbr)
@@ -403,3 +392,10 @@ vmap V <Plug>(expand_region_shrink)
 
 " vim-css-color
 let g:cssColorVimDoNotMessMyUpdatetime = 1
+
+" syntastic
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+

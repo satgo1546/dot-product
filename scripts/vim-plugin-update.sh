@@ -4,9 +4,12 @@ plugins=(
 	easymotion/vim-easymotion
 	terryma/vim-expand-region
 	tpope/vim-fugitive
+	tpope/vim-vinegar
 
 	scrooloose/nerdcommenter
 	Raimondi/delimitMate
+	tomtom/tlib_vim
+	MarcWeber/vim-addon-mw-utils
 	garbas/vim-snipmate
 	scrooloose/syntastic
 

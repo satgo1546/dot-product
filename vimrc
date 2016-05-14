@@ -84,8 +84,7 @@ set smartcase
 set scrolloff=0
 set wrap
 set list listchars=tab:»\ ,trail:·,extends:►,precedes:◄,nbsp:◦
-
-set fillchars=vert:\ ,fold:·,diff:·
+set fillchars=stl:\ ,stlnc:\ ,vert:\ ,fold:┈,diff:-
 set lazyredraw
 set number norelativenumber
 set numberwidth=6
@@ -106,7 +105,7 @@ set laststatus=2
 set showtabline=2
 
 " 8 terminal
-set guicursor=a:block-blinkon0,ve:ver35,o:hor50,i-ci:ver20,r-cr:hor5
+set guicursor=a:block-blinkon0,ve:ver35,o:hor50,i-ci:ver20-blinkon0,r-cr:hor5
 
 " 9 using the mouse
 if has('mouse')
@@ -152,15 +151,18 @@ set wildmenu wildignore=*~,*.o,*.obj,*.bin,*.exe
 
 " Some highlights
 " These usually aren't in color scheme files, so I include these here.
-hi CursorLine              cterm=underline               guibg=#f9f9f9
+hi CursorLine              cterm=none                         guibg=#f9f9f9
 hi CursorLineNr            cterm=bold           gui=bold
 hi CursorColumn            cterm=bold
+hi VertSplit               cterm=none
 hi clear Error
 hi Error                   cterm=inverse        gui=undercurl guisp=red
-hi EasyMotionShade         cterm=bold ctermfg=0 gui=none guifg=#999999
-hi EasyMotionTarget        cterm=bold ctermfg=3 gui=bold guifg=#ffb400
-hi EasyMotionTarget2First  cterm=bold ctermfg=3 gui=bold guifg=#ffb400
-hi EasyMotionTarget2Second cterm=none ctermfg=3 gui=none guifg=#b98300
+hi link SyntasticError Error
+hi SyntasticWarning        cterm=inverse        gui=undercurl guisp=DarkOrange
+hi EasyMotionShade         cterm=bold ctermfg=0 gui=none      guifg=gray60
+hi EasyMotionTarget        cterm=bold ctermfg=3 gui=bold      guifg=DarkGoldenrod1
+hi EasyMotionTarget2First  cterm=bold ctermfg=3 gui=bold      guifg=DarkGoldenrod1
+hi EasyMotionTarget2Second cterm=none ctermfg=3 gui=none      guifg=DarkGoldenrod3
 
 "----------------------------------------------------------------------------
 " Translations
@@ -365,6 +367,10 @@ if v:lang =~# "^zh_CN\\."
 	\ }
 endif
 let g:airline_powerline_fonts = 1
+if !exists('g:airline_symbols')
+	let g:airline_symbols = {}
+endif
+let g:airline_symbols.space = "\ua0"
 
 " Emmet
 autocmd FileType html,css imap <buffer> <Tab> <Plug>(emmet-expand-abbr)
@@ -394,8 +400,6 @@ vmap V <Plug>(expand_region_shrink)
 let g:cssColorVimDoNotMessMyUpdatetime = 1
 
 " syntastic
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
-
+let g:syntastic_enable_signs = 0

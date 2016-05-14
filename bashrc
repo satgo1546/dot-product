@@ -10,6 +10,9 @@
 # don't put duplicate lines in the history
 HISTCONTROL=ignoredups
 
+# fix spelling mistakes automatically
+shopt -s cdspell
+
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 

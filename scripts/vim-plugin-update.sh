@@ -22,7 +22,7 @@ plugins=(
 print-help() {
 	cat <<EOF
 Examples:
-$ noupdate=1 ./vim-plugin-update.sh
+$ noupdate=1 vim-plugin-update.sh
 EOF
 }
 
@@ -41,7 +41,7 @@ cd $HOME/.vim/bundle
 for p in ${plugins[@]}
 do
 	d=$(basename $p)
-	echo -e '\e[1;37;44m' "$p ($d)" '\e[0m'
+	echo -e "\e[34m$p ($d)\e[0m"
 	if [ -d "$d" ]
 	then
 		[ -n "$noupdate" ] && continue

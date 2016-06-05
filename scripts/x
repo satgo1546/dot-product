@@ -1,0 +1,2 @@
+#!/bin/bash
+"$@" 1>/dev/zero 2>&1 &

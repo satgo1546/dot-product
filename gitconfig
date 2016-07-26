@@ -1,0 +1,29 @@
+[user]
+	email = satgo1546@yeah.net
+	name = Frog Chen
+[push]
+	default = simple
+[credential]
+	helper = cache
+[color]
+	ui = true
+[column]
+	ui = auto
+[alias]
+	co = checkout
+	com = checkout master
+	cos = checkout satgo1546-dev
+	ci = commit
+	st = status -sb
+	graph = log --graph --abbrev-commit --pretty=tformat:'%>|(10)%Cred%h %><(23)%C(yellow)%d%Creset %<(44,trunc)%s %<(14)%C(green)%cr %C(blue)%an <%ce>%Creset'
+	undo-commit = reset HEAD~
+	undo-merge = reset --hard ORIG_HEAD
+	unstage = reset HEAD --
+	last = log -1 HEAD
+[core]
+	editor = vim
+	excludesfile = /home/satgo1546/.gitignore_global
+	eol = lf
+	safecrlf = true
+[merge]
+	renormalize = true

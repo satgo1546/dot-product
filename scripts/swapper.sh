@@ -1,8 +1,10 @@
 #!/bin/bash
 
 swapper="/media/swapper"
-cmd="rsync -vruth"
-me=`basename $0`
+cmd=rsync
+cmd="$cmd --recursive --update --times --human-readable --del --executability"
+cmd="$cmd --progress --verbose"
+me=$(basename $0)
 d=$(basename $(pwd))
 
 case $1 in

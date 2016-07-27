@@ -12,6 +12,8 @@ ln -s $(pwd)/bashrc ~/.bashrc
 ln -s $(pwd)/bash_profile ~/.bash_profile
 ln -s $(pwd)/vimrc ~/.vimrc
 ln -s $(pwd)/gitconfig ~/.gitconfig
+ln -s $(pwd)/SciTEUser.properties ~/.SciTEUser.properties
+ln -s --force $(pwd)/user-dirs.dirs ~/.config
 ```
 
 ```

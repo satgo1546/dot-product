@@ -4,7 +4,7 @@
 [push]
 	default = simple
 [credential]
-	helper = cache
+	helper = cache --timeout=3600
 [color]
 	ui = true
 [column]

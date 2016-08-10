@@ -10,21 +10,21 @@
 # don't put duplicate lines in the history
 HISTCONTROL=ignoredups
 
-# fix spelling mistakes automatically
-shopt -s cdspell
+# shell options
+shopt -s cdspell cmdhist nocaseglob
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # be colorful
-if [ "$TERM" = xterm ]
-then
-	export TERM=xterm-256color
-fi
-PS1='\[\033[0;1;32;42m\]${debian_chroot:+($debian_chroot)} \u \[\033[0;7;32m\]│ #\# │ $? │ \W \[\033[0;92m\]\$⧖\[\033[0m\] '
-PS2='  \[\033[0;32m\]┃\[\033[0m\] '
+[ "$TERM" = xterm ] && export TERM=xterm-256color
+ESC=$(echo -e "\e")
+PS1='\[\e[0;1;32;42m\] \u \[\e[0;7;32m\]│ #\# │ $? │ \W \[\e[0;92m\]\$⧖\[\e[0m\] '
+PS2='  \[\e[0;32m\]┃\[\e[0m\] '
+PS3="$ESC[0;32m──┨ $ESC[92m$ESC[0m "
+PS4='✢ '
 
-# aliases
+# aliases and functions
 alias ls="ls --color=auto"
 alias la="ls -A"
 alias ll="ls -l"
@@ -38,20 +38,25 @@ alias mx="chmod +x"
 alias dialog-hello='dialog --msgbox "Hello, world!" 6 24 # quite useless'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history | tail -n 1 | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg"
-for ((i = 0; i < 256; i++))
-do
-	# Generate 0x100 aliases and this actually works!
-	alias cdp$i="cd $HOME/repositories/project$i"
-done
+cdp() {
+	cd $HOME/repositories/project$1
+}
+
+# $EDITOR; here comes a battle
+export EDITOR=vim
+export VISUAL=vim
 
 # $PATH
-export PATH="$HOME/miscellaneous/scripts:$HOME/.gem/ruby/2.3.0/bin:$HOME/local/jdk1.8.0_65/bin:$PATH"
+PATH="$HOME/.gem/ruby/2.3.0/bin:$PATH"
+PATH="$HOME/local/jdk1.8.0_65/bin:$PATH"
+PATH="$HOME/local/AFDKO/Tools/linux:$PATH"
+PATH="$HOME/miscellaneous/scripts:$PATH"
+export PATH
 
 # IME and other miscellaneous stuff
 export GTK_IM_MODULE=ibus
 export XMODIFIERS=@im=ibus
 export QT_IM_MODULE=ibus
-
 export SYSTEMD_PAGER=""
 
 # completion.sh

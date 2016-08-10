@@ -7,11 +7,11 @@
 # if not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-# don't put duplicate lines in the history
-HISTCONTROL=ignoredups
-
-# shell options
-shopt -s cdspell cmdhist nocaseglob
+# shell options and history control
+shopt -s cdspell cmdhist nocaseglob checkwinsize histappend
+HISTSIZE=30000
+HISTFILESIZE=$HISTSIZE
+HISTCONTROL=ignoredups:ignorespace
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"

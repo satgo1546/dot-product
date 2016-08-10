@@ -19,10 +19,16 @@ HISTCONTROL=ignoredups:ignorespace
 # be colorful
 [ "$TERM" = xterm ] && export TERM=xterm-256color
 ESC=$(echo -e "\e")
-PS1='\[\e[0;1;32;42m\] \u \[\e[0;7;32m\]│ #\# │ $? │ \W \[\e[0;92m\]\$⧖\[\e[0m\] '
+PS1='\[\e[0;1;32;42m\] \u \[\e[0;7;32m\] │ !\! │ $?'
+PS1="$PS1"' $(sats_ps1_extra) \W \[\e[0;92m\$⧖\e[0m '
 PS2='  \[\e[0;32m\]┃\[\e[0m\] '
 PS3="$ESC[0;32m──┨ $ESC[92m$ESC[0m "
 PS4='✢ '
+unset ESC
+GIT_PS1_SHOWDIRTYSTATE=1
+GIT_PS1_SHOWUNTRACKEDFILES=1
+GIT_PS1_DESCRIBE_STYLE=default
+GIT_PS1_HIDE_IF_PWD_IGNORED=1
 
 # aliases and functions
 alias ls="ls --color=auto"
@@ -59,5 +65,7 @@ export XMODIFIERS=@im=ibus
 export QT_IM_MODULE=ibus
 export SYSTEMD_PAGER=""
 
-# completion.sh
+# completion+prompt.sh
 source /usr/share/git/completion/git-completion.bash
+source /usr/share/git/completion/git-prompt.sh
+source sats-ps1.sh

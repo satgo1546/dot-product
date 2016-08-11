@@ -1,5 +1,7 @@
 #!/bin/bash
 plugins=(
+	tpope/vim-pathogen
+
 	vim-airline/vim-airline
 	easymotion/vim-easymotion
 	terryma/vim-expand-region
@@ -11,7 +13,6 @@ plugins=(
 	tomtom/tlib_vim
 	MarcWeber/vim-addon-mw-utils
 	garbas/vim-snipmate
-	scrooloose/syntastic
 
 	mattn/emmet-vim
 	sukima/xmledit

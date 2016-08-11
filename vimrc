@@ -8,51 +8,14 @@
 set nocompatible
 set guioptions=fimMglr
 
-" Why to turn this off?
-filetype off
-
+runtime bundle/vim-pathogen/autoload/pathogen.vim
 execute pathogen#infect()
 
-" CTRL-U in insert mode deletes a lot. Use CTRL-G u to first break undo,
-" so that you can undo CTRL-U after inserting a line break.
-inoremap <C-U> <C-G>u<C-U>
-
-" Switch syntax highlighting on, when the terminal has colors
-" Also switch on highlighting the last used search pattern.
-if &t_Co > 2 || has("gui_running")
-	syntax on
-	set hlsearch
-endif
-
-" Only do this part when compiled with support for autocommands.
-if has("autocmd")
-	" Enable file type detection.
-	" Use the default filetype settings, so that mail gets 'tw' set to 72,
-	" 'cindent' is on in C files, etc.
-	" Also load indent files, to automatically do language-dependent indenting.
-	filetype plugin indent on
-
-	" Put these in an autocmd group, so that we can delete them easily.
-	augroup vimrcEx
-		au!
-
-		" For all text files set 'textwidth' to 78 characters.
-		autocmd FileType text setlocal textwidth=78
-
-		" When editing a file, always jump to the last known cursor position.
-		" Don't do it when the position is invalid or when inside an event handler
-		" (happens when dropping a file on gvim).
-		" Also don't do it when the mark is in the first line, that is the default
-		" position when opening a file.
-		autocmd BufReadPost *
-		\ if line("'\"") > 1 && line("'\"") <= line("$") |
-		\   exe "normal! g`\"" |
-		\ endif
-	augroup END
-else
-	" always set autoindenting on
-	set autoindent
-endif
+" Enable file type detection.
+" Use the default filetype settings, so that mail gets 'tw' set to 72,
+" 'cindent' is on in C files, etc.
+" Also load indent files, to automatically do language-dependent indenting.
+filetype plugin indent on
 
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
@@ -65,13 +28,13 @@ endif
 "----------------------------------------------------------------------------
 " Configuration for functions in this file
 
-let g:pause_command = 'read -n 1 -p "……(.) "'
-let g:terminal = "xfce4-terminal"
-let g:rcnames = {
-	\ "b": "bash",
-	\ "v": "vim",
-	\ "f": "fbterm",
-\ }
+if has("win32")
+	let g:pause_command = "pause"
+	let g:terminal = "cmd"
+else
+	let g:pause_command = "read -n 1 -p '. . . '"
+	let g:terminal = "exo-open --launch TerminalEmulator"
+endif
 
 "----------------------------------------------------------------------------
 " :option
@@ -90,6 +53,7 @@ set number norelativenumber
 set numberwidth=6
 
 " 5 syntax, highlighting and spelling
+syntax on
 set background=light
 set cursorline
 set colorcolumn=80
@@ -97,6 +61,7 @@ if has("gui_running")
 	" Everything looks terrible without a GUI
 	colorscheme Tomorrow
 endif
+set hlsearch
 
 " 6 multiple windows
 set laststatus=2
@@ -134,6 +99,7 @@ set backspace=indent,eol,start
 
 " 15 tabs and indenting
 set tabstop=2 shiftwidth=2
+set noexpandtab
 set autoindent
 
 " 18 mapping
@@ -151,199 +117,263 @@ set wildmenu wildignore=*~,*.o,*.obj,*.bin,*.exe
 
 " Some highlights
 " These usually aren't in color scheme files, so I include these here.
-hi CursorLine              cterm=none                         guibg=#f9f9f9
+hi CursorLine              cterm=none                         guibg=#fafafa
 hi CursorLineNr            cterm=bold           gui=bold
 hi CursorColumn            cterm=bold
 hi VertSplit               cterm=none
 hi clear Error
 hi Error                   cterm=inverse        gui=undercurl guisp=red
-hi link SyntasticError Error
 hi SyntasticWarning        cterm=inverse        gui=undercurl guisp=DarkOrange
 hi EasyMotionShade         cterm=bold ctermfg=0 gui=none      guifg=gray60
 hi EasyMotionTarget        cterm=bold ctermfg=3 gui=bold      guifg=DarkGoldenrod1
 hi EasyMotionTarget2First  cterm=bold ctermfg=3 gui=bold      guifg=DarkGoldenrod1
 hi EasyMotionTarget2Second cterm=none ctermfg=3 gui=none      guifg=DarkGoldenrod3
+hi link SyntasticError Error
+
+" Custom matches
+match Error /^\s\+$/
 
 "----------------------------------------------------------------------------
 " Translations
-let s:lang_prompt = v:lang =~# "^zh_CN\\." ?
-\ "%s：" : "%s: "
-let s:lang_expired_space = v:lang =~# "^zh_CN\\." ?
-\ "空格键已过期于 %s。" : "The space key expired at %s."
-let s:lang_filename = v:lang =~# "^zh_CN\\." ?
-\ "文件名" : "Filename"
-let s:lang_argument = v:lang =~# "^zh_CN\\." ?
-\ "参数" : "Argument"
-let s:lang_commit_message = v:lang =~# "^zh_CN\\." ?
-\ "提交信息" : "Commit message"
-let s:lang_missing_argument = v:lang =~# "^zh_CN\\." ?
-\ "未输入参数，因此停止执行。"
-\ : "Stopped executing because no argument is specified."
-let s:lang_filename_prompt = printf(s:lang_prompt, s:lang_filename)
-let s:lang_argument_prompt = printf(s:lang_prompt, s:lang_argument)
-let s:lang_commit_message_prompt = printf(s:lang_prompt, s:lang_commit_message)
-let s:lang_stopped_committing = v:lang =~# "^zh_CN\\." ?
-\ "取消提交操作。" : "Cancelled committing."
+
+let s:lang = {}
+let s:langs = {}
+let s:langs.code = ["^en", "\\v^zh_(CN|Hans)\\."]
+let s:langs.prompt = ["%s: ", "%s："]
+let s:langs.placeholder = ["<%s here>", "[键入%s]"]
+let s:langs.filename = ["Filename", "文件名"]
+let s:langs.argument = ["Argument", "参数"]
+let s:langs.expired_space = [
+	\ "<Space> expired at %d.",
+	\ "<Space>已过期于%d。",
+\ ]
+let s:langs.missing_argument = [
+	\ "Stopped executing because no arguments are specified.",
+	\ "未输入参数，因此停止执行。",
+\ ]
+let s:langs.comment_head_exists = [
+	\ "There's already a comment head.",
+	\ "注释头已存在。",
+\ ]
 
 "----------------------------------------------------------------------------
-" Shortcuts
+" Helper functions
 
-let g:mapleader = "\<Space>"
+function! InitializeLang()
+	let l:lang_index = 0
+	for l:regexp in s:langs.code
+		if v:lang =~# l:regexp
+			let s:lang.code = v:lang
+			let s:lang.index = l:lang_index
+			break
+		endif
+		let l:lang_index += 1
+	endfor
+	if l:lang_index >= len(s:langs.code)
+		let s:lang.code = ""
+		let s:lang.index = 0
+	endif
+	for l:key in keys(s:langs)
+		let s:lang[l:key] = s:langs[l:key][s:lang.index]
+	endfor
+endfunction
+call InitializeLang()
 
 function! ExpiredSpace()
 	echo printf(s:lang_expired_space, strftime("%s"))
 endfunction
-nmap <Leader> :call ExpiredSpace()<CR>
-imap <C-Space> <C-o>:call ExpiredSpace()<CR>
 
-function! PromptForArg(command, prompt, completion)
-	let l:arg = input(a:prompt, "", a:completion)
-	if l:arg == ""
-		echo s:lang_missing_argument
-		return
+function! OpenTerminal()
+	if has("gui_running")
+		!exo-open --launch TerminalEmulator &<CR><CR>
+	else
+		shell
 	endif
-	execute a:command . " " . l:arg
 endfunction
+
+function! NormalizeBuffer()
+	let l:pos = getpos(".")
+	silent! %s/\s\+$//
+	nohlsearch
+	call setpos(".", l:pos)
+endfunction
+
+function! CheckAndSetHelpWindow()
+	if &filetype ==# "help"
+		if &columns > 100
+			wincmd H
+			vertical resize 79
+		else
+			wincmd T
+		endif
+	endif
+endfunction
+
+"----------------------------------------------------------------------------
+" Keyboard mappings
+
+let g:mapleader = "\<Space>"
+
+noremap <Leader> :call ExpiredSpace()<CR>
+inoremap <M-Space> <C-o>:call ExpiredSpace()<CR>
 
 " Essentials
-nmap <Leader><Leader> :w<CR>
-nmap <Leader>q :q<CR>
-nmap <Leader><S-q> :q!<CR>
-nmap <Leader><BS> :nohlsearch<CR>
-nmap <C-CR> :wq<CR>
-map Y y$
+nnoremap <Leader><Leader> :w<CR>
+nnoremap <Leader><BS> :nohlsearch<CR>
+noremap Y y$
+
+" CTRL-U in insert mode deletes a lot. Use CTRL-G u to first break undo,
+" so that you can undo CTRL-U after inserting a line break.
+inoremap <C-U> <C-G>u<C-U>
 
 " Clipboard
-nmap <Leader>p "+p
-nmap <Leader>P "+P
-nmap <Leader>y "+y
-vmap <Leader>y "+y
+nnoremap <Leader>p "+p
+vnoremap <Leader>p "+p
+nnoremap <Leader>P "+P
+vnoremap <Leader>P "+P
+nnoremap <Leader>y "+y
+vnoremap <Leader>y "+y
+nnoremap <Leader>Y "+Y
+vnoremap <Leader>Y "+Y
 
 " Switching between windows
-nmap <A-h> <C-w>h
-nmap <A-j> <C-w>j
-nmap <A-k> <C-w>k
-nmap <A-l> <C-w>l
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+nnoremap <A-l> <C-w>l
 
 " Quick movement in insert mode
-imap <A-h> <Left>
-imap <A-j> <Down>
-imap <A-k> <Up>
-imap <A-l> <Right>
+noremap! <A-h> <Left>
+noremap! <A-j> <Down>
+noremap! <A-k> <Up>
+noremap! <A-l> <Right>
 
 " Switching between tabs
-nmap <A-w> :tabclose<CR>
-nmap <Leader><Tab> :tabs<CR>
-nmap <A-1> :tabfirst<CR>
-nmap <A-2> :tabnext 2<CR>
-nmap <A-3> :tabnext 3<CR>
-nmap <A-4> :tabnext 4<CR>
-nmap <A-5> :tabnext 5<CR>
-nmap <A-6> :tabnext 6<CR>
-nmap <A-7> :tabnext 7<CR>
-nmap <A-8> :tabnext 8<CR>
-nmap <A-9> :tablast<CR>
+nnoremap <A-1> :tabfirst<CR>
+nnoremap <A-2> :tabnext 2<CR>
+nnoremap <A-3> :tabnext 3<CR>
+nnoremap <A-4> :tabnext 4<CR>
+nnoremap <A-5> :tabnext 5<CR>
+nnoremap <A-6> :tabnext 6<CR>
+nnoremap <A-7> :tabnext 7<CR>
+nnoremap <A-8> :tabnext 8<CR>
+nnoremap <A-9> :tablast<CR>
 
-" Expand more
-function! ExpandMore(filename)
-	" Trim whitespace first
-	let l:expanded = substitute(a:filename, "^\\s\\+\\|\\s\\+$", "", "g")
-	if l:expanded == ""
-		return ""
-	elseif l:expanded =~? "^\\(mkf\\|makefile\\)$"
-		return "Makefile"
-	elseif l:expanded =~? "^\\.\\=.*rc$"
-		" This removes the dot and 'rc'
-		let l:rcname = strpart(l:expanded, strpart(l:expanded, 0, 1) == ".",
-		\ strlen(l:expanded) - 2)
-		" Expand shortcuts
-		if has_key(g:rcnames, l:rcname)
-			let l:rcname = g:rcnames[l:rcname]
-		endif
-		if l:rcname ==? "vim"
-			let l:expanded = "$MYVIMRC"
-		else
-			let l:expanded = "~/." . l:rcname . "rc"
-		endif
-	endif
-	return expand(l:expanded)
-endfunction
-
-" Edit files
-" a:command can be "e", "tabe", etc.
-function! PromptForEditingFile(command)
-	let l:filename = input(":" . a:command . " ", "", "file")
-	echo ""
-	execute a:command . " " . ExpandMore(l:filename)
-endfunction
-
+" Inventory
+" i - Edit my .vimrc
+nnoremap <Leader>i :tabnew $MYVIMRC<CR>
 " e - Edit directly
-nmap <Leader>e :edit<Space>
+nnoremap <Leader>e :edit<Space>
 " s - Split horizontally
-nmap <Leader>s :split<Space>
+nnoremap <Leader>s :split<Space>
 " v - Split vertically
-nmap <Leader>v :vsplit<Space>
+nnoremap <Leader>v :vsplit<Space>
 " t - Edit in a new tab
-nmap <Leader>t :tabnew<Space>
+nnoremap <Leader>t :tabnew<Space>
+" d - Change working directory
+nnoremap <Leader>d :cd<Space>
+" a - Select the whole buffer
+nnoremap <Leader>a ggVG
+" q - Close buffer
+nnoremap <Leader>q :q<CR>
+nnoremap <Leader>Q :q!<CR>
+" j - EasyMotion
+map <Leader>j <Plug>(easymotion-prefix)
 
-" Changing current directory
-nmap <Leader>d :call PromptForArg("cd", ":cd ", "dir")<CR>
+" Toolbar
+noremap <F3> n
+nnoremap <F5> :!run.sh<CR>
+nnoremap <F7> :wa<CR>:make<CR>
+nnoremap <S-F7> :make clean<CR>
+nnoremap <F9> :call OpenTerminal()<CR>
 
-" Making
-nmap <Leader>m :!make -v<CR>
-nmap <Leader>mk :wa<CR>:make<CR>
-nmap <Leader>mf :call PromptForArg(":make", s:lang_argument_prompt, "file")<CR>
-nmap <Leader>mc :make clean<CR>
+"----------------------------------------------------------------------------
+" Abbreviations
 
-" Select the whole buffer
-nmap <Leader>a ggVG
 
-" Open the terminal
-if has("gui_running")
-	execute "nmap <Leader>1 :!" . g:terminal . " --maximize &<CR><CR>"
-else
-	nmap <Leader>1 :shell<CR>
-endif
 
-" The Crafting Guide Git
-function! GitCommit(message, all)
-	if a:message == ""
-		let l:message = input(s:lang_commit_message_prompt)
-		if l:message == ""
-			echo s:lang_stopped_committing
-			return
+"----------------------------------------------------------------------------
+" Magic tab
+
+function! TabInInsertMode()
+	let l:pos = getpos(".")
+	let l:line = getline(l:pos[1])
+	let l:equal_column = strridx(l:line, "=") + 1
+	if l:pos[1] == 1 && l:pos[2] == 1
+		" Cursor there ↖
+		if l:line =~# "=\\{77\\}$"
+			echom s:lang_comment_head_exists
+		else
+			let l:buffer_name = expand("%")
+			if l:buffer_name == ""
+				let l:buffer_name = printf(s:lang.placeholder, s:lang.filename)
+			endif
+			" insert comment head
 		endif
+	elseif l:line =~# "^\\s\\{" . (l:pos[2] - 1) . "\\}"
+		" only spacing characters before cursor
+		return "\<Tab>"
+	elseif l:equal_column < l:pos[2]
+	\ && l:line[(l:equal_column):(l:pos[2] - 1)] !~# "\\s"
+		let l:expression = l:line[(l:equal_column - 1):(l:pos[2] - 2)]
+		if l:pos[2] > len(l:line)
+			normal! vF=d
+		else
+			normal! dF=
+		endif
+		echo l:expression
+		silent! execute "return " . l:expression[1:]
 	else
-		let l:message = a:message
+		let l:word = snipMate#WordBelowCursor()
+		let l:snippets = snipMate#GetSnippetsForWordBelowCursorForComplete(word)
+		if len(l:snippets) > 1
+			return snipMate#ShowAvailableSnips()
+		elseif word !=# snippets[0]
+			normal! "_db"_x
+			return snippets[0]
+		else
+			return snipMate#TriggerSnippet(1)
+		endif
 	endif
-	let l:cmd = ":!git commit -"
-	if a:all
-		let l:cmd .= "a"
-	endif
-	let l:cmd .= "m \"" . l:message . "\""
-	execute l:cmd
+	return ""
 endfunction
 
-nmap <Leader>g :!git --version<CR>
-nmap <Leader>gs :!git status<CR>
-nmap <Leader>gaa :!git add -A<CR>
-nmap <Leader>gaA :!git add -A :/<CR>
-nmap <Leader>gcs :call GitCommit("", 0)<CR>
-nmap <Leader>gca :call GitCommit("", 1)<CR>
-nmap <Leader>gl :!git graph<CR>
+map <Tab> <Plug>(easymotion-s)
+map <C-Tab> <Plug>(easymotion-s2)
+inoremap <Tab> <C-r>=TabInInsertMode()<CR>
+imap <S-Tab> <Plug>delimitMateS-Tab
+map <C-S-Tab> <Plug>(easymotion-sn)
+map <C-A-S-Tab> <Plug>(easymotion-jumptoanywhere)
+augroup sats_fttab
+	autocmd!
+	autocmd FileType html,css imap <buffer> <Tab> <Plug>(emmet-expand-abbr)
+augroup END
 
-" Running programs
-function! MakeRun()
-	wa
-	let l:command = ":!false"
-	let l:command .= "|| ./run.sh " . shellescape(expand("%"), 1)
-	let l:command .= "|| make run"
-	"let l:command .= "|| " . g:terminal . " --hide-menubar --geometry 80x25"
-	let l:command .= "|| cd .. && make run"
-	execute l:command
-endfunction
+"----------------------------------------------------------------------------
+" autocmd groups
 
-nmap <F5> :call MakeRun()<CR>
+augroup vimrcEx
+	autocmd!
+	autocmd FileType text setlocal textwidth=78
+
+	" When editing a file, always jump to the last known cursor position.
+	" Don't do it when the position is invalid or when inside an event handler
+	" (happens when dropping a file on gvim).
+	" Also don't do it when the mark is in the first line, that is the default
+	" position when opening a file.
+	autocmd BufReadPost *
+	\ if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+augroup END
+
+augroup sats
+	autocmd!
+	autocmd BufWritePost * call NormalizeBuffer()
+augroup END
+
+augroup sats_window
+	autocmd!
+	autocmd BufWinEnter * call CheckAndSetHelpWindow()
+augroup END
 
 "----------------------------------------------------------------------------
 " Plugins' world
@@ -372,19 +402,31 @@ if !exists('g:airline_symbols')
 endif
 let g:airline_symbols.space = "\ua0"
 
-" Emmet
-autocmd FileType html,css imap <buffer> <Tab> <Plug>(emmet-expand-abbr)
-
 " delimitMate
-let g:delimitMate_expand_cr = 2
+let g:delimitMate_matchpairs = "(:),[:],{:}"
+let g:delimitMate_matchpairs .= ",（:）,［:］,｛:｝,〔:〕"
+let g:delimitMate_matchpairs .= ",【:】,〖:〗,『:』,「:」,｢:｣"
+let g:delimitMate_quotes = "\" '"
+let g:delimitMate_expand_cr = 1
+let g:delimitMate_expand_space = 1
+let g:delimitMate_excluded_regions = "String"
+
+" SnipMate
+let g:snips_author = "<subject name here>"
+let g:snipMate = {}
+let g:snipMate.no_match_completion_feedkeys_chars = ""
 
 " EasyMotion
+let g:EasyMotion_do_shade = 1
+let g:EasyMotion_use_smartsign_us = 1
 let g:EasyMotion_use_upper = 1
-let g:EasyMotion_keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+let g:EasyMotion_keys = "XYZWABCDUVEFGMNHPQRIJKLOST0123456789"
 let g:EasyMotion_prompt = "{n} ⧖ "
-map <Leader>j <Plug>(easymotion-prefix)
-map <Tab> <Plug>(easymotion-s)
-map <S-Tab> <Plug>(easymotion-s2)
+let g:EasyMotion_inc_highlight = 0
+let g:EasyMotion_verbose = 0
+
+" Emmet
+let g:user_emmet_install_global = 0
 
 " NERD Commenter
 " I can't remember such complex key mappings.
@@ -395,11 +437,3 @@ vmap <Leader>c <Plug>NERDCommenterToggle
 " vim-expand-region
 vmap v <Plug>(expand_region_expand)
 vmap V <Plug>(expand_region_shrink)
-
-" vim-css-color
-let g:cssColorVimDoNotMessMyUpdatetime = 1
-
-" syntastic
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_enable_signs = 0

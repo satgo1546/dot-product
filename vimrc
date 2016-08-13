@@ -356,6 +356,9 @@ nnoremap <Leader>q :quit<CR>
 nnoremap <Leader>Q :quit!<CR>
 " j - EasyMotion
 map <Leader>j <Plug>(easymotion-prefix)
+" <C-s> - Show the active syntax highlighting groups under the cursor
+nnoremap <Leader><C-s> :echo join(reverse(map(synstack(line("."), col(".")),
+\ synIDattr(v:val, 'name')")), " ")<CR>
 
 " Toolbar
 noremap <F3> n
@@ -365,8 +368,6 @@ nnoremap <S-F7> :make clean<CR>
 nnoremap <F9> :call OpenTerminal()<CR>
 
 " Various items dropped out
-nnoremap zS :echo reverse(map(synstack(line("."), col(".")),
-\ synIDattr(v:val, 'name')"))<CR>
 
 " Abbreviations -----------------------------------------------------------{{{1
 

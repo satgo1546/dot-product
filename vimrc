@@ -2,20 +2,15 @@
 " ■ satgo's .vimrc
 "==============================================================================
 
-"----------------------------------------------------------------------------
-" Initialization
+" Initialization ----------------------------------------------------------{{{1
 
 set nocompatible
-set guioptions=fimMglr
+set guioptions+=M
+syntax on
+filetype plugin indent on
 
 runtime bundle/vim-pathogen/autoload/pathogen.vim
 execute pathogen#infect()
-
-" Enable file type detection.
-" Use the default filetype settings, so that mail gets 'tw' set to 72,
-" 'cindent' is on in C files, etc.
-" Also load indent files, to automatically do language-dependent indenting.
-filetype plugin indent on
 
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
@@ -28,24 +23,25 @@ endif
 "----------------------------------------------------------------------------
 " Configuration for functions in this file
 
+let g:commands = {}
 if has("win32")
-	let g:pause_command = "pause"
-	let g:terminal = "cmd"
+	let g:commands.pause = "pause"
+	let g:commands.terminal = "cmd"
 else
-	let g:pause_command = "read -n 1 -p '. . . '"
-	let g:terminal = "exo-open --launch TerminalEmulator"
+	let g:commands.pause = "read -n 1 -p '. . . '"
+	let g:commands.terminal = "exo-open --launch TerminalEmulator &"
 endif
 
-"----------------------------------------------------------------------------
-" :option
+" :option :set ------------------------------------------------------------{{{1
 
 " 2 moving around, searching and patterns
 set incsearch
-set smartcase
+set ignorecase smartcase
 
 " 4 displaying text
 set scrolloff=0
 set wrap
+set display=lastline,uhex
 set list listchars=tab:»\ ,trail:·,extends:►,precedes:◄,nbsp:◦
 set fillchars=stl:\ ,stlnc:\ ,vert:\ ,fold:┈,diff:-
 set lazyredraw
@@ -53,7 +49,6 @@ set number norelativenumber
 set numberwidth=6
 
 " 5 syntax, highlighting and spelling
-syntax on
 set background=light
 set cursorline
 set colorcolumn=80
@@ -79,8 +74,8 @@ endif
 set nomousefocus nomousehide
 
 " 10 GUI
-" 'guioptions' has been set before.
 set guifont=Monospace\ 14
+set guioptions=fimglr
 set linespace=2
 set browsedir=current
 
@@ -95,7 +90,11 @@ set errorbells
 set clipboard=unnamed
 
 " 14 editing text
+set undolevels=1024
 set backspace=indent,eol,start
+set matchpairs+=（:）,［:］,｛:｝,〔:〕,【:】,〖:〗,『:』,「:」,｢:｣
+set nojoinspaces
+set nrformats-=octal
 
 " 15 tabs and indenting
 set tabstop=2 shiftwidth=2
@@ -113,10 +112,26 @@ set autowrite
 
 " 21 command line editing
 set history=42
-set wildmenu wildignore=*~,*.o,*.obj,*.bin,*.exe
+set wildmenu
+set wildignore=*~,*.o,*.obj,*.bin,*.exe,*.png,*.jpg,*.gif,*.tif,*.tiff,*.tga
+set wildignore+=*.pdf,*.dll,*.so,*.a,a.out,*.ttf,*.otf
 
-" Some highlights
+" 22 executing external commands
+set keywordprg= " set this by filetype
+
+" 24 language specific
+set isident+=@,$
+
+" 25 multi-byte characters
+set encoding=utf-8
+set fileencodings=ucs-bom,utf-8,prc,ucs-2le,latin1
+
+" 26 various
+set sessionoptions-=options,winpos,winsize
+
+" Some highlights ---------------------------------------------------------{{{1
 " These usually aren't in color scheme files, so I include these here.
+
 hi CursorLine              cterm=none                         guibg=#fafafa
 hi CursorLineNr            cterm=bold           gui=bold
 hi CursorColumn            cterm=bold
@@ -124,17 +139,16 @@ hi VertSplit               cterm=none
 hi clear Error
 hi Error                   cterm=inverse        gui=undercurl guisp=red
 hi SyntasticWarning        cterm=inverse        gui=undercurl guisp=DarkOrange
-hi EasyMotionShade         cterm=bold ctermfg=0 gui=none      guifg=gray60
-hi EasyMotionTarget        cterm=bold ctermfg=3 gui=bold      guifg=DarkGoldenrod1
-hi EasyMotionTarget2First  cterm=bold ctermfg=3 gui=bold      guifg=DarkGoldenrod1
-hi EasyMotionTarget2Second cterm=none ctermfg=3 gui=none      guifg=DarkGoldenrod3
+hi EasyMotionShade         cterm=none ctermfg=7 gui=none      guifg=gray60
+hi EasyMotionTarget        cterm=none ctermfg=3 gui=bold      guifg=DarkGoldenrod1
+hi EasyMotionTarget2First  cterm=none ctermfg=3 gui=bold      guifg=DarkGoldenrod1
+hi EasyMotionTarget2Second cterm=none ctermfg=0 gui=none      guifg=DarkGoldenrod3
 hi link SyntasticError Error
 
 " Custom matches
-match Error /^\s\+$/
+match Error /\v^\s+$|\u037e/
 
-"----------------------------------------------------------------------------
-" Translations
+" Translations ------------------------------------------------------------{{{1
 
 let s:lang = {}
 let s:langs = {}
@@ -144,8 +158,8 @@ let s:langs.placeholder = ["<%s here>", "[键入%s]"]
 let s:langs.filename = ["Filename", "文件名"]
 let s:langs.argument = ["Argument", "参数"]
 let s:langs.expired_space = [
-	\ "<Space> expired at %d.",
-	\ "<Space>已过期于%d。",
+	\ "<Space> expired at %s.",
+	\ "<Space>已过期于%s。",
 \ ]
 let s:langs.missing_argument = [
 	\ "Stopped executing because no arguments are specified.",
@@ -155,9 +169,65 @@ let s:langs.comment_head_exists = [
 	\ "There's already a comment head.",
 	\ "注释头已存在。",
 \ ]
+let s:langs.airline_mode_map = [
+	\ {
+		\ "__" : " - ",
+		\ "n"  : " ~ ",
+		\ "i"  : "INSERT",
+		\ "R"  : "REPLACE",
+		\ "v"  : "VISUAL",
+		\ "V"  : "V-LINE",
+		\ "c"  : "COMMAND",
+		\ "" : "V-BLOCK",
+		\ "s"  : "SELECT",
+		\ "S"  : "S-LINE",
+		\ "" : "S-BLOCK",
+		\ "t"  : "TERMINAL",
+	\ }, {
+		\ "__": " － ",
+		\ "n" : " ～ ",
+		\ "i" : "插入",
+		\ "R" : "替换",
+		\ "c" : "命令",
+		\ "v" : "可视",
+		\ "V" : " 行 ",
+		\ "": " 块 ",
+		\ "s" : "选择",
+		\ "S" : "‖行‖",
+		\ "": "‖块‖",
+		\ "t" : "终端",
+	\ },
+\ ]
+let s:langs.airline_symbols = [
+	\ {
+		\ "paste": "PASTE",
+		\ "spell": "SPELL",
+		\ "readonly": "\ue0a2",
+		\ "whitespace": "\u2739",
+		\ "linenr": "\ue0a1",
+		\ "maxlinenr": "\u2630",
+		\ "branch": "\ue0a0",
+		\ "notexists": "\u2204",
+		\ "modified": "+",
+		\ "space": " ",
+		\ "crypt": "🔒",
+	\ },
+	\ {
+		\ "paste": "粘贴",
+		\ "spell": "拼写",
+		\ "readonly": "\ue0a2",
+		\ "whitespace": "\u2739",
+		\ "linenr": "\ue0a1",
+		\ "maxlinenr": "\u2630",
+		\ "branch": "\ue0a0",
+		\ "notexists": "\u2204",
+		\ "modified": "已修改",
+		\ "space": " ",
+		\ "crypt": "🔒",
+	\ },
+\ ]
 
-"----------------------------------------------------------------------------
-" Helper functions
+" Helper functions --------------------------------------------------------{{{1
 
 function! InitializeLang()
 	let l:lang_index = 0
@@ -180,12 +250,12 @@ endfunction
 call InitializeLang()
 
 function! ExpiredSpace()
-	echo printf(s:lang_expired_space, strftime("%s"))
+	echo strftime(s:lang.expired_space)
 endfunction
 
 function! OpenTerminal()
 	if has("gui_running")
-		!exo-open --launch TerminalEmulator &<CR><CR>
+		execute "silent !" . g:commands.terminal
 	else
 		shell
 	endif
@@ -193,7 +263,7 @@ endfunction
 
 function! NormalizeBuffer()
 	let l:pos = getpos(".")
-	silent! %s/\s\+$//
+	%s/\s\+$//e
 	nohlsearch
 	call setpos(".", l:pos)
 endfunction
@@ -209,8 +279,13 @@ function! CheckAndSetHelpWindow()
 	endif
 endfunction
 
-"----------------------------------------------------------------------------
-" Keyboard mappings
+function! GoToLastPosition()
+	if line("'\"") > 1 && line("'\"") <= line("$") && expand("%:p:h:t") !=# ".git"
+		normal! g`"
+	endif
+endfunction
+
+" Keyboard mappings -------------------------------------------------------{{{1
 
 let g:mapleader = "\<Space>"
 
@@ -221,6 +296,8 @@ inoremap <M-Space> <C-o>:call ExpiredSpace()<CR>
 nnoremap <Leader><Leader> :w<CR>
 nnoremap <Leader><BS> :nohlsearch<CR>
 noremap Y y$
+noremap j gj
+noremap k gk
 
 " CTRL-U in insert mode deletes a lot. Use CTRL-G u to first break undo,
 " so that you can undo CTRL-U after inserting a line break.
@@ -249,25 +326,25 @@ noremap! <A-k> <Up>
 noremap! <A-l> <Right>
 
 " Switching between tabs
-nnoremap <A-1> :tabfirst<CR>
-nnoremap <A-2> :tabnext 2<CR>
-nnoremap <A-3> :tabnext 3<CR>
-nnoremap <A-4> :tabnext 4<CR>
-nnoremap <A-5> :tabnext 5<CR>
-nnoremap <A-6> :tabnext 6<CR>
-nnoremap <A-7> :tabnext 7<CR>
-nnoremap <A-8> :tabnext 8<CR>
-nnoremap <A-9> :tablast<CR>
+nnoremap <C-1> :tabfirst<CR>
+nnoremap <C-2> :tabnext 2<CR>
+nnoremap <C-3> :tabnext 3<CR>
+nnoremap <C-4> :tabnext 4<CR>
+nnoremap <C-5> :tabnext 5<CR>
+nnoremap <C-6> :tabnext 6<CR>
+nnoremap <C-7> :tabnext 7<CR>
+nnoremap <C-8> :tabnext 8<CR>
+nnoremap <C-9> :tablast<CR>
 
 " Inventory
-" i - Edit my .vimrc
+" i - Edit .vimrc
 nnoremap <Leader>i :tabnew $MYVIMRC<CR>
 " e - Edit directly
 nnoremap <Leader>e :edit<Space>
-" s - Split horizontally
-nnoremap <Leader>s :split<Space>
-" v - Split vertically
-nnoremap <Leader>v :vsplit<Space>
+" s - Edit horizontally
+nnoremap <Leader>s :new<Space>
+" v - Edit vertically
+nnoremap <Leader>v :vnew<Space>
 " t - Edit in a new tab
 nnoremap <Leader>t :tabnew<Space>
 " d - Change working directory
@@ -275,8 +352,8 @@ nnoremap <Leader>d :cd<Space>
 " a - Select the whole buffer
 nnoremap <Leader>a ggVG
 " q - Close buffer
-nnoremap <Leader>q :q<CR>
-nnoremap <Leader>Q :q!<CR>
+nnoremap <Leader>q :quit<CR>
+nnoremap <Leader>Q :quit!<CR>
 " j - EasyMotion
 map <Leader>j <Plug>(easymotion-prefix)
 
@@ -287,22 +364,25 @@ nnoremap <F7> :wa<CR>:make<CR>
 nnoremap <S-F7> :make clean<CR>
 nnoremap <F9> :call OpenTerminal()<CR>
 
-"----------------------------------------------------------------------------
-" Abbreviations
+" Various items dropped out
+nnoremap zS :echo reverse(map(synstack(line("."), col(".")),
+\ synIDattr(v:val, 'name')"))<CR>
+
+" Abbreviations -----------------------------------------------------------{{{1
 
 
 
-"----------------------------------------------------------------------------
-" Magic tab
+" Not-so-magic Tab---------------------------------------------------------{{{1
 
 function! TabInInsertMode()
+	echo ""
 	let l:pos = getpos(".")
 	let l:line = getline(l:pos[1])
 	let l:equal_column = strridx(l:line, "=") + 1
 	if l:pos[1] == 1 && l:pos[2] == 1
 		" Cursor there ↖
 		if l:line =~# "=\\{77\\}$"
-			echom s:lang_comment_head_exists
+			echom s:lang.comment_head_exists
 		else
 			let l:buffer_name = expand("%")
 			if l:buffer_name == ""
@@ -311,7 +391,6 @@ function! TabInInsertMode()
 			" insert comment head
 		endif
 	elseif l:line =~# "^\\s\\{" . (l:pos[2] - 1) . "\\}"
-		" only spacing characters before cursor
 		return "\<Tab>"
 	elseif l:equal_column < l:pos[2]
 	\ && l:line[(l:equal_column):(l:pos[2] - 1)] !~# "\\s"
@@ -322,7 +401,7 @@ function! TabInInsertMode()
 			normal! dF=
 		endif
 		echo l:expression
-		silent! execute "return " . l:expression[1:]
+		return eval(l:expression[1:])
 	else
 		let l:word = snipMate#WordBelowCursor()
 		let l:snippets = snipMate#GetSnippetsForWordBelowCursorForComplete(word)
@@ -346,66 +425,36 @@ map <C-S-Tab> <Plug>(easymotion-sn)
 map <C-A-S-Tab> <Plug>(easymotion-jumptoanywhere)
 augroup sats_fttab
 	autocmd!
-	autocmd FileType html,css imap <buffer> <Tab> <Plug>(emmet-expand-abbr)
+	autocmd FileType html,css
+	\ execute "imap <buffer> <Tab> <Plug>(emmet-expand-abbr)"
 augroup END
 
-"----------------------------------------------------------------------------
-" autocmd groups
-
-augroup vimrcEx
-	autocmd!
-	autocmd FileType text setlocal textwidth=78
-
-	" When editing a file, always jump to the last known cursor position.
-	" Don't do it when the position is invalid or when inside an event handler
-	" (happens when dropping a file on gvim).
-	" Also don't do it when the mark is in the first line, that is the default
-	" position when opening a file.
-	autocmd BufReadPost *
-	\ if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-augroup END
+" :autocmd groups ---------------------------------------------------------{{{1
 
 augroup sats
 	autocmd!
+	autocmd GUIFailed * qall
+	autocmd BufReadPost * call GoToLastPosition()
+	autocmd BufReadPost COMMIT_EDITMSG startinsert
 	autocmd BufWritePost * call NormalizeBuffer()
-augroup END
-
-augroup sats_window
-	autocmd!
+	autocmd FileType text setlocal textwidth=78
+	autocmd FileType c,cpp setlocal keywordprg=man\ 3
+	autocmd FileType sh setlocal keywordprg=man
+	autocmd FileType vim setlocal foldmethod=marker keywordprg=
+	autocmd FileType vim
+	\ nnoremap <buffer> <F5> :execute "source " . expand("%")<CR>
 	autocmd BufWinEnter * call CheckAndSetHelpWindow()
 augroup END
 
-"----------------------------------------------------------------------------
-" Plugins' world
+" Plugins' world ----------------------------------------------------------{{{1
 
 " vim-airline
 let g:loaded_airline_themes = 1
 let g:airline_theme = "sats"
-if v:lang =~# "^zh_CN\\."
-	let g:airline_mode_map = {
-		\ "__": " － ",
-		\ "n" : " ～ ",
-		\ "i" : "插入",
-		\ "R" : "替换",
-		\ "c" : "命令",
-		\ "v" : "可视",
-		\ "V" : "(行)",
-		\ "": "(块)",
-		\ "s" : "选择",
-		\ "S" : "(行)",
-		\ "": "(块)",
-	\ }
-endif
-let g:airline_powerline_fonts = 1
-if !exists('g:airline_symbols')
-	let g:airline_symbols = {}
-endif
-let g:airline_symbols.space = "\ua0"
+let g:airline_mode_map = s:lang.airline_mode_map
+let g:airline_symbols = s:lang.airline_symbols
 
 " delimitMate
-let g:delimitMate_matchpairs = "(:),[:],{:}"
-let g:delimitMate_matchpairs .= ",（:）,［:］,｛:｝,〔:〕"
-let g:delimitMate_matchpairs .= ",【:】,〖:〗,『:』,「:」,｢:｣"
 let g:delimitMate_quotes = "\" '"
 let g:delimitMate_expand_cr = 1
 let g:delimitMate_expand_space = 1
@@ -437,3 +486,5 @@ vmap <Leader>c <Plug>NERDCommenterToggle
 " vim-expand-region
 vmap v <Plug>(expand_region_expand)
 vmap V <Plug>(expand_region_shrink)
+
+" EOF }}}1

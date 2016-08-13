@@ -7,6 +7,9 @@ plugins=(
 	terryma/vim-expand-region
 	tpope/vim-fugitive
 	tpope/vim-vinegar
+	tpope/vim-characterize
+	tpope/vim-speeddating
+	tpope/vim-eunuch
 
 	scrooloose/nerdcommenter
 	Raimondi/delimitMate
@@ -16,26 +19,31 @@ plugins=(
 
 	mattn/emmet-vim
 	sukima/xmledit
-	skammer/vim-css-color
+	chrisbra/csv.vim
 	kchmck/vim-coffee-script
 )
 
 print-help() {
 	cat <<EOF
 Examples:
-$ noupdate=1 vim-plugin-update.sh
+$ vim-plugin-update.sh
+$ vim-plugin-update.sh -i # no update (i.e. install new plugins only)
 EOF
 }
 
 github-clone() {
-	git clone --depth=1 https://github.com/$1.git
+	git clone --verbose --depth=1 --single-branch https://github.com/$1.git
 }
 
-if [ "$1" = "--help" ]
-then
-	print-help
-	exit
-fi
+OPTIND=1
+while getopts "hi" opt
+do
+	case "$opt" in
+		h) print-help; exit;;
+		i) noupdate=1;;
+	esac
+done
+[ "$noupdate" -eq 1 ] && echo "- noupdate == 1 -"
 
 mkdir -p $HOME/.vim/bundle
 cd $HOME/.vim/bundle
@@ -45,7 +53,7 @@ do
 	echo -e "\e[34m$p ($d)\e[0m"
 	if [ -d "$d" ]
 	then
-		[ -n "$noupdate" ] && continue
+		[ "$noupdate" -eq 1 ] && continue
 		if [ -d "$d/.git" ]
 		then
 			cd $d

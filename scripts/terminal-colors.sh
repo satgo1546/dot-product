@@ -12,4 +12,3 @@ do
 	done
 	echo -e "\e[0m"
 done
-#echo -ne "\e]P7cccccc"

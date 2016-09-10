@@ -21,7 +21,7 @@
 	unstage = reset HEAD --
 	last = log -1 HEAD
 [core]
-	editor = vim
+	editor = gvim -f -S ~/miscellaneous/scripts/popup-edit.vim
 	excludesfile = /home/satgo1546/.gitignore_global
 	eol = lf
 	safecrlf = true

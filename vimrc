@@ -75,7 +75,7 @@ set nomousefocus nomousehide
 
 " 10 GUI
 set guifont=Monospace\ 14
-set guioptions=fimglr
+set guioptions=imglr
 set linespace=2
 set browsedir=current
 
@@ -436,7 +436,6 @@ augroup sats
 	autocmd!
 	autocmd GUIFailed * qall
 	autocmd BufReadPost * call GoToLastPosition()
-	autocmd BufReadPost COMMIT_EDITMSG startinsert
 	autocmd BufWritePost * call NormalizeBuffer()
 	autocmd FileType text setlocal textwidth=78
 	autocmd FileType c,cpp setlocal keywordprg=man\ 3

@@ -13,15 +13,18 @@
 	co = checkout
 	com = checkout master
 	cos = checkout satgo1546-dev
+	mg = merge
+	mgm = merge master
+	mgs = merge satgo1546-dev
+	br = branch
 	ci = commit
 	st = status -sb
 	dup = clone --depth=1 --no-single-branch --recursive --shallow-submodules
-	graph = log --all --graph --abbrev-commit --pretty=tformat:'%>|(15)%Cred%h %C(yellow)%d%Creset %<|(66,trunc)%s %Cgreen%>(7)%cr %Cblue%an'
+	graph = log --all --graph --abbrev-commit --pretty=tformat:'%>|(15)%Cred%h %C(auto)%d%Creset %<|(66,trunc)%s %Cgreen%>(7)%cr %Cblue%an'
 	undo-commit = reset HEAD~
 	undo-merge = reset --hard ORIG_HEAD
 	unstage = reset HEAD --
 	last = log -1 HEAD
-	br = branch
 [core]
 	editor = gvim -f -S ~/miscellaneous/scripts/popup-edit.vim
 	excludesfile = /home/satgo1546/.gitignore_global

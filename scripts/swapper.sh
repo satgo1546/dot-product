@@ -20,8 +20,11 @@ EOF
 		if [ $1 = "get" ]
 		then
 			$cmd "$swapper/$d/" "./"
+			[ -d .git ] && git config --local core.fileMode true
 		else
+			[ -d .git ] && git config --local core.fileMode false
 			$cmd "./" "$swapper/$d/"
+			[ -d .git ] && git config --local core.fileMode true
 		fi
 		;;
 	* )

@@ -19,8 +19,7 @@ HISTCONTROL=ignoredups:ignorespace
 # be colorful
 [ "$TERM" = xterm ] && export TERM=xterm-256color
 ESC=$(echo -e "\e")
-PS1='\[\e[0;1;32;42m\] \u \[\e[0;7;32m\]│ !\! │ $?'
-PS1="$PS1"' $(sats_ps1_extra) \W \[\e[0;92m\$⧖\e[0m '
+PROMPT_COMMAND=sats_ps1
 PS2='  \[\e[0;32m\]┃\[\e[0m\] '
 PS3="$ESC[0;32m──┨ $ESC[92m$ESC[0m "
 PS4='✢ '

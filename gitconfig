@@ -17,6 +17,7 @@
 	mg = merge
 	mgm = merge master
 	mgs = merge satgo1546-dev
+	mgg = merge gh-pages
 	br = branch
 	ci = commit
 	st = status -sb

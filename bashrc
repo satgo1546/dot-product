@@ -36,11 +36,10 @@ alias ll="ls -l"
 alias dir="ls"
 alias dira="ls -A"
 alias dirl="ls -l"
-alias cd..="cd .."
-alias cd...="cd ../.."
-alias cd....="cd ../../.."
 alias en="LANG=en_US"
 alias mx="chmod +x"
+alias md=mkdir
+alias chdir=cd
 alias dialog-hello='dialog --msgbox "Hello, world!" 6 24 # quite useless'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history | tail -n 1 | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg"

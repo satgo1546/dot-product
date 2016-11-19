@@ -1,0 +1,7 @@
+# .ptconfig.toml
+
+color-path = "32;47"
+color-match = "33;4"
+color-line-number = "36"
+
+smart-case = true

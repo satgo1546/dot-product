@@ -5,7 +5,8 @@
 " Initialization ----------------------------------------------------------{{{1
 
 set nocompatible
-set guioptions+=M
+set encoding=utf-8
+
 syntax on
 filetype plugin indent on
 
@@ -74,7 +75,12 @@ endif
 set nomousefocus nomousehide
 
 " 10 GUI
-set guifont=Monospace\ 14
+if has('gui_win32')
+	set guifont=Courier_New:h14
+	set guifontwide=NSimSun:h16
+elseif has('gui_gtk2')
+	set guifont=Monospace\ 14
+endif
 set guioptions=imglr
 set linespace=2
 set browsedir=current
@@ -123,8 +129,10 @@ set keywordprg= " set this by filetype
 set isident+=@,$
 
 " 25 multi-byte characters
-set encoding=utf-8
 set fileencodings=ucs-bom,utf-8,prc,ucs-2le,latin1
+if has('win32')
+	set termencoding=cp936
+endif
 
 " 26 various
 set sessionoptions-=options,winpos,winsize
@@ -152,7 +160,7 @@ match Error /\v^\s+$|\u037e/
 
 let s:lang = {}
 let s:langs = {}
-let s:langs.code = ["^en", "\\v^zh_(CN|Hans)\\."]
+let s:langs.code = ["^en", "\\v^zh_(CN|Hans)"]
 let s:langs.prompt = ["%s: ", "%s："]
 let s:langs.placeholder = ["<%s here>", "[键入%s]"]
 let s:langs.filename = ["Filename", "文件名"]
@@ -230,6 +238,16 @@ let s:langs.airline_symbols = [
 " Helper functions --------------------------------------------------------{{{1
 
 function! InitializeLang()
+	let l:lang_code = strpart(v:lang, 0, strridx(v:lang, ".") + 1)
+	if l:lang_code == ""
+		let l:lang_code = v:lang
+	endif
+	execute "language message " . l:lang_code . ".UTF-8"
+	call InitializeLangScript()
+	source $VIMRUNTIME/menu.vim
+endfunction
+
+function! InitializeLangScript()
 	let l:lang_index = 0
 	for l:regexp in s:langs.code
 		if v:lang =~# l:regexp
@@ -242,6 +260,7 @@ function! InitializeLang()
 	if l:lang_index >= len(s:langs.code)
 		let s:lang.code = ""
 		let s:lang.index = 0
+		return
 	endif
 	for l:key in keys(s:langs)
 		let s:lang[l:key] = s:langs[l:key][s:lang.index]

@@ -1,7 +1,7 @@
 sats_ps1() {
 	PS1='\[\e[0;1;32;42m\] \u \[\e[0;7;32m\]│ !\! │ $? '
 	sats_ps1_extra
-	PS1="$PS1"' \W \[\e[0;92m\$⧖\e[0m '
+	PS1="$PS1"' \W \[\e[0;92m\]\$⧖\[\e[0m\] '
 }
 
 sats_ps1_extra() {
@@ -17,7 +17,6 @@ sats_ps1_extra() {
 	if [ ${#list_compact[@]} -eq 0 ]
 	then
 		PS1="$PS1│"
-		return
 	else
 		PS1="$PS1"'\[\e[0;32;107m\]▒ '"${list_compact[0]}"
 		for ((i = 1; i < ${#list_compact[@]}; i++))

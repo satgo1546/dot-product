@@ -1,0 +1,23 @@
+set autoindent
+set tabsize 2
+unset tabstospaces
+set whitespace "»·"
+set softwrap
+
+set backup
+set boldtext
+set locking
+set morespace
+set mouse
+set poslog
+set smarthome
+set smooth
+
+# Valid colors: white, black, red, blue, green, yellow, magenta, cyan.
+# For foreground colors, you may use the prefix "bright" to get a
+# stronger highlight.
+set statuscolor black,white
+set keycolor green
+set functioncolor yellow
+
+include "/usr/share/nano/*.nanorc"

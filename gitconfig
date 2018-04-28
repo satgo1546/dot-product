@@ -1,6 +1,7 @@
 [user]
 	email = satgo1546@yeah.net
 	name = Frog Chen
+	signingkey = 2AE5A66FF1D92739
 [push]
 	default = simple
 [credential]
@@ -14,10 +15,12 @@
 	com = checkout master
 	cos = checkout satgo1546-dev
 	cog = checkout gh-pages
+	cob = checkout bobcao3-dev
 	mg = merge
 	mgm = merge master
 	mgs = merge satgo1546-dev
 	mgg = merge gh-pages
+	mgb = merge bobcao3-dev
 	br = branch
 	ci = commit
 	st = status -sb
@@ -28,11 +31,15 @@
 	unstage = reset HEAD --
 	last = log -1 HEAD
 [core]
-	editor = gvim -f -S ~/miscellaneous/scripts/popup-edit.vim
-	excludesfile = /home/satgo1546/.gitignore_global
+	editor = gvim -f
+	excludesfile = D:\\Miscellaneous\\gitignore
 	eol = lf
 	safecrlf = true
+	autocrlf = input
+	fscache = true
 [merge]
 	renormalize = true
 [help]
 	autoCorrect = 5
+[gpg]
+	program = gpg2

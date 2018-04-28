@@ -52,7 +52,7 @@ export EDITOR=vim
 export VISUAL=vim
 
 # $PATH
-PATH="$HOME/.gem/ruby/2.3.0/bin:$PATH"
+PATH="$HOME/.gem/ruby/2.4.0/bin:$PATH"
 PATH="$HOME/local/jdk1.8.0_65/bin:$PATH"
 PATH="$HOME/local/AFDKO/Tools/linux:$PATH"
 PATH="$HOME/miscellaneous/scripts:$PATH"

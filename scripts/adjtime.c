@@ -1,3 +1,10 @@
+//=============================================================================
+// ■ ADJTIME
+//-----------------------------------------------------------------------------
+//   A command-line utility for Windows to change system time relatively.
+//   Requires running as local administrator.
+//=============================================================================
+
 #include <windows.h>
 #include <strsafe.h>
 
@@ -45,6 +52,11 @@ int main(int argc, char** argv) {
 	SYSTEMTIME st;
 	if (argc != 2) {
 		printf("Usage:\n\t%s <adjustment/100 nanosecond>\n", argv[0]);
+		printf(
+			"Example:\n"
+			"\tREM put system time forward by 5 minutes\n"
+			"\tADJTIME.EXE 3000000000\n"
+		);
 		return 1;
 	}
 	if (sscanf(argv[1], "%lld", &d) != 1) {

@@ -1,0 +1,288 @@
+"==============================================================================
+" ■ satgo's .vimrc
+"------------------------------------------------------------------------------
+"   Add the following to .vimrc:
+"       set rtp+=/path/to/dot-product/vim
+"       source /path/to/dot-product/vim/vimrc
+"==============================================================================
+
+" Initialization ----------------------------------------------------------{{{1
+
+set nocompatible
+set encoding=utf-8
+
+let g:skip_defaults_vim = 1
+set guioptions+=M
+
+syntax on
+filetype plugin indent on
+
+if !exists('loaded_plugins')
+	runtime bundle/vim-pathogen/autoload/pathogen.vim
+	execute pathogen#infect()
+	let g:loaded_plugins = v:true
+endif
+
+" :option :set ------------------------------------------------------------{{{1
+" 2 moving around, searching and patterns
+set incsearch
+set ignorecase smartcase
+
+" 4 displaying text
+set scrolloff=0
+set wrap
+set breakindent
+set showbreak=↪
+set display=lastline,uhex
+set list listchars=tab:\ \ ,trail:·,extends:►,precedes:◄,nbsp:◦
+set fillchars=stl:\ ,stlnc:\ ,vert:\ ,fold:┈,diff:-
+set lazyredraw
+set number norelativenumber
+set numberwidth=5
+
+" 5 syntax, highlighting and spelling
+set background=light
+set cursorline
+set colorcolumn=80
+colorscheme sats_iced
+set nohlsearch
+
+" 6 multiple windows
+set laststatus=2
+
+" 7 multiple tab pages
+set showtabline=2
+
+" 8 terminal
+set guicursor=
+\a:block-blinkon0,ve:ver35,o:hor50,i-ci:ver20-blinkon0,r-cr:hor5-blinkon0
+
+" 9 using the mouse
+if has('mouse')
+	set mouse=a
+endif
+set nomousefocus nomousehide
+set mousemodel=popup_setpos
+set mouseshape=n-o:arrow,i-r:beam,v:rightup-arrow
+set mouseshape+=m:arrow,ml-e:up-arrow
+set mouseshape+=s:updown,sd:udsizing,vs:leftright,vd:lrsizing
+
+" 10 GUI
+if has('gui_win32')
+	set guifont=Courier_New:h14
+	set guifontwide=NSimSun:h16
+elseif has('gui_gtk2')
+	set guifont=Monospace\ 14
+endif
+set guioptions=imMgLr
+set linespace=2
+set browsedir=current
+
+" 12 messages and info
+set shortmess=l
+set showcmd
+set showmode
+set ruler
+set errorbells
+set belloff=backspace,cursor,esc,insertmode
+
+" 13 selecting text
+set clipboard=unnamed
+
+" 14 editing text
+set undolevels=1024
+set backspace=indent,eol,start
+set matchpairs+=（:）,［:］,｛:｝,〔:〕,【:】,〖:〗,『:』,「:」,｢:｣
+set nojoinspaces
+set nrformats=bin,hex
+set completeopt=menu,menuone,preview,longest
+
+" 15 tabs and indenting
+set tabstop=2 shiftwidth=2
+set noexpandtab
+set autoindent
+
+" 18 mapping
+set timeoutlen=1000 ttimeoutlen=0
+
+" 19 reading and writing files
+set fileformats=unix,dos
+set nobackup
+set autowrite
+
+" 21 command line editing
+set history=42
+set wildmenu
+set wildignore=*~,*.o,*.obj,*.bin,*.exe,*.png,*.jpg,*.gif,*.tif,*.tiff,*.tga
+set wildignore+=*.pdf,*.dll,*.so,*.a,a.out,*.ttf,*.otf
+
+" 22 executing external commands
+set keywordprg= " set this by filetype
+
+" 24 language specific
+set isident+=@,$
+
+" 25 multi-byte characters
+set fileencodings=ucs-bom,utf-8,prc,ucs-2le,latin1
+if has('win32')
+	set termencoding=cp936
+endif
+
+" 26 various
+set sessionoptions-=options,winpos,winsize
+
+" Custom matches ----------------------------------------------------------{{{1
+
+match Error /\v^\s+$|\u037e/
+
+" Keyboard mappings -------------------------------------------------------{{{1
+
+let g:mapleader = "\<Space>"
+
+noremap <Leader> :call ExpiredSpace()<CR>
+inoremap <M-Space> <C-o>:call ExpiredSpace()<CR>
+
+" Essentials
+nnoremap <Leader><Leader> :w<CR>
+noremap Y y$
+noremap j gj
+ounmap j
+noremap k gk
+ounmap k
+noremap <Up> gk
+noremap <Down> gj
+
+" CTRL-U in insert mode deletes a lot. Use CTRL-G u to first break undo,
+" so that you can undo CTRL-U after inserting a line break.
+inoremap <C-u> <C-g>u<C-u>
+
+" Solve compatibility issues on Windows
+noremap <A-Space> :simalt ~<CR>
+
+" Clipboard
+nnoremap <Leader>p "+p
+vnoremap <Leader>p "+p
+nnoremap <Leader>P "+P
+vnoremap <Leader>P "+P
+nnoremap <Leader>y "+y
+vnoremap <Leader>y "+y
+nnoremap <Leader>Y "+Y
+vnoremap <Leader>Y "+Y
+
+" Switching between windows
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+nnoremap <A-l> <C-w>l
+
+" Quick movement in insert mode
+noremap! <A-h> <Left>
+noremap! <A-j> <C-o>gj
+noremap! <A-k> <C-o>gk
+noremap! <A-l> <Right>
+
+" Switching between tabs
+nnoremap <C-1> :tabfirst<CR>
+nnoremap <C-2> :tabnext 2<CR>
+nnoremap <C-3> :tabnext 3<CR>
+nnoremap <C-4> :tabnext 4<CR>
+nnoremap <C-5> :tabnext 5<CR>
+nnoremap <C-6> :tabnext 6<CR>
+nnoremap <C-7> :tabnext 7<CR>
+nnoremap <C-8> :tabnext 8<CR>
+nnoremap <C-9> :tablast<CR>
+nnoremap <C-Tab> :tabnext<CR>
+nnoremap <C-S-Tab> :tabprevious<CR>
+
+" For convenience & compatibility (not 'cp'!)
+nnoremap <C-s> :w<CR>
+inoremap <C-s> <C-o>:w<CR>
+nnoremap <C-f> :promptfind<CR>
+inoremap <C-f> <C-o>:promptfind<CR>
+nnoremap <C-h> :promptrepl<CR>
+inoremap <C-h> <C-o>:promptrepl<CR>
+noremap n :call FindNext(1)<CR>
+noremap N :call FindNext(-1)<CR>
+nnoremap <Leader><BS> :call ClearHighlight()<CR>:echo<CR>
+
+" Inventory
+" i - Edit .vimrc
+nnoremap <Leader>i :tabnew $MYVIMRC<CR>
+" e - Edit directly
+nnoremap <Leader>e :edit<Space>
+" t - Edit in a new tab
+nnoremap <Leader>t :tabnew<Space>
+" d - Change working directory
+nnoremap <Leader>d :cd<Space>
+" a - Select the whole buffer
+nnoremap <Leader>a ggVG
+" q - Close buffer
+nnoremap <Leader>q :quit<CR>
+nnoremap <Leader>Q :quit!<CR>
+
+" Toolbar
+nmap <F3> n
+nmap <S-F3> N
+nnoremap <F5> :!run.sh<CR>
+nnoremap <F7> :wa<CR>:make<CR>
+nnoremap <S-F7> :make clean<CR>
+nnoremap <F9> :call OpenTerminal()<CR>
+
+" :autocmd groups ---------------------------------------------------------{{{1
+
+augroup sats
+	autocmd!
+	autocmd GUIFailed * qall
+	if has('gui_win32')
+		autocmd GUIEnter * simalt ~x
+	endif
+	autocmd BufReadPost * call GoToLastPosition()
+	autocmd BufWritePost * call NormalizeBuffer()
+	autocmd FileType text setlocal textwidth=78
+	autocmd FileType c,cpp setlocal keywordprg=man\ 3
+	autocmd FileType sh setlocal keywordprg=man
+	autocmd FileType vim setlocal foldmethod=marker keywordprg=
+	autocmd FileType vim nnoremap <buffer> <F5> :source %<CR>
+	autocmd BufWinEnter * call CheckAndSetHelpWindow()
+	autocmd FileType html,css
+	\ execute "imap <buffer> <Tab> <Plug>(emmet-expand-abbr)"
+	autocmd FileType snippets set foldmethod=marker
+augroup END
+
+" My scripts --------------------------------------------------------------{{{1
+
+runtime functions.vim
+runtime mymenu.vim
+runtime line.vim
+
+" Plugins' world ----------------------------------------------------------{{{1
+
+let g:vim_indent_cont = 0
+
+" netrw
+let g:loaded_netrw = 1
+let g:loaded_netrwPlugin = 1
+
+" delimitMate
+let g:delimitMate_quotes = "\" '"
+let g:delimitMate_expand_cr = 1
+let g:delimitMate_expand_space = 1
+let g:delimitMate_excluded_regions = "String"
+
+" SnipMate
+let g:snips_author = "<subject name here>"
+if !exists("snipMate")
+	let g:snipMate = {}
+endif
+let g:snipMate.description_in_completion = 0
+imap <Tab> <Plug>snipMateNextOrTrigger
+smap <Tab> <Plug>snipMateNextOrTrigger
+imap <S-Tab> <Plug>snipMateBack
+smap <S-Tab> <Plug>snipMateBack
+imap <F1> <Plug>snipMateShow
+vmap <Tab> <Plug>snipMateVisual
+
+" Emmet
+let g:user_emmet_install_global = 0
+
+" EOF }}}1

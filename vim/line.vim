@@ -17,14 +17,17 @@ function! s:set_color(m, fg, bg, x)
 	endfor
 endfunction
 
-hi Sats_StatusLineMod guifg=#332a1a guibg=#ffe0e0 gui=bold
-call s:set_color("N" , "#1a2b33", ["#85d7ff", "#c2ebff", "#e0f5ff"], "none")
-call s:set_color("I" , "#2d331a", ["#dfff85", "#efffc2", "#f7ffe0"], "none")
-call s:set_color("R" , "#332f1a", ["#ffeb85", "#fff5c2", "#fffae0"], "none")
-call s:set_color("V" , "#2c1a33", ["#df85ff", "#efc2ff", "#f7e0ff"], "none")
-call s:set_color("NC", "#7fccff", ["#f0f9ff", "#f0f9ff", "#f0f9ff"], "underline")
-call s:set_color("RO", "#666666", ["#c0c0c0", "#dbdbdb", "#eeeeee"], "none")
-call s:set_color("C" , "#23282a", ["#b0c9d5", "#d7e4ea", "#ebf1f4"], "none")
+function! <SID>Sats_HighlightStatusLine()
+	hi Sats_StatusLineMod guifg=#332a1a guibg=#ffe0e0 gui=bold
+	call s:set_color("N" , "#1a2b33", ["#85d7ff", "#c2ebff", "#e0f5ff"], "none")
+	call s:set_color("I" , "#2d331a", ["#dfff85", "#efffc2", "#f7ffe0"], "none")
+	call s:set_color("R" , "#332f1a", ["#ffeb85", "#fff5c2", "#fffae0"], "none")
+	call s:set_color("V" , "#2c1a33", ["#df85ff", "#efc2ff", "#f7e0ff"], "none")
+	call s:set_color("S" , "#2c2726", ["#dfc2c2", "#efe1e0", "#f7f0ef"], "none")
+	call s:set_color("NC", "#7fccff", ["#f0f9ff", "#f0f9ff", "#f0f9ff"], "underline")
+	call s:set_color("RO", "#666666", ["#c0c0c0", "#dbdbdb", "#eeeeee"], "none")
+	call s:set_color("C" , "#23282a", ["#b0c9d5", "#d7e4ea", "#ebf1f4"], "none")
+endfunction
 
 function! <SID>Sats_RefreshStatusLine()
   for nr in range(1, winnr('$'))
@@ -40,8 +43,10 @@ function! Sats_StatusLine(nr)
 			let m = "RO"
 		elseif m ==# "n"
 			let m = "N"
-		elseif m ==? "v" || m ==# "" || m ==? "s" || m ==# ""
+		elseif m ==? "v" || m ==# ""
 			let m = "V"
+		elseif m ==? "s" || m ==# ""
+			let m = "S"
 		elseif m ==# "i"
 			let m = "I"
 		elseif m ==# "R"
@@ -63,5 +68,6 @@ endfunction
 
 augroup Sats_StatusLine
   autocmd!
+	autocmd VimEnter,ColorScheme * call <SID>Sats_HighlightStatusLine()
   autocmd VimEnter,WinEnter,BufWinEnter * call <SID>Sats_RefreshStatusLine()
 augroup END

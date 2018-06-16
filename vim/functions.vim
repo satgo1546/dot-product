@@ -10,6 +10,10 @@ function! ExpiredSpace()
 	echo strftime("%s")
 endfunction
 
+function! Bell()
+	execute "normal! \<Esc>"
+endfunction
+
 function! NormalizeBuffer()
 	let l:pos = getpos(".")
 	keeppatterns %s/\s\+$//e
@@ -18,12 +22,12 @@ function! NormalizeBuffer()
 endfunction
 
 function! CheckAndSetHelpWindow()
-	if &filetype ==# "help"
+	if &filetype == "help"
 		if &columns > 100
 			wincmd H
 			vertical resize 79
 		else
-			wincmd T
+			silent wincmd T
 		endif
 	endif
 endfunction
@@ -84,8 +88,7 @@ endfunction
 
 function! ShowWordCount()
 	let h = wordcount()
-	echom "字符数 = " . h.chars
-	echom "单词数 = " . h.words
+	echomsg "字符数 = " . h.chars . "; 单词数 = " . h.words
 endfunction
 
 function! FindNext(delta) range
@@ -98,7 +101,7 @@ function! FindNext(delta) range
 	catch /^Vim\%((\a\+)\)\=:E486/
 		echohl ErrorMsg
 		echomsg "找不到模式"
-		execute "normal \<Esc>"
+		call Bell()
 		echohl None
 	finally
 		set hlsearch
@@ -112,4 +115,30 @@ endfunction
 
 function! FindCurrentColorScheme()
 	return findfile(g:colors_name . ".vim", join(finddir("colors", &rtp, -1), ","))
+endfunction
+
+try
+	function! Run()
+		if &filetype == "vim"
+			source %
+		elseif &filetype == "dosbatch"
+			execute "!start " . expand("%:S")
+		else
+			if has('win32')
+				!run.bat
+			else
+				!run.sh
+			endif
+		endif
+	endfunction
+catch /^Vim\%((\a\+)\)\=:E127/
+endtry
+
+function! SeparateEvenOddLines()
+	" There have to be an even number of lines
+	if line("$") % 2
+		$
+		put =''
+	endif
+	global/^/+move$
 endfunction

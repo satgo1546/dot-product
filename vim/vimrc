@@ -88,6 +88,8 @@ set belloff=backspace,cursor,esc,insertmode
 
 " 13 selecting text
 set clipboard=unnamed
+set selectmode=key
+set keymodel=startsel,stopsel
 
 " 14 editing text
 set undolevels=1024
@@ -110,26 +112,31 @@ set fileformats=unix,dos
 set nobackup
 set autowrite
 
+" 20 the swap file
+set directory-=.
+
 " 21 command line editing
 set history=42
 set wildmenu
 set wildignore=*~,*.o,*.obj,*.bin,*.exe,*.png,*.jpg,*.gif,*.tif,*.tiff,*.tga
-set wildignore+=*.pdf,*.dll,*.so,*.a,a.out,*.ttf,*.otf
+set wildignore+=*.pdn,*.pdf,*.dll,*.so,*.a,a.out,*.ttf,*.otf
 
 " 22 executing external commands
 set keywordprg= " set this by filetype
 
-" 24 language specific
+" 25 language specific
 set isident+=@,$
+set allowrevins
 
-" 25 multi-byte characters
+" 26 multi-byte characters
 set fileencodings=ucs-bom,utf-8,prc,ucs-2le,latin1
 if has('win32')
 	set termencoding=cp936
 endif
 
-" 26 various
+" 27 various
 set sessionoptions-=options,winpos,winsize
+set secure
 
 " Custom matches ----------------------------------------------------------{{{1
 
@@ -145,12 +152,14 @@ inoremap <M-Space> <C-o>:call ExpiredSpace()<CR>
 " Essentials
 nnoremap <Leader><Leader> :w<CR>
 noremap Y y$
-noremap j gj
-ounmap j
-noremap k gk
-ounmap k
+nnoremap j gj
+xnoremap j gj
+nnoremap k gk
+xnoremap k gk
 noremap <Up> gk
 noremap <Down> gj
+inoremap <Up> <C-o>gk
+inoremap <Down> <C-o>gj
 
 " CTRL-U in insert mode deletes a lot. Use CTRL-G u to first break undo,
 " so that you can undo CTRL-U after inserting a line break.
@@ -161,13 +170,13 @@ noremap <A-Space> :simalt ~<CR>
 
 " Clipboard
 nnoremap <Leader>p "+p
-vnoremap <Leader>p "+p
+xnoremap <Leader>p "+p
 nnoremap <Leader>P "+P
-vnoremap <Leader>P "+P
+xnoremap <Leader>P "+P
 nnoremap <Leader>y "+y
-vnoremap <Leader>y "+y
+xnoremap <Leader>y "+y
 nnoremap <Leader>Y "+Y
-vnoremap <Leader>Y "+Y
+xnoremap <Leader>Y "+Y
 
 " Switching between windows
 nnoremap <A-h> <C-w>h
@@ -177,9 +186,14 @@ nnoremap <A-l> <C-w>l
 
 " Quick movement in insert mode
 noremap! <A-h> <Left>
-noremap! <A-j> <C-o>gj
-noremap! <A-k> <C-o>gk
+map! <A-j> <Down>
+map! <A-k> <Up>
 noremap! <A-l> <Right>
+inoremap <A-0> <Home>
+inoremap <A-4> <End>
+inoremap <A-5> <C-o>%
+inoremap <A-6> <C-o>^
+inoremap <Home> <C-o>^
 
 " Switching between tabs
 nnoremap <C-1> :tabfirst<CR>
@@ -223,14 +237,14 @@ nnoremap <Leader>Q :quit!<CR>
 " Toolbar
 nmap <F3> n
 nmap <S-F3> N
-nnoremap <F5> :!run.sh<CR>
+nnoremap <F5> :call Run()<CR>
 nnoremap <F7> :wa<CR>:make<CR>
 nnoremap <S-F7> :make clean<CR>
 nnoremap <F9> :call OpenTerminal()<CR>
 
 " :autocmd groups ---------------------------------------------------------{{{1
 
-augroup sats
+augroup Sats
 	autocmd!
 	autocmd GUIFailed * qall
 	if has('gui_win32')
@@ -238,11 +252,10 @@ augroup sats
 	endif
 	autocmd BufReadPost * call GoToLastPosition()
 	autocmd BufWritePost * call NormalizeBuffer()
-	autocmd FileType text setlocal textwidth=78
+	"autocmd FileType what setlocal textwidth=78
 	autocmd FileType c,cpp setlocal keywordprg=man\ 3
 	autocmd FileType sh setlocal keywordprg=man
-	autocmd FileType vim setlocal foldmethod=marker keywordprg=
-	autocmd FileType vim nnoremap <buffer> <F5> :source %<CR>
+	autocmd FileType vim setlocal foldmethod=marker keywordprg=:help
 	autocmd BufWinEnter * call CheckAndSetHelpWindow()
 	autocmd FileType html,css
 	\ execute "imap <buffer> <Tab> <Plug>(emmet-expand-abbr)"
@@ -260,8 +273,7 @@ runtime line.vim
 let g:vim_indent_cont = 0
 
 " netrw
-let g:loaded_netrw = 1
-let g:loaded_netrwPlugin = 1
+let g:netrw_sizestyle = "H"
 
 " delimitMate
 let g:delimitMate_quotes = "\" '"
@@ -275,12 +287,13 @@ if !exists("snipMate")
 	let g:snipMate = {}
 endif
 let g:snipMate.description_in_completion = 0
+let g:snipMate.no_match_completion_feedkeys_chars = ""
 imap <Tab> <Plug>snipMateNextOrTrigger
 smap <Tab> <Plug>snipMateNextOrTrigger
 imap <S-Tab> <Plug>snipMateBack
 smap <S-Tab> <Plug>snipMateBack
 imap <F1> <Plug>snipMateShow
-vmap <Tab> <Plug>snipMateVisual
+xmap <Tab> <Plug>snipMateVisual
 
 " Emmet
 let g:user_emmet_install_global = 0

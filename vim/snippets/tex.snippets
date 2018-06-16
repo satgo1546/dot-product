@@ -1,9 +1,9 @@
 # Preamble --------------------------------------------------------------------
 snippet newcommand
-	\newcommand{\\${1:cmd}}[${2:opt}]{${3:realcmd}}
+	\newcommand\\${1:cmd}[${2:opt}]{${3:realcmd}}
 
 snippet usepackage
-	\usepackage[${1:options}]{${2:package}}
+	\usepackage{${2:package}}
 
 snippet newunicodechar
 	\newunicodechar{${1}}{${2:\ensuremath}${3}}
@@ -47,33 +47,33 @@ snippet center
 	\end{center}
 
 snippet ol
-	${0:enumerate}
+	enumerate${0}
 snippet enumerate
 	\begin{enumerate}
-		${0:items}
+		items${0}
 	\end{enumerate}
 
 snippet ul
-	${0:itemize}
+	itemize${0}
 snippet itemize
 	\begin{itemize}
-		${0:items}
+		items${0}
 	\end{itemize}
 
 snippet dd
-	${0:description}
+	description${0}
 snippet description
 	\begin{description}
-		${0:descriptionitems}
+		descriptionitems${0}
 	\end{description}
 
 # Endless new items
 snippet items
 	\item ${1}
-	${0:items}
+	items${0}
 snippet descriptionitems
 	\item[${1}] ${2}
-	${0:descriptionitems}
+	descriptionitems${0}
 
 snippet index
 	\index{${1}}
@@ -133,10 +133,25 @@ snippet matrix
 		${0}
 	\end{${1}matrix}
 
+snippet matrix2
+	\begin{${1:pbBvV}matrix}
+		${2:1} & ${3:0} \\
+		${4:0} & ${5:1}
+	\end{${1}matrix}
+
+snippet matrix3
+	\begin{${1:pbBvV}matrix}
+		${2} & ${3:\cdots} & ${4} \\
+		${5:\vdots} & ${6:\ddots} & ${7:\vdots} \\
+		${8} & ${9:\cdots} & ${10}
+	\end{${1}matrix}
+
 snippet smallmatrix
+	\bigl${1}
 	\begin{smallmatrix}
 		${0}
 	\end{smallmatrix}
+	\bigr${2}
 
 snippet cases
 	\begin{cases}
@@ -210,6 +225,9 @@ snippet rm roman font text
 
 snippet tt typewriter text
 	\texttt{${0}}
+
+snippet bb mathbb
+	\mathbb{${0}}
 
 snippet frak mathfrak
 	\mathfrak{${0}}

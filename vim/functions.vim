@@ -123,6 +123,13 @@ try
 			source %
 		elseif &filetype == "dosbatch"
 			execute "!start " . expand("%:S")
+		elseif &filetype == "ruby"
+			execute "!ruby " . expand("%:S")
+		elseif &filetype == "python"
+			execute "!python " . expand("%:S")
+		elseif &filetype == "make"
+			!make
+		elseif &filetype == ""
 		else
 			if has('win32')
 				!run.bat
@@ -133,6 +140,14 @@ try
 	endfunction
 catch /^Vim\%((\a\+)\)\=:E127/
 endtry
+
+function! OpenTerminal()
+	if has('win32')
+		silent !start
+	else
+		!bash
+	endif
+endfunction
 
 function! SeparateEvenOddLines()
 	" There have to be an even number of lines

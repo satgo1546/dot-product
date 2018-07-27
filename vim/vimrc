@@ -84,7 +84,7 @@ set showcmd
 set showmode
 set ruler
 set errorbells
-set belloff=backspace,cursor,esc,insertmode
+set belloff=backspace,cursor,esc,insertmode,error
 
 " 13 selecting text
 set clipboard=unnamed
@@ -110,6 +110,7 @@ set timeoutlen=1000 ttimeoutlen=0
 " 19 reading and writing files
 set fileformats=unix,dos
 set nobackup
+set autoread
 set autowrite
 
 " 20 the swap file
@@ -138,9 +139,15 @@ endif
 set sessionoptions-=options,winpos,winsize
 set secure
 
-" Custom matches ----------------------------------------------------------{{{1
+" Custom matches, abbreviations and digraphs ------------------------------{{{1
 
-match Error /\v^\s+$|\u037e/
+2match Error /\v^\s+$|\u037e/
+digraph 44 8308
+digraph 55 8309
+digraph 66 8310
+digraph 77 8311
+digraph 88 8312
+digraph 99 8313
 
 " Keyboard mappings -------------------------------------------------------{{{1
 
@@ -156,8 +163,8 @@ nnoremap j gj
 xnoremap j gj
 nnoremap k gk
 xnoremap k gk
-noremap <Up> gk
-noremap <Down> gj
+nnoremap <Up> gk
+nnoremap <Down> gj
 inoremap <Up> <C-o>gk
 inoremap <Down> <C-o>gj
 
@@ -193,7 +200,6 @@ inoremap <A-0> <Home>
 inoremap <A-4> <End>
 inoremap <A-5> <C-o>%
 inoremap <A-6> <C-o>^
-inoremap <Home> <C-o>^
 
 " Switching between tabs
 nnoremap <C-1> :tabfirst<CR>
@@ -215,13 +221,16 @@ nnoremap <C-f> :promptfind<CR>
 inoremap <C-f> <C-o>:promptfind<CR>
 nnoremap <C-h> :promptrepl<CR>
 inoremap <C-h> <C-o>:promptrepl<CR>
-noremap n :call FindNext(1)<CR>
-noremap N :call FindNext(-1)<CR>
-nnoremap <Leader><BS> :call ClearHighlight()<CR>:echo<CR>
+inoremap <C-v> <C-r><C-r>+
+
+"noremap n :call FindNext(1)<CR>
+"noremap N :call FindNext(-1)<CR>
+"nnoremap <Leader><BS> :call ClearHighlight()<CR>:echo<CR>
+nnoremap <Leader><BS> <Nop>
+inoremap <Home> <C-o>^
+noremap! <C-BS> <C-w>
 
 " Inventory
-" i - Edit .vimrc
-nnoremap <Leader>i :tabnew $MYVIMRC<CR>
 " e - Edit directly
 nnoremap <Leader>e :edit<Space>
 " t - Edit in a new tab
@@ -233,6 +242,8 @@ nnoremap <Leader>a ggVG
 " q - Close buffer
 nnoremap <Leader>q :quit<CR>
 nnoremap <Leader>Q :quit!<CR>
+" 1 - Open a terminal
+nnoremap <Leader>1 :call OpenTerminal()<CR>
 
 " Toolbar
 nmap <F3> n
@@ -240,7 +251,6 @@ nmap <S-F3> N
 nnoremap <F5> :call Run()<CR>
 nnoremap <F7> :wa<CR>:make<CR>
 nnoremap <S-F7> :make clean<CR>
-nnoremap <F9> :call OpenTerminal()<CR>
 
 " :autocmd groups ---------------------------------------------------------{{{1
 
@@ -257,9 +267,10 @@ augroup Sats
 	autocmd FileType sh setlocal keywordprg=man
 	autocmd FileType vim setlocal foldmethod=marker keywordprg=:help
 	autocmd BufWinEnter * call CheckAndSetHelpWindow()
-	autocmd FileType html,css
-	\ execute "imap <buffer> <Tab> <Plug>(emmet-expand-abbr)"
-	autocmd FileType snippets set foldmethod=marker
+	"autocmd FileType html,css
+	"\ execute "imap <buffer> <Tab> <Plug>(emmet-expand-abbr)"
+	autocmd FileType snippets setlocal foldmethod=marker
+	autocmd FileType gitcommit,tex,plaintex,context,markdown silent emenu 工具(T).启用拼写检查(S)
 augroup END
 
 " My scripts --------------------------------------------------------------{{{1

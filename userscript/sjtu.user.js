@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         脚痛大学选课非完全辅助功能
 // @namespace    http://satgo1546.mist.so/
-// @version      0.02
+// @version      0.04
 // @description  减弱装饰，增强选课。
 // @author       satgo1546
 // @match        *://i.sjtu.edu.cn/*
@@ -33,6 +33,23 @@
 			body {
 				background-color: white;
 				font-family: SimSun;
+			}
+
+			.top1 .logo_2 img {
+				display: none;
+			}
+
+			.navbar-header .navbar-brand {
+				width: unset;
+			}
+
+			#cdNav {
+				height: unset;
+				display: block;
+			}
+
+			.navbar-toggle .icon-bar+.icon-bar {
+				margin-top: 4px;
 			}
 
 			.dropdown > ul.dropdown-menu {
@@ -84,6 +101,10 @@
 	}
 	if (match_url("//i.sjtu.edu.cn/kbcx/")) { // 课表查询
 		add_style(long_string(function () { /*
+			.table-hover > tbody > tr:hover {
+				background-color: unset;
+			}
+
 			td[id^="6-"]:empty, td[id^="7-"]:empty {
 				display: none;
 			}
@@ -119,7 +140,8 @@
 			}
 
 			.satgo-cell-div:not(.satgo-cell-div-confirmed) {
-				opacity: 0.6;
+				color: saddlebrown;
+				background-color: antiquewhite;
 			}
 			.satgo-cell-div:not(.satgo-cell-div-confirmed)::before {
 				content: "〖待筛选〗";
@@ -235,6 +257,10 @@
 				font-family: SimSun;
 			}
 
+			.table-hover > tbody > tr:hover {
+				background-color: unset;
+			}
+
 			.top2 {
 				display: none;
 			}
@@ -280,6 +306,18 @@
 			#tjkbtable, #xskbtable {
 				font-size: 9pt;
 			}
+
+			.sats-alert {
+				display: block;
+				position: fixed;
+				width: 100%;
+				z-index: 9999;
+				background-color: rgba(252, 248, 227, 0.67);
+				text-align: center;
+				font-size: 12pt;
+				text-shadow: -1px -1px #fcf8e3, -1px 1px #fcf8e3, 1px -1px #fcf8e3, 1px 1px #fcf8e3;
+				padding: 0.25em 10%;
+			}
 		*/ }));
 		$(".sl_nav_tabs > li:first > a").click();
 		setInterval(function () {
@@ -287,5 +325,13 @@
 			$(".outer_left").click();
 			$(".mCustomScrollbar").mCustomScrollbar("destroy");
 		}, 600);
+		// 干掉模态弹窗
+		$.alert = function (a) {
+			var el = $("<mark class=\"sats-alert\">" + a.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</mark>");
+			el.prependTo($(document.body));
+			setTimeout(function () {
+				el.remove();
+			}, 1700);
+		}
 	}
 })();

@@ -119,24 +119,26 @@ endfunction
 
 try
 	function! Run()
+		let command = ""
 		if &filetype == "vim"
-			source %
+			let command = "source %"
 		elseif &filetype == "dosbatch"
-			execute "!start " . expand("%:S")
+			let command = "!start " . expand("%:S")
 		elseif &filetype == "ruby"
-			execute "!ruby " . expand("%:S")
+			let command = "!ruby " . expand("%:S")
 		elseif &filetype == "python"
-			execute "!python " . expand("%:S")
+			let command = "!python " . expand("%:S")
 		elseif &filetype == "make"
-			!make
+			let command = "!make"
 		elseif &filetype == ""
 		else
-			if has('win32')
-				!run.bat
-			else
-				!run.sh
-			endif
+			let command = has('win32') ? "!run.bat" : "!run.sh"
 		endif
+		if has('win32') && command =~# "^!"
+			"let command = strpart(command, 1)
+			"let command = "silent !start cmd.exe /s /c (" . command . " ^& pause)"
+		endif
+		execute command
 	endfunction
 catch /^Vim\%((\a\+)\)\=:E127/
 endtry
@@ -156,4 +158,28 @@ function! SeparateEvenOddLines()
 		put =''
 	endif
 	global/^/+move$
+endfunction
+
+function! GetEncodedEscapeSequences(text, encoding)
+	let str = iconv(a:text, "utf-8", a:encoding)
+	let len = strlen(str)
+	let i = 0
+	let r = ""
+	while i < len
+		let charcodeupper = char2nr(str[i]) / 16
+		let charcodelower = and(char2nr(str[i]), 15)
+		let charupper = nr2char((charcodeupper > 9 ? 87 : 48) + charcodeupper)
+		let charlower = nr2char((charcodelower > 9 ? 87 : 48) + charcodelower)
+		let r .= "\\x" . charupper . charlower
+		let i += 1
+	endwhile
+	return r
+endfunction
+
+function! InsertEncodedEscapeSequences(text, encoding)
+	execute "normal! a" . GetEncodedEscapeSequences(a:text, a:encoding)
+endfunction
+
+function! EnterEncodedEscapeSequences(encoding)
+	call InsertEncodedEscapeSequences(inputdialog("输入要编码的字符。"), a:encoding)
 endfunction

@@ -39,6 +39,7 @@ set fillchars=stl:\ ,stlnc:\ ,vert:\ ,fold:┈,diff:-
 set lazyredraw
 set number norelativenumber
 set numberwidth=5
+set conceallevel=2
 
 " 5 syntax, highlighting and spelling
 set background=light
@@ -69,7 +70,7 @@ set mouseshape+=s:updown,sd:udsizing,vs:leftright,vd:lrsizing
 
 " 10 GUI
 if has('gui_win32')
-	set guifont=Courier_New:h14
+	set guifont=FreeMono:h14
 	set guifontwide=NSimSun:h16
 elseif has('gui_gtk2')
 	set guifont=Monospace\ 14
@@ -95,14 +96,17 @@ set keymodel=startsel,stopsel
 set undolevels=1024
 set backspace=indent,eol,start
 set matchpairs+=（:）,［:］,｛:｝,〔:〕,【:】,〖:〗,『:』,「:」,｢:｣
+set matchpairs+=“:”,‘:’,《:》,〈:〉,〘:〙,〚:〛,⁅:⁆
 set nojoinspaces
-set nrformats=bin,hex
+set nrformats=alpha,bin,hex
 set completeopt=menu,menuone,preview,longest
 
 " 15 tabs and indenting
 set tabstop=2 shiftwidth=2
 set noexpandtab
 set autoindent
+set cinwords-=switch
+set cinkeys-=0#
 
 " 18 mapping
 set timeoutlen=1000 ttimeoutlen=0
@@ -134,6 +138,8 @@ set fileencodings=ucs-bom,utf-8,prc,ucs-2le,latin1
 if has('win32')
 	set termencoding=cp936
 endif
+set delcombine
+set maxcombine=3
 
 " 27 various
 set sessionoptions-=options,winpos,winsize
@@ -148,6 +154,9 @@ digraph 66 8310
 digraph 77 8311
 digraph 88 8312
 digraph 99 8313
+digraph ?? 8263
+digraph ?! 8264
+digraph !? 8265
 
 " Keyboard mappings -------------------------------------------------------{{{1
 
@@ -265,6 +274,7 @@ augroup Sats
 	"autocmd FileType what setlocal textwidth=78
 	autocmd FileType c,cpp setlocal keywordprg=man\ 3
 	autocmd FileType sh setlocal keywordprg=man
+	autocmd FileType dosbatch setlocal keywordprg=help
 	autocmd FileType vim setlocal foldmethod=marker keywordprg=:help
 	autocmd BufWinEnter * call CheckAndSetHelpWindow()
 	"autocmd FileType html,css
@@ -282,6 +292,8 @@ runtime line.vim
 " Plugins' world ----------------------------------------------------------{{{1
 
 let g:vim_indent_cont = 0
+let g:pascal_symbol_operator = 1
+let g:ruby_operators = 1
 
 " netrw
 let g:netrw_sizestyle = "H"

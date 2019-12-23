@@ -29,6 +29,7 @@ hi IncSearch      gui=none           guibg=#ffff90
 hi Search                            guibg=Yellow
 hi SpecialKey                                         guifg=DarkGreen
 hi Title          gui=bold                            guifg=DarkGreen
+hi Conceal        gui=bold           guibg=NONE       guifg=NONE
 hi Folded         gui=bold,underline guibg=NONE       guifg=#a7cfe6
 hi FoldColumn     gui=none           guibg=#f0f9ff    guifg=#a7cfe6
 hi CursorColumn   NONE
@@ -88,3 +89,6 @@ hi link rubyDefine Keyword
 
 hi link luaFunction Type
 hi link luaFunc Sats_RecognizedIdentifier
+
+hi link hexAddressFieldUnknown Error
+hi link hexDataFieldUnknown Error

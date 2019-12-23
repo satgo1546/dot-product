@@ -8,13 +8,17 @@ let g:NetrwTopLvlMenu = "文件(&F).&Netrw"
 nnoreme 10.50 文件(&F).&Netrw <Nop>
 nnoreme 10.9990 文件(&F).-999- <Nop>
 nnoreme 10.9999 文件(&F).退出(&X) :qa<CR>
-runtime myfiletypes.vim
 nnoreme 20.20 编辑(&E).-1- <Nop>
-nnoreme 20.21 编辑(&E).十六进制编辑(&C) :call XxdConv()<CR>
-nnoreme 20.22 编辑(&E).十六进制编辑返回(&R) :call XxdBack()<CR>
-nnoreme 20.30.10 编辑(&E).大幅改动(&B).删除空格(&D) :%s/ //g<CR>
-nnoreme 20.30.15 编辑(&E).大幅改动(&B).删除空白(&W) :%s/\s+//g<CR>
-nnoreme 20.30.20 编辑(&E).大幅改动(&B).奇偶行分离(&E) :call SeparateEvenOddLines()<CR>
+nnoreme 20.21 编辑(&E).显示字符信息(&A)<Tab>ga ga
+nnoreme 20.22 编辑(&E).显示字符的UTF-&8编码<Tab>g8 g8
+nnoreme 20.44 编辑(&E).插入&UTF-8编码的C转义序列 :call EnterEncodedEscapeSequences("utf-8")<CR>
+nnoreme 20.45 编辑(&E).插入GB&K编码的C转义序列 :call EnterEncodedEscapeSequences("gbk")<CR>
+nnoreme 20.60 编辑(&E).-2- <Nop>
+nnoreme 20.61 编辑(&E).十六进制编辑(&X) :call XxdConv()<CR>
+nnoreme 20.62 编辑(&E).十六进制编辑返回(&R) :call XxdBack()<CR>
+nnoreme 20.70.10 编辑(&E).大幅改动(&B).删除空格(&D) :%s/ //g<CR>
+nnoreme 20.70.15 编辑(&E).大幅改动(&B).删除空白(&W) :%s/\s+//g<CR>
+nnoreme 20.70.20 编辑(&E).大幅改动(&B).奇偶行分离(&E) :call SeparateEvenOddLines()<CR>
 let s:names = sort(map(split(globpath(&runtimepath, "colors/*.vim"), "\n"), 'substitute(v:val, "\\c.*[/\\\\:\\]]\\([^/\\\\:]*\\)\\.vim", "\\1", "")'), 1)
 let s:i = 1
 for s:name in s:names
@@ -38,7 +42,7 @@ nnoreme 40.92 工具(&T).编辑函数(&F)
 nnoreme 40.93 工具(&T).编辑菜单(&M)
 \ :execute "tabedit " . findfile("mymenu.vim", &rtp)<CR>
 nnoreme 40.94 工具(&T).编辑文件类型(&D)
-\ :execute "tabedit " . findfile("myfiletypes.vim", &rtp)<CR>
+\ :execute "tabedit " . findfile("filetype.vim", &rtp)<CR>
 nnoreme 40.95 工具(&T).编辑状态栏(&L)
 \ :execute "tabedit " . findfile("line.vim", &rtp)<CR>
 nnoreme 40.96 工具(&T).编辑代码片段(&S)

@@ -604,7 +604,8 @@ set_next_input_language() {
 
 toggle_ime_convmode() {
 	current_convmode := get_ime_convmode()
-	if (current_convmode = 0) {
+	; 默认为英文状态，则转换模式为268435456
+	if (current_convmode = 0 || current_convmode = 0x10000000) {
 		set_ime_convmode(1)
 	} else {
 		set_ime_convmode(0)
@@ -617,7 +618,7 @@ set_ime_convmode(mode) {
 	Return DllCall("SendMessage"
 		, "UInt", DllCall("imm32\ImmGetDefaultIMEWnd", "UInt", ahwnd)
 		, "UInt", 0x0283 ; Message = WM_IME_CONTROL
-		, "Int", 0x002 ; wParam = IMC_SETCONVERSIONMODE
+		, "Int", 0x0002 ; wParam = IMC_SETCONVERSIONMODE
 		, "Int", mode) ; lParam = CONVERSIONMODE
 }
 
@@ -632,7 +633,7 @@ get_ime_convmode() {
 	Return DllCall("SendMessage"
 		, "UInt", DllCall("imm32\ImmGetDefaultIMEWnd", "Uint", ahwnd)
 		, "UInt", 0x0283 ; Message = WM_IME_CONTROL
-		,  "Int", 0x001  ; wParam = IMC_GETCONVERSIONMODE
+		,  "Int", 0x0001 ; wParam = IMC_GETCONVERSIONMODE
 		,  "Int", 0) ; lParam = 0
 }
 

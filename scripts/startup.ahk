@@ -1,4 +1,4 @@
-#NoEnv
+﻿#NoEnv
 #Warn
 SendMode Input
 SetWorkingDir %A_ScriptDir%
@@ -101,7 +101,7 @@ Gui, Show, xCenter y%key_height% Hide, SatgosSymbolPalette
 WinSet, AlwaysOnTop, On, ahk_id %hwnd%
 
 ; Disable Win key
-; Assigning the modifier key to be a "prefix" for at least one other hotkey retains the modifiying function.
+; Assigning the modifier key to be a “prefix” for at least one other hotkey retains the modifiying function.
 LWin::
 RWin::
 	show_symbol_palette([])
@@ -109,6 +109,10 @@ RWin::
 LWin & CapsLock::
 	Return
 RWin & CapsLock::
+	Return
+
+Capslock::
+	toggle_ime_convmode()
 	Return
 
 multi_tap(characters) {
@@ -210,6 +214,21 @@ multi_tap(characters) {
 >#z::Send ζ
 
 #NumpadSub::Send −
+#IfWinActive ahk_exe LyX.exe
+#NumpadMult::Send \times{Space}
+#NumpadDiv::Send \div{Space}
+#-::Send --
+#,::Send \le{Space}
+#+,::Send \leqslant{Space}
+#.::Send \ge{Space}
+#+.::Send \geqslant{Space}
+^1::Send {^}2{Right}
+^2::Send \sqrt{Space}
+^/::Send !mf
+^+/::Send ^+{Left}!mf{Down}
+#IfWinActive ahk_exe Mathematica.exe
+^1::Send ^62{Right}
+#IfWinActive
 #NumpadMult::Send ×
 #NumpadDiv::Send ÷
 #-::Send –
@@ -467,12 +486,30 @@ VKBF Up::button_keyup(52)
 		, "", "", "", "", " ", "", "", ""
 	. ""])
 	Return
+#F8::
+	show_symbol_palette([""
+		. "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "", "", ""
+		, "", "", "ς", "ε", "ρ", "τ", "υ", "θ", "ι", "ο", "π", "", "", ""
+		, "", "α", "σ", "δ", "φ", "γ", "η", "ξ", "κ", "λ", "", "", ""
+		, "", "ζ", "χ", "ψ", "ω", "β", "ν", "μ", "", "", "", ""
+		, "", "", "", "", " ", "", "", ""
+	. ""])
+	Return
++#F8::
+	show_symbol_palette([""
+		. "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "", "", ""
+		, "", "", "Σ", "Ε", "Ρ", "Τ", "Υ", "Θ", "Ι", "Ο", "Π", "", "", ""
+		, "", "Α", "Σ", "Δ", "Φ", "Γ", "Η", "Ξ", "Κ", "Λ", "", "", ""
+		, "", "Ζ", "Χ", "Ψ", "Ω", "Β", "Ν", "Μ", "", "", "", ""
+		, "", "", "", "", " ", "", "", ""
+	. ""])
+	Return
 #F10::
 	show_symbol_palette([""
 		. "", "", "", "", "", "", "", "", "", "", "", "", "", ""
 		, "", "§", "№", "℡", "〓", "℃", "℉", "ℓ", "", "", "", "♀", "♂", ""
 		, "", "〃", "々", "〆", "〒", "※", "", "", "", "", "", "", ""
-		, "", "•", "‣", "⁎", "⁑", "†", "‡", "", "℮", "‧", "", ""
+		, "", "•", "‣", "⁎", "⁑", "†", "‡", "⹋", "℮", "‧", "", ""
 		, "", "", "", "", " ", "", "", ""
 	. ""])
 	Return
@@ -557,6 +594,46 @@ show_symbol_palette(symbols) {
 	} Else {
 		Gui, Show, Hide, SatgosSymbolPalette
 	}
+}
+
+set_next_input_language() {
+	WinExist("A")
+	ControlGetFocus, CtrlInFocus
+	PostMessage, 0x50, 4, , %CtrlInFocus%
+}
+
+toggle_ime_convmode() {
+	current_convmode := get_ime_convmode()
+	if (current_convmode = 0) {
+		set_ime_convmode(1)
+	} else {
+		set_ime_convmode(0)
+	}
+	Return
+}
+
+set_ime_convmode(mode) {
+	ControlGet, ahwnd, Hwnd, , , A
+	Return DllCall("SendMessage"
+		, "UInt", DllCall("imm32\ImmGetDefaultIMEWnd", "UInt", ahwnd)
+		, "UInt", 0x0283 ; Message = WM_IME_CONTROL
+		, "Int", 0x002 ; wParam = IMC_SETCONVERSIONMODE
+		, "Int", mode) ; lParam = CONVERSIONMODE
+}
+
+get_ime_convmode() {
+	ControlGet, ahwnd, Hwnd, , , A
+	ptrSize := !A_PtrSize ? 4 : A_PtrSize
+	cbSize := 4 + 4 + (PtrSize * 6) + 16
+	VarSetCapacity(stGTI, cbSize, 0)
+	NumPut(cbSize, stGTI, 0, "UInt")  ; DWORD cbSize;
+	ahwnd := DllCall("GetGUIThreadInfo", "Uint", 0, "Uint", &stGTI)
+		? NumGet(stGTI, 8 + PtrSize, "UInt") : ahwnd
+	Return DllCall("SendMessage"
+		, "UInt", DllCall("imm32\ImmGetDefaultIMEWnd", "Uint", ahwnd)
+		, "UInt", 0x0283 ; Message = WM_IME_CONTROL
+		,  "Int", 0x001  ; wParam = IMC_GETCONVERSIONMODE
+		,  "Int", 0) ; lParam = 0
 }
 
 XButton1::Return

@@ -8,6 +8,7 @@ Menu, Tray, Icon, D:\Miscellaneous\Icons\classic_MyAHKScript.ico
 ; 	SendEvent {NumLock}
 ; }
 SetScrollLockState, On
+capslock_count := 0
 
 on_exit(ExitReason, ExitCode) {
 	If ExitReason in Logoff,Shutdown
@@ -111,8 +112,25 @@ LWin & CapsLock::
 RWin & CapsLock::
 	Return
 
-Capslock::
-	toggle_ime_convmode()
+CapsLock::
+	capslock_count++
+	If (capslock_count > 1) {
+		Return
+	}
+	If (GetKeyState("CapsLock", "T")) {
+		SetCapsLockState Off
+	} Else {
+		toggle_ime_convmode()
+		KeyWait, %A_ThisHotkey%, T0.5
+		If (ErrorLevel) {
+			toggle_ime_convmode()
+			SetCapsLockState On
+		}
+	}
+	Return
+
+CapsLock Up::
+	capslock_count := 0
 	Return
 
 multi_tap(characters) {

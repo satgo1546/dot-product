@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         脚痛大学选课非完全辅助功能
 // @namespace    http://satgo1546.mist.so/
-// @version      0.04
+// @version      0.05
 // @description  减弱装饰，增强选课。
 // @author       satgo1546
 // @match        *://i.sjtu.edu.cn/*
+// @match        *://kbcx.sjtu.edu.cn/*
 // @grant        none
 // ==/UserScript==
 /* eslint-env browser, jquery */
@@ -28,7 +29,7 @@
 	}
 
 	$.fx.off = true;
-	if (match_url("//i.sjtu.edu.cn/xtgl/")) { // 系统管理（首页）
+	if (match_url("sjtu.edu.cn/xtgl/")) { // 系统管理（首页）
 		add_style(long_string(function () { /*
 			body {
 				background-color: white;
@@ -99,7 +100,7 @@
 		// 系统一定不会保存我所做的更改。
 		window.flag = false; // 全局变量，告辞
 	}
-	if (match_url("//i.sjtu.edu.cn/kbcx/")) { // 课表查询
+	if (match_url("sjtu.edu.cn/kbcx/")) { // 课表查询
 		add_style(long_string(function () { /*
 			.table-hover > tbody > tr:hover {
 				background-color: unset;
@@ -232,7 +233,7 @@
 			});
 		}, 600);
 	}
-	if (match_url("//i.sjtu.edu.cn/jxzxjhgl/")) { // 专业培养计划查询
+	if (match_url("sjtu.edu.cn/jxzxjhgl/")) { // 专业培养计划查询
 		$("a[href=\"#profileX\"]").click(function () {
 			// 切换到“修读要求”选项卡时全部展开
 			var f = function () {
@@ -251,7 +252,7 @@
 			f();
 		}).append("<small> 会卡一会</small>")
 	}
-	if (match_url("//i.sjtu.edu.cn/xsxk/")) { // 学生选课
+	if (match_url("sjtu.edu.cn/xsxk/")) { // 学生选课
 		add_style(long_string(function () { /*
 			body {
 				font-family: SimSun;

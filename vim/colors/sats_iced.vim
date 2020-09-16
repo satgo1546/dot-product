@@ -53,6 +53,7 @@ hi SpellCap       gui=undercurl                                        guisp=Gre
 
 hi Comment                                            guifg=#009900
 hi String                                             guifg=#d0a003
+hi Sats_StringSpecial gui=bold                        guifg=#d0a003
 hi Character                                          guifg=#ba5601
 hi Number                                             guifg=#a50e00
 hi Constant                                           guifg=#a50040
@@ -83,6 +84,8 @@ hi link cppType cType
 
 hi link rcLanguage Keyword
 
+hi link pythonInclude Keyword
+
 hi link rubyConstant NONE
 hi link rubyStringDelimiter rubyString
 hi link rubyDefine Keyword
@@ -92,3 +95,8 @@ hi link luaFunc Sats_RecognizedIdentifier
 
 hi link hexAddressFieldUnknown Error
 hi link hexDataFieldUnknown Error
+
+hi link jsonKeyword Sats_StringSpecial
+hi link jsonNoise Delimiter
+hi link jsonQuote String
+hi link jsonNull Constant

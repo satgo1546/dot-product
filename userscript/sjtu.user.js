@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         脚痛大学选课非完全辅助功能
 // @namespace    http://satgo1546.mist.so/
-// @version      0.05
+// @version      0.06
 // @description  减弱装饰，增强选课。
 // @author       satgo1546
 // @match        *://i.sjtu.edu.cn/*
@@ -12,7 +12,7 @@
 
 (function() {
 	'use strict';
-	console.info("载入「脚痛大学选课非完全辅助功能」");
+	console.info("载入「脚痛大学选课非完全辅助功能」" + GM.info.script.version);
 	function match_url(head) {
 		return window.location.href.indexOf(head) >= 0;
 	}
@@ -24,7 +24,8 @@
 	}
 	function add_style(css) {
 		var el = document.createElement('style');
-		el.innerHTML = css.replace(/;/g, " !important;"); // 看看到底谁更important
+		// 你的important和我的important比一比，看看到底谁更important
+		el.innerHTML = css.replace(/;/g, " !important;");
 		document.body.appendChild(el);
 	}
 
@@ -130,6 +131,12 @@
 				display: none;
 			}
 
+			.timetable1 .festival {
+				font-family: "Arial Narrow";
+				font-weight: 300;
+				font-style: normal;
+			}
+
 			.satgo-minitable {
 				border: 1px solid black;
 				float: right;
@@ -138,6 +145,7 @@
 				width: 8px;
 				height: 8px;
 				border: 1px solid silver;
+				line-height: 1px;
 			}
 
 			.satgo-cell-div:not(.satgo-cell-div-confirmed) {
@@ -156,6 +164,18 @@
 			$("#kbcong").click(); $("#kbcongform input[type=checkbox]").prop("checked", true); $("#kbcongok").click();
 			$("[onclick=\"searchResult()\"").click(function() {
 				setTimeout(function () {
+					$("span.festival").each(function () {
+						var el = $(this);
+						el.text([undefined,
+							"8:00~", "~9:40",
+							"10:00~", "~11:40",
+							"", "12:55~",
+							"14:00~", "~15:40",
+							"16:00~", "~17:40",
+							"18:00~", "", "~20:20",
+							"",
+						][parseInt(el.text())]);
+					});
 					$("span.title").each(function () {
 						var s = "";
 						var el = $(this);
@@ -195,7 +215,7 @@
 							if (!index) return;
 							t += "<td style=\"background-color: ";
 							t += value ? "black" : "white";
-							t += ";\"></td>";
+							t += " !important;\"></td>";
 							if (index % 5 == 0) t += "</tr><tr>";
 						});
 						t += "</tr></table>";

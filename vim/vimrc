@@ -90,7 +90,7 @@ set belloff=backspace,cursor,esc,insertmode,error
 " 13 selecting text
 set clipboard=unnamed
 set selectmode=key
-set keymodel=startsel,stopsel
+set keymodel=startsel
 
 " 14 editing text
 set undolevels=1024
@@ -231,6 +231,7 @@ inoremap <C-f> <C-o>:promptfind<CR>
 nnoremap <C-h> :promptrepl<CR>
 inoremap <C-h> <C-o>:promptrepl<CR>
 inoremap <C-v> <C-r><C-r>+
+nnoremap <MiddleMouse> <Nop>
 
 "noremap n :call FindNext(1)<CR>
 "noremap N :call FindNext(-1)<CR>
@@ -276,6 +277,8 @@ augroup Sats
 	autocmd FileType sh setlocal keywordprg=man
 	autocmd FileType dosbatch setlocal keywordprg=help
 	autocmd FileType vim setlocal foldmethod=marker keywordprg=:help
+	autocmd FileType ruby setlocal expandtab shiftwidth=2 softtabstop=2 tabstop=8
+	autocmd FileType asm,nasm setlocal shiftwidth=8 softtabstop=8 tabstop=8
 	autocmd BufWinEnter * call CheckAndSetHelpWindow()
 	"autocmd FileType html,css
 	"\ execute "imap <buffer> <Tab> <Plug>(emmet-expand-abbr)"
@@ -294,6 +297,7 @@ runtime line.vim
 let g:vim_indent_cont = 0
 let g:pascal_symbol_operator = 1
 let g:ruby_operators = 1
+let g:vim_json_conceal = 0
 
 " netrw
 let g:netrw_sizestyle = "H"

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         脚痛大学选课非完全辅助功能
 // @namespace    http://satgo1546.mist.so/
-// @version      0.06
+// @version      0.07
 // @description  减弱装饰，增强选课。
 // @author       satgo1546
 // @match        *://i.sjtu.edu.cn/*
@@ -36,6 +36,10 @@
 				background-color: white;
 				font-family: SimSun;
 			}
+
+            h1, h2, h3, h4, h5, h6, p, blockquote, pre, dl, ol, ul, fieldset, form, table, article, aside, details, figure, footer, header, nav, section {
+				font-family: SimSun;
+            }
 
 			.top1 .logo_2 img {
 				display: none;
@@ -100,6 +104,18 @@
 		// 离开此网站！
 		// 系统一定不会保存我所做的更改。
 		window.flag = false; // 全局变量，告辞
+		var el = document.createElement("li");
+		el.innerHTML = long_string(function () { /*
+			<li class="dropdown">
+				<a>附赠功能 <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li><a href="https://i.sjtu.edu.cn/jxzxjhgl/pyjhxxcx_cxPyjhxxIndex.html">培养计划查询</a></li>
+					<li><a href="https://i.sjtu.edu.cn/jxzxjhgl/kcapjsgl_cxKcapjsxxIndex.html">课程安排教室查询</a></li>
+				</ul>
+			</li>
+		*/ });
+		$("#cdNav > ul:first").append(el);
+		$("a[tabindex=\"-1\"][onclick]").removeAttr("tabindex");
 	}
 	if (match_url("sjtu.edu.cn/kbcx/")) { // 课表查询
 		add_style(long_string(function () { /*
@@ -274,7 +290,7 @@
 	}
 	if (match_url("sjtu.edu.cn/xsxk/")) { // 学生选课
 		add_style(long_string(function () { /*
-			body {
+			body, #footerID {
 				font-family: SimSun;
 			}
 

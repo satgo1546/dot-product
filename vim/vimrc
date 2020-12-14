@@ -147,7 +147,7 @@ set secure
 
 " Custom matches, abbreviations and digraphs ------------------------------{{{1
 
-2match Error /\v^\s+$|\u037e/
+2match Error /\v^\s+$|\u037e|\u2329|\u232a/
 digraph 44 8308
 digraph 55 8309
 digraph 66 8310
@@ -283,7 +283,7 @@ augroup Sats
 	"autocmd FileType html,css
 	"\ execute "imap <buffer> <Tab> <Plug>(emmet-expand-abbr)"
 	autocmd FileType snippets setlocal foldmethod=marker
-	autocmd FileType gitcommit,tex,plaintex,context,markdown silent emenu 工具(T).启用拼写检查(S)
+	autocmd FileType gitcommit,tex,plaintex,context,markdown silent emenu 工具(T).启用拼写检查(K)
 augroup END
 
 " My scripts --------------------------------------------------------------{{{1

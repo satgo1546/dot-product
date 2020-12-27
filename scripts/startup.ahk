@@ -713,6 +713,39 @@ get_ime_convmode() {
 }
 
 XButton1::Return
+XButton2::Return
+
+Launch_App1::Return
+Launch_App2::
+	Return
+Media_Next::Return
+Media_Prev::Return
+Media_Play_Pause::Return
+Media_Stop::
+	downloading := 0
+	Process, Exist, baidunetdisk.exe
+	downloading += ErrorLevel
+	Process, Exist, uget.exe
+	downloading += ErrorLevel
+	Process, Exist, uTorrent.exe
+	downloading += ErrorLevel
+	If (downloading) {
+		MsgBox, 0x131, 睡眠, 还有下载任务。睡眠吗？
+	} Else {
+		MsgBox, 0x1, 睡眠, 睡眠吗？
+	}
+	IfMsgBox OK
+	{
+		; Parameter #1: Pass 1 instead of 0 to hibernate rather than suspend.
+		; Parameter #2: Pass 1 instead of 0 to suspend immediately rather than asking each application for permission.
+		; Parameter #3: Pass 1 instead of 0 to disable all wake events.
+		DllCall("PowrProf\SetSuspendState", "Int", 0, "Int", 0, "Int", 0)
+	}
+	Return
+Browser_Back::Return
+Browser_Forward::Return
+Browser_Home::Return
+Launch_Mail::Return
 
 MenuHandler:
 	str := A_ThisMenuItem

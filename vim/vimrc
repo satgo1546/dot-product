@@ -37,7 +37,7 @@ set display=lastline,uhex
 set list listchars=tab:\ \ ,trail:·,extends:►,precedes:◄,nbsp:◦
 set fillchars=stl:\ ,stlnc:\ ,vert:\ ,fold:┈,diff:-
 set lazyredraw
-set number norelativenumber
+set number relativenumber
 set numberwidth=5
 set conceallevel=2
 
@@ -98,8 +98,9 @@ set backspace=indent,eol,start
 set matchpairs+=（:）,［:］,｛:｝,〔:〕,【:】,〖:〗,『:』,「:」,｢:｣
 set matchpairs+=“:”,‘:’,《:》,〈:〉,〘:〙,〚:〛,⁅:⁆
 set nojoinspaces
-set nrformats=alpha,bin,hex
+set nrformats=bin,hex
 set completeopt=menu,menuone,preview,longest
+setglobal formatoptions+=njB
 
 " 15 tabs and indenting
 set tabstop=2 shiftwidth=2
@@ -168,10 +169,6 @@ inoremap <M-Space> <C-o>:call ExpiredSpace()<CR>
 " Essentials
 nnoremap <Leader><Leader> :w<CR>
 noremap Y y$
-nnoremap j gj
-xnoremap j gj
-nnoremap k gk
-xnoremap k gk
 nnoremap <Up> gk
 nnoremap <Down> gj
 inoremap <Up> <C-o>gk
@@ -202,8 +199,8 @@ nnoremap <A-l> <C-w>l
 
 " Quick movement in insert mode
 noremap! <A-h> <Left>
-map! <A-j> <Down>
-map! <A-k> <Up>
+noremap! <A-j> <Down>
+noremap! <A-k> <Up>
 noremap! <A-l> <Right>
 inoremap <A-0> <Home>
 inoremap <A-4> <End>
@@ -273,7 +270,7 @@ augroup Sats
 	autocmd BufReadPost * call GoToLastPosition()
 	autocmd BufWritePost * call NormalizeBuffer()
 	"autocmd FileType what setlocal textwidth=78
-	autocmd FileType c,cpp setlocal keywordprg=man\ 3
+	autocmd FileType c,cpp setlocal keywordprg=man\ 3 formatoptions+=njB
 	autocmd FileType sh setlocal keywordprg=man
 	autocmd FileType dosbatch setlocal keywordprg=help
 	autocmd FileType vim setlocal foldmethod=marker keywordprg=:help
@@ -298,6 +295,7 @@ let g:vim_indent_cont = 0
 let g:pascal_symbol_operator = 1
 let g:ruby_operators = 1
 let g:vim_json_conceal = 0
+let g:tex_conceal = "g"
 
 " netrw
 let g:netrw_sizestyle = "H"

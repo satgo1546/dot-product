@@ -20,8 +20,13 @@ hi VisualNOS      gui=reverse
 hi Cursor                            guibg=fg         guifg=bg
 hi lCursor                           guibg=#521552    guifg=bg
 hi link CursorIM lCursor
+	if &relativenumber
+hi LineNr         gui=none           guibg=#f0f9ff    guifg=#4faaff
+hi CursorLineNr   gui=none           guibg=#bfe5ff    guifg=#1a2b3c
+	else
 hi LineNr         gui=none           guibg=#f0f9ff    guifg=#7fccff
 hi CursorLineNr   gui=bold           guibg=#bfe5ff    guifg=#f0f9ff
+	endif
 hi link MoreMsg Question
 hi Question       gui=italic                          guifg=DarkGreen
 hi NonText        gui=none           guibg=bg         guifg=#bddebf
@@ -96,7 +101,11 @@ hi link luaFunc Sats_RecognizedIdentifier
 hi link hexAddressFieldUnknown Error
 hi link hexDataFieldUnknown Error
 
+hi link javaScriptFunction Keyword
+hi link javaScriptNumber Constant
 hi link jsonKeyword Sats_StringSpecial
 hi link jsonNoise Delimiter
 hi link jsonQuote String
 hi link jsonNull Constant
+
+hi link mfOpenString Error

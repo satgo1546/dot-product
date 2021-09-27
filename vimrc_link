@@ -1,0 +1,3 @@
+set go+=M
+set rtp^=Y:\my\dot-product\vim
+source Y:\my\dot-product\vim\vimrc

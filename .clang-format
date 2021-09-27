@@ -1,0 +1,51 @@
+---
+Language: Cpp
+BasedOnStyle: LLVM
+
+UseTab: ForContinuationAndIndentation
+TabWidth: 2
+IndentWidth: 2
+ContinuationIndentWidth: 2
+BreakBeforeBraces: Attach
+IndentCaseBlocks: true
+IndentCaseLabels: false
+ColumnLimit: 0
+AccessModifierOffset: -2
+
+AlignAfterOpenBracket: DontAlign
+ArrayInitializerAlignmentStyle: None
+AlignEscapedNewlines: DontAlign
+AlignOperands: DontAlign
+AlignTrailingComments: false
+
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AllowShortLambdasOnASingleLine: None
+AllowShortLoopsOnASingleLine: true
+
+AlwaysBreakBeforeMultilineStrings: true
+AlwaysBreakTemplateDeclarations: MultiLine
+
+BreakBeforeBinaryOperators: NonAssignment
+
+BreakBeforeTernaryOperators: true
+
+ConstructorInitializerIndentWidth: 2
+
+IndentCaseLabels: false
+
+JavaScriptQuotes: Double
+KeepEmptyLinesAtTheStartOfBlocks: false
+
+MaxEmptyLinesToKeep: 2
+NamespaceIndentation: All
+PointerAlignment: Right
+
+SpaceAroundPointerQualifiers: Default
+ReflowComments: false
+SpaceAfterCStyleCast: true
+SpaceBeforeParens: ControlStatementsExceptControlMacros
+SpacesBeforeTrailingComments: 1
+SpacesInContainerLiterals: false

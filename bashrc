@@ -22,7 +22,7 @@ ESC=$(echo -e "\e")
 PROMPT_COMMAND=sats_ps1
 PS2='  \[\e[0;32m\]┃\[\e[0m\] '
 PS3="$ESC[0;32m──┨ $ESC[92m$ESC[0m "
-PS4='✢ '
+PS4='$0:$LINENO ✢ '
 unset ESC
 GIT_PS1_SHOWDIRTYSTATE=1
 GIT_PS1_SHOWUNTRACKEDFILES=1
@@ -32,11 +32,12 @@ sats_ps1() {
 	PS1='\[\e[0;1;32;42m\] \u \[\e[0;7;32m\]│ !\! │ $? '
 	sats_ps1_extra
 	PS1="$PS1"' \W \[\e[0;92m\]\$⧖\[\e[0m\] '
+	#PS1=⎐
 }
 sats_ps1_extra() {
 	local i empty=0
 	local list=(
-		"$(__git_ps1 "⎇ %s")"
+		#"$(__git_ps1 "⎇ %s")"
 	)
 	local -a list_compact
 	for ((i = 0; i < ${#list[@]}; i++))
@@ -65,9 +66,9 @@ alias md=mkdir
 alias chdir=cd
 alias df="df -h"
 alias du="du -h"
-alias grep='grep --color'                     # show differences in colour
-alias egrep='egrep --color=auto'              # show differences in colour
-alias fgrep='fgrep --color=auto'              # show differences in colour
+alias grep="grep --color=auto"
+alias egrep="egrep --color=auto"
+alias fgrep="fgrep --color=auto"
 alias ack='ag --color-path="32" --color-match="4;33" --color-line-number="36"'
 settitle() {
   echo -ne "\e]2;$@\a\e]1;$@\a";
@@ -93,6 +94,23 @@ then
 fi
 if false
 then
+	# For Cygwin.
 	export DISPLAY=:0.0
 	export SDL_RENDER_DRIVER=software
 fi
+if true
+then
+	# For Windows Subsystem for Linux.
+	#   sed -n "s/nameserver //p" /etc/resolv.conf
+	export DISPLAY=$HOSTNAME.local:0
+	export http_proxy=http://$HOSTNAME.local:7890
+	# Setting https:// prevents curl from working, while wget is okay with it.
+	export https_proxy=http://$HOSTNAME.local:7890
+fi
+if true
+then
+	export GDK_DPI_SCALE=1.5
+	export QT_SCALE_FACTOR=1.5
+fi
+# It seems that a Windows Terminal bug prevents the first line of a colorful shell prompt from displaying correctly.
+printf "\r"

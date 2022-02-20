@@ -5,7 +5,7 @@
 [push]
 	default = simple
 [credential]
-	helper = cache --timeout=14400
+	helper = manager
 [color]
 	ui = true
 [column]
@@ -34,7 +34,7 @@
 	editor = gvim -f
 	excludesfile = D:\\Miscellaneous\\gitignore
 	eol = lf
-	safecrlf = true
+	safecrlf = warn
 	autocrlf = input
 	fscache = true
 [merge]

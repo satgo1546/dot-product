@@ -10,6 +10,8 @@ Menu, Tray, Icon, D:\Miscellaneous\Icons\classic_MyAHKScript.ico
 SetScrollLockState, On
 capslock_count := 0
 
+last_clipboard := ""
+
 on_exit(ExitReason, ExitCode) {
 	If ExitReason in Logoff,Shutdown
 	{
@@ -233,6 +235,7 @@ multi_tap(characters) {
 
 #NumpadSub::Send −
 #IfWinActive ahk_exe LyX.exe
+#NumpadAdd::Send \pm{Space}
 #NumpadMult::Send \times{Space}
 #NumpadDiv::Send \div{Space}
 #-::Send --
@@ -247,6 +250,7 @@ multi_tap(characters) {
 #IfWinActive ahk_exe Mathematica.exe
 ^1::Send ^62{Right}
 #IfWinActive
+#NumpadAdd::Send ±
 #NumpadMult::Send ×
 #NumpadDiv::Send ÷
 #-::Send –
@@ -436,10 +440,10 @@ VKBF Up::button_keyup(52)
 	Return
 +#F2::
 	show_symbol_palette([""
-		. "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", ""
+		. "", "¨", "¯", "<", "≤", "=", "≥", ">", "≠", "∨", "∧", "+", "×", ""
+		, "", "?", "⍵", "⍷", "⍴", "∼", "↑", "↓", "⍳", "⍜", "⋆", "←", "→", ""
+		, "", "⍺", "⌈", "⌊", "", "⍙", "⍢", "∘", "'", "⎕", "", "", ""
+		, "", "⊂", "⊃", "∩", "∪", "⊥", "⊤", "∣", "", "", "", ""
 		, "", "", "", "", " ", "", "", ""
 	. ""])
 	Return
@@ -580,8 +584,8 @@ VKBF Up::button_keyup(52)
 	Return
 +#F10::
 	show_symbol_palette([""
-		. "", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", "", "", ""
+		. "", "", "", "", "", "", "", "", "", "", "", "", "", ""
+		, "", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅", "", "", "", "", "", "", ""
 		, "", "", "", "", "", "", "", "", "", "", "", "", ""
 		, "", "☰", "☱", "☲", "☳", "☴", "☵", "☶", "☷", "⚊", "⚋", ""
 		, "", "", "", "", " ", "", "", ""
@@ -712,6 +716,31 @@ get_ime_convmode() {
 		,  "Int", 0) ; lParam = 0
 }
 
+text_to_tex(str) {
+	; StrReplace不好用，因为它不知道区不区分大小写
+	str := RegExReplace(str, "“", "`" + "`")
+	str := RegExReplace(str, "”", "''")
+	str := RegExReplace(str, "‘", "`")
+	str := RegExReplace(str, "’", "'")
+	str := RegExReplace(str, "\bLaTeX\b", "\LaTeX{}")
+	str := RegExReplace(str, "TeX\b", "\TeX{}")
+	str := RegExReplace(str, "\bTeXbook\b", "\TeX book")
+	str := RegExReplace(str, "\bMETAFONT\b", "\MF{}")
+	str := RegExReplace(str, "\bMETAFONTbook\b", "\MF book")
+	str := RegExReplace(str, "−", "--")
+	str := RegExReplace(str, "—", "---")
+	str := RegExReplace(str, "i)\bPh\.\s?D\. ", "Ph.D.\ ")
+	str := RegExReplace(str, "\b(Miss|Ms|Mrs?|cf|v\.?s)\.\s", "$1.~")
+	str := RegExReplace(str, Chr(160), "~")
+	str := RegExReplace(str, "%", "\%")
+	str := RegExReplace(str, "i)(?:https?|s?ftps?|git|telnet)://[\w~!@#\$%\^&\*\(\)\[\]\{\}<>,\./\?=\+:;""'-]{4,2083}", "\url{$0}")
+	str := RegExReplace(str, "(\w)\s&\s(\w)", "$1 \& $2")
+	str := RegExReplace(str, "$(\d)", "\$$$1")
+	str := RegExReplace(str, "#(\d)", "\#$1")
+	str := RegExReplace(str, "<em>(.+?)</em>", "\emph{$1}")
+	Return str
+}
+
 XButton1::Return
 XButton2::Return
 
@@ -742,10 +771,23 @@ Media_Stop::
 		DllCall("PowrProf\SetSuspendState", "Int", 0, "Int", 0, "Int", 0)
 	}
 	Return
-Browser_Back::Return
-Browser_Forward::Return
+Browser_Back::Send {Volume_Down}
+Browser_Forward::Send {Volume_Up}
 Browser_Home::Return
-Launch_Mail::Return
+Launch_Mail::
+	If (last_clipboard == Clipboard) {
+		ToolTip, 已经转换过了。
+	} Else {
+		last_clipboard := text_to_tex(Clipboard)
+		Clipboard := last_clipboard
+		ToolTip, 将剪贴板文本转换为 LaTeX 格式。
+	}
+	SetTimer, RemoveToolTip, -1000
+	Return
+
+RemoveToolTip:
+	ToolTip
+	Return
 
 MenuHandler:
 	str := A_ThisMenuItem

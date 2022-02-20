@@ -96,7 +96,9 @@ set keymodel=startsel
 set undolevels=1024
 set backspace=indent,eol,start
 set matchpairs+=（:）,［:］,｛:｝,〔:〕,【:】,〖:〗,『:』,「:」,｢:｣
-set matchpairs+=“:”,‘:’,《:》,〈:〉,〘:〙,〚:〛,⁅:⁆
+set matchpairs+=“:”,‘:’,«:»,‹:›,《:》,〈:〉,〘:〙,〚:〛,⁅:⁆
+set matchpairs+=⁽:⁾,₍:₎,⌈:⌉,⌊:⌋,⟨:⟩,⦃:⦄,⦅:⦆,⦇:⦈,⦉:⦊,⦑:⦒,⦋:⦌,⦍:⦐,⦏:⦎,⦗:⦘
+set matchpairs+=❨:❩,❪:❫,❬:❭,❮:❯,❰:❱,❲:❳,❴:❵
 set nojoinspaces
 set nrformats=bin,hex
 set completeopt=menu,menuone,preview,longest
@@ -296,6 +298,8 @@ let g:pascal_symbol_operator = 1
 let g:ruby_operators = 1
 let g:vim_json_conceal = 0
 let g:tex_conceal = "g"
+let g:vhdl_indent_genportmap = 0
+let g:vhdl_indent_rhsassign = 0
 
 " netrw
 let g:netrw_sizestyle = "H"

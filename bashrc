@@ -9,6 +9,7 @@
 
 # Shell options and history control.
 shopt -s cdspell cmdhist nocaseglob checkwinsize histappend
+shopt -u promptvars
 HISTSIZE=30000
 HISTFILESIZE=$HISTSIZE
 HISTCONTROL=ignoredups:ignorespace
@@ -29,15 +30,10 @@ GIT_PS1_SHOWUNTRACKEDFILES=1
 GIT_PS1_DESCRIBE_STYLE=default
 GIT_PS1_HIDE_IF_PWD_IGNORED=1
 sats_ps1() {
-	PS1='\[\e[0;1;32;42m\] \u \[\e[0;7;32m\]│ !\! │ $? '
-	sats_ps1_extra
-	PS1="$PS1"' \W \[\e[0;92m\]\$⧖\[\e[0m\] '
-	#PS1=⎐
-}
-sats_ps1_extra() {
+	PS1='\[\e[0;1;32;42m\] \u \[\e[0;7;32m\]│ !\! │'" $? "
 	local i empty=0
 	local list=(
-		#"$(__git_ps1 "⎇ %s")"
+		"$(~/gitps1)"
 	)
 	local -a list_compact
 	for ((i = 0; i < ${#list[@]}; i++))
@@ -55,6 +51,8 @@ sats_ps1_extra() {
 		done
 		PS1="$PS1"' ▒\[\e[0;7;32m\]'
 	fi
+	PS1="$PS1"' \W \[\e[0;92m\]\$⧖\[\e[0m\] '
+	#PS1=⎐
 }
 
 # Aliases and functions.

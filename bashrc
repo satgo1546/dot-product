@@ -23,7 +23,7 @@ ESC=$(echo -e "\e")
 PROMPT_COMMAND=sats_ps1
 PS2='  \[\e[0;32m\]┃\[\e[0m\] '
 PS3="$ESC[0;32m──┨ $ESC[92m$ESC[0m "
-PS4='$0:$LINENO ✢ '
+PS4='. '
 unset ESC
 GIT_PS1_SHOWDIRTYSTATE=1
 GIT_PS1_SHOWUNTRACKEDFILES=1
@@ -31,23 +31,117 @@ GIT_PS1_DESCRIBE_STYLE=default
 GIT_PS1_HIDE_IF_PWD_IGNORED=1
 sats_ps1() {
 	PS1='\[\e[0;1;32;42m\] \u \[\e[0;7;32m\]│ !\! │'" $? "
-	local i empty=0
-	local list=(
-		"$(~/gitps1)"
-	)
-	local -a list_compact
-	for ((i = 0; i < ${#list[@]}; i++))
-	do
-		[ -n "${list[$i]}" ] && list_compact[${#list_compact[@]}]="${list[$i]}"
-	done
-	if [ ${#list_compact[@]} -eq 0 ]
+	local -a list
+
+	# What follows is adapted from git-prompt.sh.
+	repo_info="$(git rev-parse --git-dir --is-inside-git-dir \
+		--is-bare-repository --is-inside-work-tree --short HEAD 2>/dev/null)"
+	if [ "$?" = "0" ]
+	then
+		short_sha="${repo_info##*$'\n'}"
+		repo_info="${repo_info%$'\n'*}"
+	fi
+
+	if [ -n "$repo_info" ]
+	then
+		p=""
+
+		inside_worktree="${repo_info##*$'\n'}"
+		repo_info="${repo_info%$'\n'*}"
+		bare_repo="${repo_info##*$'\n'}"
+		repo_info="${repo_info%$'\n'*}"
+		inside_gitdir="${repo_info##*$'\n'}"
+		# g is normally assigned ".git".
+		g="${repo_info%$'\n'*}"
+		if [ -d "$g/rebase-merge" ]
+		then
+			eread "$g/rebase-merge/head-name" b
+			eread "$g/rebase-merge/msgnum" step
+			eread "$g/rebase-merge/end" total
+			p="rebasing "
+		else
+			if [ -d "$g/rebase-apply" ]
+			then
+				if [ -f "$g/rebase-apply/rebasing" ]
+				then
+					eread "$g/rebase-apply/head-name" b
+					p="rebasing "
+				elif [ -f "$g/rebase-apply/applying" ]
+				then
+					p="AM "
+				else
+					p="AM/rebasing "
+				fi
+				eread "$g/rebase-apply/next" step
+				eread "$g/rebase-apply/last" total
+			elif [ -f "$g/MERGE_HEAD" ]
+			then
+				p="merging "
+			# see if a cherry-pick or revert is in progress, if the user has committed a
+			# conflict resolution with 'git commit' in the middle of a sequence of picks or
+			# reverts then CHERRY_PICK_HEAD/REVERT_HEAD will not exist so we have to read
+			# the todo file.
+			elif [ -f "$g/CHERRY_PICK_HEAD" ]
+			then
+				p="cherry-picking "
+			elif test -f "$g/REVERT_HEAD"
+			then
+				p="reverting "
+			elif eread "$g/sequencer/todo" todo
+			then
+				case "$todo" in
+				p[\ \	]|pick[\ \	]*) p="cherry-picking " ;;
+				revert[\ \	]*) p="reverting " ;;
+				esac
+			elif [ -f "$g/BISECT_LOG" ]
+			then
+				p="bisecting "
+			fi
+			[ -n "$p" ] && p="\[\e[1m\]$p"
+			[ -z "$b" ] && b="$(
+				git symbolic-ref --short HEAD 2>/dev/null \
+				|| git describe --tags HEAD 2>/dev/null \
+				|| echo $short_sha
+			)"
+			p="$p⎇ $b"
+		fi
+		[ -n "$total" ] && p="$p $step/$total"
+
+		if [ "$inside_gitdir" = "true" ]
+		then
+			[ "$bare_repo" = "true" ] && p="bare: $p"
+			[ "$bare_repo" = "true" ] || p="$p .git/"
+		elif [ "$inside_worktree" = "true" ]
+		then
+			git diff --no-ext-diff --cached --quiet || p="$p+"
+			git diff --no-ext-diff --quiet || p="$p*"
+			[ -z "$short_sha" ] && p="$p #"
+			# Find how many commits we are ahead/behind our upstream.
+			upstream="$(git rev-list --count --left-right @{upstream}...HEAD 2>/dev/null)"
+			if [ -n "$upstream" ]
+			then
+				left="${upstream%	*}"
+				[ "$left" -ne 0 ] && p="$p $left<"
+				right="${upstream#*	}"
+				[ "$right" -ne 0 ] && p="$p $right>"
+				[ "$left" -eq 0 ] && [ "$right" -eq 0 ] && p="$p ="
+				p="$p $(git rev-parse --abbrev-ref @{upstream} 2>/dev/null)"
+			fi
+		fi
+		[ "$(git config --bool core.sparseCheckout)" = "true" ] && p="$p sparse"
+		list[${#list[@]}]="$p"
+	fi
+
+	#list[${#list[@]}]="?"
+
+	if [ ${#list[@]} -eq 0 ]
 	then
 		PS1="$PS1│"
 	else
-		PS1="$PS1"'\[\e[0;32;107m\]▒ '"${list_compact[0]}"
-		for ((i = 1; i < ${#list_compact[@]}; i++))
+		PS1="$PS1"'\[\e[0;32;107m\]▒ '"${list[0]}"'\[\e[0;32;107m\]'
+		for ((i = 1; i < ${#list[@]}; i++))
 		do
-			PS1="$PS1 │ ${list_compact[$i]}"
+			PS1="$PS1 │ ${list[$i]}\[\e[0;32;107m\]"
 		done
 		PS1="$PS1"' ▒\[\e[0;7;32m\]'
 	fi
@@ -74,6 +168,11 @@ settitle() {
 alias dialog-hello='dialog --msgbox "Hello, world!" 6 24 # quite useless'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history | tail -n 1 | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg"
+# Helper function to read the first line of a file into a variable.
+# eread requires 2 arguments, the file path and the name of the variable, in that order.
+eread() {
+	[ -r "$1" ] && IFS=$'\r\n' read "$2" <"$1"
+}
 
 # Environment complex.
 export EDITOR=vim
@@ -84,11 +183,6 @@ then
 	export XMODIFIERS=@im=ibus
 	export GTK_IM_MODULE=ibus
 	export QT_IM_MODULE=ibus
-fi
-if false
-then
-	source /usr/share/git/completion/git-completion.bash
-	source /usr/share/git/completion/git-prompt.sh
 fi
 if false
 then

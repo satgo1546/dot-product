@@ -5,7 +5,7 @@
 [push]
 	default = simple
 [credential]
-	helper = manager
+	helper = store
 [color]
 	ui = true
 [column]

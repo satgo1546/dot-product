@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# short edge?
+if true
+then
+	exec pdfjam --landscape --suffix book --signature 4 "$@"
+else
+	(kpsewhich everyshi.sty >/dev/null) || {
+		echo "the 'everyshi' package is not installed."; exit 1
+	}
+	exec pdfjam --landscape --suffix book --signature 4 \
+		--preamble '\usepackage{everyshi}
+			\makeatletter
+			\EveryShipout{\ifodd\c@page\pdfpageattr{/Rotate 180}\fi}
+			\makeatother
+			' "$@"
+fi

@@ -19,7 +19,7 @@ HISTCONTROL=ignoredups:ignorespace
 
 # Be colorful.
 [ "$TERM" = xterm ] && export TERM=xterm-256color
-ESC=$(echo -e "\e")
+ESC=$'\x1b'
 PROMPT_COMMAND=sats_ps1
 PS2='  \[\e[0;32m\]┃\[\e[0m\] '
 PS3="$ESC[0;32m──┨ $ESC[92m$ESC[0m "
@@ -34,6 +34,8 @@ sats_ps1() {
 	local -a list
 
 	# What follows is adapted from git-prompt.sh.
+	local b g p
+	local step total short_sha repo_info inside_worktree repo_info bare_repo inside_gitdir
 	repo_info="$(git rev-parse --git-dir --is-inside-git-dir \
 		--is-bare-repository --is-inside-work-tree --short HEAD 2>/dev/null)"
 	if [ "$?" = "0" ]
@@ -163,7 +165,10 @@ alias egrep="egrep --color=auto"
 alias fgrep="fgrep --color=auto"
 alias ack='ag --color-path="32" --color-match="4;33" --color-line-number="36"'
 settitle() {
-  echo -ne "\e]2;$@\a\e]1;$@\a";
+  echo -ne "\e]2;$@\a\e]1;$@\a"
+}
+x() {
+	"$@" 1>/dev/zero 2>&1 &
 }
 alias dialog-hello='dialog --msgbox "Hello, world!" 6 24 # quite useless'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history | tail -n 1 | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -173,11 +178,13 @@ alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg"
 eread() {
 	[ -r "$1" ] && IFS=$'\r\n' read "$2" <"$1"
 }
+hash thefuck 2>/dev/null && eval $(thefuck --alias)
 
 # Environment complex.
 export EDITOR=vim
 export VISUAL=vim
 export SYSTEMD_PAGER=""
+export PATH=$HOME/dot-product/scripts:$PATH
 if false
 then
 	export XMODIFIERS=@im=ibus
@@ -195,14 +202,20 @@ then
 	# For Windows Subsystem for Linux.
 	#   sed -n "s/nameserver //p" /etc/resolv.conf
 	export DISPLAY=$HOSTNAME.local:0
+	export LIBGL_ALWAYS_INDIRECT=1
 	export http_proxy=http://$HOSTNAME.local:7890
 	# Setting https:// prevents curl from working, while wget is okay with it.
 	export https_proxy=http://$HOSTNAME.local:7890
+	alias explorer="explorer.exe"
 fi
 if true
 then
 	export GDK_DPI_SCALE=1.5
 	export QT_SCALE_FACTOR=1.5
+fi
+if true
+then
+	export GPG_TTY=$(tty)
 fi
 # It seems that a Windows Terminal bug prevents the first line of a colorful shell prompt from displaying correctly.
 printf "\r"

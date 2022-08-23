@@ -8,7 +8,7 @@
 [[ "$-" != *i* ]] && return
 
 # Shell options and history control.
-shopt -s cdspell cmdhist nocaseglob checkwinsize histappend
+shopt -s cdspell cmdhist nocaseglob checkwinsize histappend globstar
 shopt -u promptvars
 HISTSIZE=30000
 HISTFILESIZE=$HISTSIZE
@@ -154,7 +154,7 @@ sats_ps1() {
 # Aliases and functions.
 alias ls="ls --color=auto"
 alias la="ls -A"
-alias ll="ls -l"
+alias ll="ls -lh"
 alias dir="ls --color=auto --format=vertical"
 alias md=mkdir
 alias chdir=cd
@@ -173,6 +173,23 @@ x() {
 alias dialog-hello='dialog --msgbox "Hello, world!" 6 24 # quite useless'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history | tail -n 1 | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg"
+alias py='python -i -c "import os, sys, time, re, json, string, base64, struct, numpy as np, scipy, cv2, pandas as pd, matplotlib.pyplot as plt; from math import *; from typing import *; from numpy.typing import *"'
+alias pytf='python -i -c "import numpy as np, tensorflow as tf; tf.sign(0)"'
+tmproot() {
+	if [ "x$1" = "x-" ]
+	then
+		docker start -i $(docker ps -ql)
+	else
+		mkdir -p /tmp/tmproot
+		docker run -it --network host -v /tmp/tmproot-swapper:/swapper tensorflow/tensorflow /bin/sh -c \
+			'sed -i "s/deb.debian.org/mirrors.ustc.edu.cn/g; s/security.debian.org/mirrors.ustc.edu.cn/g" /etc/apt/sources.list && pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && apt-get update; exec bash'
+	fi
+}
+fix-my-permissions() {
+	chown -R $USER:$(id -gn) .
+	find -type d -print0 | xargs -0 chmod 0775
+	find -type f -print0 | xargs -0 chmod 0664
+}
 # Helper function to read the first line of a file into a variable.
 # eread requires 2 arguments, the file path and the name of the variable, in that order.
 eread() {
@@ -184,7 +201,7 @@ hash thefuck 2>/dev/null && eval $(thefuck --alias)
 export EDITOR=vim
 export VISUAL=vim
 export SYSTEMD_PAGER=""
-export PATH=$HOME/dot-product/scripts:$PATH
+export PATH=$HOME/dot-product/scripts:$PATH:$HOME/.local/bin:$HOME/.cargo/bin
 if false
 then
 	export XMODIFIERS=@im=ibus
@@ -202,10 +219,11 @@ then
 	# For Windows Subsystem for Linux.
 	#   sed -n "s/nameserver //p" /etc/resolv.conf
 	export DISPLAY=$HOSTNAME.local:0
-	export LIBGL_ALWAYS_INDIRECT=1
+	export LIBGL_ALWAYS_INDIRECT=0
 	export http_proxy=http://$HOSTNAME.local:7890
 	# Setting https:// prevents curl from working, while wget is okay with it.
 	export https_proxy=http://$HOSTNAME.local:7890
+	alias clip="clip.exe"
 	alias explorer="explorer.exe"
 fi
 if true

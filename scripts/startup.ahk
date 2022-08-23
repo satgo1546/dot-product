@@ -148,7 +148,7 @@ multi_tap(characters) {
 			If (count > StrLen(characters)) {
 				count := 1
 			}
-			send_string .= "{Backspace}"
+			send_string .= "`b"
 		} Else {
 			count := 1
 		}
@@ -159,26 +159,28 @@ multi_tap(characters) {
 
 <#+a::multi_tap("ĀÁǍÀÂÄⱭ")
 <#a:: multi_tap("āáǎàâäɑ")
+<#+c::multi_tap("ÇĈ")
+<#c:: multi_tap("çĉ")
 <#+e::multi_tap("ĒÉĚÈÊË")
 <#e:: multi_tap("ēéěèêë")
 <#+i::multi_tap("ĪÍǏÌÎÏ")
 <#i:: multi_tap("īíǐìîï")
-<#+o::multi_tap("ŌÓǑÒÔÖ")
-<#o:: multi_tap("ōóǒòôö")
-<#+u::multi_tap("ŪÚǓÙÛ")
-<#u:: multi_tap("ūúǔùû")
-<#+v::multi_tap("ÜǕǗǙǛ")
-<#v:: multi_tap("üǖǘǚǜ")
-<#+z::multi_tap("Ẑ")
-<#z:: multi_tap("ẑ")
-<#+c::multi_tap("ÇĈ")
-<#c:: multi_tap("çĉ")
-; <#+s::multi_tap("Ŝ")
-; <#s:: multi_tap("ŝ")
 <#+m::multi_tap("Ḿ")
 <#m:: multi_tap("ḿ")
 <#+n::multi_tap("Ǹ")
 <#n:: multi_tap("ǹ")
+<#+o::multi_tap("ŌÓǑÒÔÖ")
+<#o:: multi_tap("ōóǒòôö")
+<#+s::multi_tap("Ŝ")
+<#s:: multi_tap("ŝ")
+<#+u::multi_tap("ŪÚǓÙÛ")
+<#u:: multi_tap("ūúǔùû")
+<#+v::multi_tap("ÜǕǗǙǛ")
+<#v:: multi_tap("üǖǘǚǜ")
+<#+y::multi_tap("ŸŶ")
+<#y:: multi_tap("ÿŷ")
+<#+z::multi_tap("Ẑ")
+<#z:: multi_tap("ẑ")
 
 >!+a::Send "Α"
 >!+b::Send "Β"
@@ -252,13 +254,17 @@ multi_tap(characters) {
 ^1::Send "^62{Right}"
 #HotIf
 #NumpadAdd::Send "±"
+>!=::Send "±"
+>!-::Send "−"
 #NumpadMult::Send "×"
+>!8::Send "×"
 #NumpadDiv::Send "÷"
+>!/::Send "÷"
 #-::Send "–"
 #,::Send "≤"
-#+,::Send "⩽"
+#+,::multi_tap("⟨⩽")
 #.::Send "≥"
-#+.::Send "⩾"
+#+.::multi_tap("⟩⩾")
 
 #HotIf WinActive("ahk_exe winword.exe")
 #^0::
@@ -764,6 +770,11 @@ Launch_Mail:: {
 		ToolTip "将剪贴板文本转换为 LaTeX 格式。"
 	}
 	SetTimer RemoveToolTip, -1000
+}
+
+#+/:: {
+	ProcessClose "ctfmon.exe"
+	ProcessClose "ChsIME.exe"
 }
 
 RemoveToolTip() {

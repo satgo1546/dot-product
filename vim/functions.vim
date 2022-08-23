@@ -6,13 +6,13 @@
 
 let g:slash = (&shellslash ? '/' : '\')
 
-function! ExpiredSpace()
+def! ExpiredSpace()
 	echo strftime("%s")
-endfunction
+enddef
 
-function! Bell()
+def! Bell()
 	execute "normal! \<Esc>"
-endfunction
+enddef
 
 function! NormalizeBuffer()
 	let l:pos = getpos(".")
@@ -106,11 +106,6 @@ function! FindNext(delta) range
 	finally
 		set hlsearch
 	endtry
-endfunction
-
-function! ClearHighlight()
-	nohlsearch
-	set nohlsearch
 endfunction
 
 function! FindCurrentColorScheme()

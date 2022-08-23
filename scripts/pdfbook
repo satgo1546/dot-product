@@ -1,9 +1,16 @@
-#!/bin/sh
+#!/bin/bash
 
 # short edge?
 if true
 then
-	exec pdfjam --landscape --suffix book --signature 4 "$@"
+	if (( $1 > 0 && $1 % 4 == 0 ))
+	then
+		pdfjam --landscape --paper a4paper --suffix booklet --booklet true --signature "$@"
+		#pdfjam --landscape --suffix book --booklet true --signature "$@"
+	else
+		echo "pdfbook n input.pdf"
+		echo "where n is divisible by 4."
+	fi
 else
 	(kpsewhich everyshi.sty >/dev/null) || {
 		echo "the 'everyshi' package is not installed."; exit 1

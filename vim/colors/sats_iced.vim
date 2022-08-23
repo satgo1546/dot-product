@@ -21,11 +21,11 @@ hi Cursor                            guibg=fg         guifg=bg
 hi lCursor                           guibg=#521552    guifg=bg
 hi link CursorIM lCursor
 	if &relativenumber
-hi LineNr         gui=none           guibg=#f0f9ff    guifg=#4faaff
-hi CursorLineNr   gui=none           guibg=#bfe5ff    guifg=#1a2b3c
+hi LineNr         term=none cterm=none gui=none guibg=#f0f9ff guifg=#4faaff
+hi CursorLineNr   term=none cterm=none gui=none guibg=#bfe5ff guifg=#1a2b3c
 	else
-hi LineNr         gui=none           guibg=#f0f9ff    guifg=#7fccff
-hi CursorLineNr   gui=bold           guibg=#bfe5ff    guifg=#f0f9ff
+hi LineNr         term=none cterm=none gui=none guibg=#f0f9ff guifg=#7fccff
+hi CursorLineNr   term=bold cterm=bold gui=bold guibg=#bfe5ff guifg=#f0f9ff
 	endif
 hi link MoreMsg Question
 hi Question       gui=italic                          guifg=DarkGreen
@@ -39,9 +39,9 @@ hi Folded         gui=bold,underline guibg=NONE       guifg=#a7cfe6
 hi FoldColumn     gui=none           guibg=#f0f9ff    guifg=#a7cfe6
 hi CursorColumn   NONE
 hi CursorLine     NONE
-hi TabLineSel     gui=none           guibg=bg         guifg=fg
-hi TabLine        gui=none           guibg=#7ebe7f    guifg=White
-hi TabLineFill    gui=none           guibg=DarkGreen
+hi TabLineSel     term=none cterm=none gui=none guibg=bg guifg=fg
+hi TabLine        term=none cterm=none gui=none guibg=#7ebe7f guifg=White
+hi TabLineFill                                        guifg=DarkGreen
 hi ColorColumn                       guibg=#f0f9ff
 
 hi DiffAdd                           guibg=LightGreen guifg=NONE

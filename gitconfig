@@ -31,7 +31,7 @@
 	unstage = reset HEAD --
 	last = log -1 HEAD
 [core]
-	editor = gvim -f
+	editor = vim
 	excludesfile = D:\\Miscellaneous\\gitignore
 	eol = lf
 	safecrlf = warn
@@ -43,3 +43,15 @@
 	autoCorrect = 5
 [gpg]
 	program = gpg2
+[http]
+	proxy = http://originator.local:7890
+[https]
+	proxy = http://originator.local:7890
+[diff]
+	tool = difftastic
+[difftool]
+	prompt = false
+[difftool "difftastic"]
+	cmd = difft "$LOCAL" "$REMOTE"
+[pager]
+	difftool = true

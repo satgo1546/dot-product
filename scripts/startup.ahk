@@ -157,30 +157,31 @@ multi_tap(characters) {
 	}
 }
 
-<#+a::multi_tap("ĀÁǍÀÂÄⱭ")
-<#a:: multi_tap("āáǎàâäɑ")
-<#+c::multi_tap("ÇĈ")
-<#c:: multi_tap("çĉ")
+<#+a::multi_tap("ĀÁǍÀÂÄÅⱭ")
+<#a:: multi_tap("āáǎàâäåɑ")
+<#+c::multi_tap("©ÇĈ")
+<#c:: multi_tap("¢çĉ")
 <#+e::multi_tap("ĒÉĚÈÊË")
 <#e:: multi_tap("ēéěèêë")
 <#+i::multi_tap("ĪÍǏÌÎÏ")
-<#i:: multi_tap("īíǐìîï")
+<#i:: multi_tap("īíǐìîïı")
 <#+m::multi_tap("Ḿ")
 <#m:: multi_tap("ḿ")
-<#+n::multi_tap("Ǹ")
-<#n:: multi_tap("ǹ")
+<#+n::multi_tap("ÑǸ")
+<#n:: multi_tap("ñǹ")
 <#+o::multi_tap("ŌÓǑÒÔÖ")
 <#o:: multi_tap("ōóǒòôö")
-<#+s::multi_tap("Ŝ")
-<#s:: multi_tap("ŝ")
+<#+p::multi_tap("¶")
+<#+s::multi_tap("§ŜŠẞ")
+<#s:: multi_tap("ŝšßſ")
 <#+u::multi_tap("ŪÚǓÙÛ")
 <#u:: multi_tap("ūúǔùû")
 <#+v::multi_tap("ÜǕǗǙǛ")
 <#v:: multi_tap("üǖǘǚǜ")
-<#+y::multi_tap("ŸŶ")
+<#+y::multi_tap("¥ŸŶ")
 <#y:: multi_tap("ÿŷ")
-<#+z::multi_tap("Ẑ")
-<#z:: multi_tap("ẑ")
+<#+z::multi_tap("ẐŽ")
+<#z:: multi_tap("ẑž")
 
 >!+a::Send "Α"
 >!+b::Send "Β"
@@ -261,10 +262,10 @@ multi_tap(characters) {
 #NumpadDiv::Send "÷"
 >!/::Send "÷"
 #-::Send "–"
-#,::Send "≤"
-#+,::multi_tap("⟨⩽")
-#.::Send "≥"
-#+.::multi_tap("⟩⩾")
+#,::Send "⟨"
+#+,::multi_tap("≤⩽")
+#.::Send "⟩"
+#+.::multi_tap("≥⩾")
 
 #HotIf WinActive("ahk_exe winword.exe")
 #^0::
@@ -772,9 +773,8 @@ Launch_Mail:: {
 	SetTimer RemoveToolTip, -1000
 }
 
-#+/:: {
-	ProcessClose "ctfmon.exe"
-	ProcessClose "ChsIME.exe"
+#^v:: {
+	SendText A_Clipboard
 }
 
 RemoveToolTip() {

@@ -16,7 +16,7 @@
 	cos = checkout satgo1546-dev
 	cog = checkout gh-pages
 	cob = checkout bobcao3-dev
-	mg = merge
+	mg = merge --allow-unrelated-histories
 	mgm = merge master
 	mgs = merge satgo1546-dev
 	mgg = merge gh-pages
@@ -55,3 +55,5 @@
 	cmd = difft "$LOCAL" "$REMOTE"
 [pager]
 	difftool = true
+[init]
+	defaultBranch = main

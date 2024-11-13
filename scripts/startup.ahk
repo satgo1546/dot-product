@@ -2,116 +2,13 @@
 SetWorkingDir A_ScriptDir
 ; TODO... Menu, Tray, Icon, D:\Miscellaneous\Icons\classic_MyAHKScript.ico
 
-; If (!GetKeyState("NumLock", "T")) {
-; 	SendEvent {NumLock}
-; }
 capslock_count := 0
+keyboard_gui := Gui("+AlwaysOnTop -Caption +Owner -Theme", "Symbol Palette")
+initialize_keyboard_gui()
 
-last_clipboard := ""
-
-on_exit(ExitReason, ExitCode) {
-	If ExitReason == "Logoff" or ExitReason == "Shutdown" {
-		SetNumLockState false
-		SetScrollLockState false
-	}
-}
-OnExit on_exit
-
-title := "Symbol Palette"
-key_width4 := 48
-key_height := 48
-
-key_width5 := key_width4 * 1.25
-key_width6 := key_width4 * 1.5
-key_width7 := key_width4 * 1.75
-key_width8 := key_width4 * 2
-key_width9 := key_width4 * 2.25
-key_width11 := key_width4 * 2.75
-key_width25 := key_width4 * 6.25
-
-keyboard_gui := Gui(, title)
-keyboard_gui.Opt("+AlwaysOnTop -Caption +Owner -Theme")
-hwnd := keyboard_gui.Hwnd
-keyboard_gui.MarginX := 0
-keyboard_gui.MarginY := 0
-keyboard_gui.SetFont("s18", "M+ 1c")
-vkey_buttons1 := keyboard_gui.AddButton("section x0 y0 w" . key_width4 . " h" . key_height . " vkey_button1").OnEvent("Click", button_handler)
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button2,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button3,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button4,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button5,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button6,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button7,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button8,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button9,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button10,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button11,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button12,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button13,
-;Gui, Add, Button,         x+0 ys w%key_width8%  h%key_height% gbutton_handler vkey_button14,
-;Gui, Add, Button, section x0 y+0 w%key_width6%  h%key_height% gbutton_handler vkey_button15,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button16,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button17,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button18,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button19,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button20,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button21,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button22,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button23,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button24,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button25,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button26,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button27,
-;Gui, Add, Button,         x+0 ys w%key_width6%  h%key_height% gbutton_handler vkey_button28,
-;Gui, Add, Button, section x0 y+0 w%key_width7%  h%key_height% gbutton_handler vkey_button29,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button30,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button31,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button32,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button33,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button34,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button35,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button36,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button37,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button38,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button39,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button40,
-;Gui, Add, Button,         x+0 ys w%key_width9%  h%key_height% gbutton_handler vkey_button41,
-;Gui, Add, Button, section x0 y+0 w%key_width9%  h%key_height% gbutton_handler vkey_button42,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button43,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button44,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button45,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button46,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button47,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button48,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button49,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button50,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button51,
-;Gui, Add, Button,         x+0 ys w%key_width4%  h%key_height% gbutton_handler vkey_button52,
-;Gui, Add, Button,         x+0 ys w%key_width11% h%key_height% gbutton_handler vkey_button53,
-;Gui, Add, Button, section x0 y+0 w%key_width5%  h%key_height% gbutton_handler vkey_button54,
-;Gui, Add, Button,         x+0 ys w%key_width5%  h%key_height% gbutton_handler vkey_button55,
-;Gui, Add, Button,         x+0 ys w%key_width5%  h%key_height% gbutton_handler vkey_button56,
-;Gui, Add, Button,         x+0 ys w%key_width25% h%key_height% gbutton_handler vkey_button57,
-;Gui, Add, Button,         x+0 ys w%key_width5%  h%key_height% gbutton_handler vkey_button58,
-;Gui, Add, Button,         x+0 ys w%key_width5%  h%key_height% gbutton_handler vkey_button59,
-;Gui, Add, Button,         x+0 ys w%key_width5%  h%key_height% gbutton_handler vkey_button60,
-;Gui, Add, Button,         x+0 ys w%key_width5%  h%key_height% gbutton_handler vkey_button61,
-keyboard_gui.Show("xCenter y" . key_height . " Hide")
-;SatgosSymbolPalette
-;WinSet, AlwaysOnTop, On, ahk_id %hwnd%
-
-; Disable Win key
-; Assigning the modifier key to be a “prefix” for at least one other hotkey retains the modifiying function.
-LWin:: {
-	show_symbol_palette([])
-}
-RWin:: {
-	show_symbol_palette([])
-}
-LWin & CapsLock:: {
-}
-RWin & CapsLock:: {
-}
+; Disable Win key while retaining the modifiying function.
+~LWin::VKE8
+~RWin::VKE8
 
 CapsLock:: {
 	global capslock_count
@@ -123,11 +20,6 @@ CapsLock:: {
 		SetCapsLockState false
 	} Else {
 		toggle_ime_convmode()
-		;KeyWait, %A_ThisHotkey%, T0.5
-		;If (ErrorLevel) {
-			;toggle_ime_convmode()
-			;SetCapsLockState On
-		;}
 	}
 }
 
@@ -321,6 +213,32 @@ multi_tap(characters) {
 
 #[::Send "〖"
 #]::Send "〗"
+
+initialize_keyboard_gui() {
+	global keyboard_buttons
+	key_width := 48
+	key_height := 48
+	keyboard_gui.MarginX := 0
+	keyboard_gui.MarginY := 0
+	keyboard_gui.SetFont("s18", "M+ 1c")
+	keyboard_buttons := [
+		-1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+		-1.5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.5,
+		-1.75, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2.25,
+		-2.25, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2.75,
+		-1.25, 1.25, 1.25, 6.25, 1.25, 1.25, 1.25, 1.25,
+	]
+	For index, width in keyboard_buttons {
+		keyboard_buttons[index] := keyboard_gui.AddButton(
+			(width >= 0 ? "x+0 yp+0" : "x0 y+0")
+			. " w" . key_width * Abs(width) . " h" . key_height
+		)
+		keyboard_buttons[index].OnEvent("Click", button_handler)
+	}
+	keyboard_gui.Show("xCenter y" . key_height . " Hide")
+	keyboard_gui.Opt("+LastFound")
+	WinSetTransparent 192
+}
 
 #HotIf WinExist(keyboard_gui) && False
 `::button_keydown(1)
@@ -577,7 +495,7 @@ VKBF Up::button_keyup(52)
 		. "‥", "⿰", "⿱", "⿲", "⿳", "⿴", "⿵", "⿶", "⿷", "⿸", "⿹", "⿺", "⿻", ""
 		, "", "︻", "︵", "﹇", "︷", "﹃", "﹁", "︱", "￤", "︳", "︴", "‖", "︰", ""
 		, "", "︼", "︶", "﹈", "︸", "﹄", "﹂", "￣", "﹉", "﹊", "﹋", "﹌", ""
-		, "", "︹", "︺", "︽", "︾", "︿", "﹀", "", "", "﹍", "﹎", "﹏", ""
+		, "", "︹", "︺", "︽", "︾", "︿", "﹀", "", "﹍", "﹎", "﹏", ""
 		, "", "", "", "", " ", "", "", ""
 	. ""])
 }
@@ -586,7 +504,7 @@ VKBF Up::button_keyup(52)
 		. "", "Ⅰ", "Ⅱ", "Ⅲ", "Ⅳ", "Ⅴ", "Ⅵ", "Ⅶ", "Ⅷ", "Ⅸ", "Ⅹ", "Ⅺ", "Ⅻ", ""
 		, "", "ⅰ", "ⅱ", "ⅲ", "ⅳ", "ⅴ", "ⅵ", "ⅶ", "ⅷ", "ⅸ", "ⅹ", "ⅺ", "ⅻ", ""
 		, "", "㈠", "㈡", "㈢", "㈣", "㈤", "㈥", "㈦", "㈧", "㈨", "㈩", "", ""
-		, "", "㊀", "㊁", "㊂", "㊃", "㊄", "㊅", "㊆", "㊇", "㊈", "㊉", "",
+		, "", "㊀", "㊁", "㊂", "㊃", "㊄", "㊅", "㊆", "㊇", "㊈", "㊉", ""
 		, "", "", "", "", " ", "", "", ""
 	. ""])
 }
@@ -667,17 +585,11 @@ button_event(number) {
 }
 
 show_symbol_palette(symbols) {
-	global hwnd
 	If (symbols.Length > 0) {
 		For index, symbol in symbols {
-			;GuiControlGet, button_enabled, Enabled, key_button%index%
-			button_enabled := 0
-			If (button_enabled) {
-				;GuiControl, Text, key_button%index%, %symbol%
-			}
+			keyboard_buttons[index].Text := symbol
 		}
 		keyboard_gui.Show("NA")
-		;WinSet, Transparent, 192, ahk_id %hwnd%
 	} Else {
 		keyboard_gui.Hide()
 	}
@@ -740,43 +652,6 @@ text_to_tex(str) {
 XButton1::Return
 XButton2::Return
 
-Launch_App1::Return
-Launch_App2::Return
-Media_Next::Return
-Media_Prev::Return
-Media_Play_Pause::Return
-Media_Stop:: {
-	If ProcessExist("baidunetdisk.exe") + ProcessExist("uget.exe") + ProcessExist("uTorrent.exe") {
-		result := MsgBox, 0x131, "睡眠", "还有下载任务。睡眠吗？"
-	} Else {
-		result := MsgBox, 0x1, "睡眠", "睡眠吗？"
-	}
-	If result == "OK" {
-		; Parameter #1: Pass 1 instead of 0 to hibernate rather than suspend.
-		; Parameter #2: Pass 1 instead of 0 to suspend immediately rather than asking each application for permission.
-		; Parameter #3: Pass 1 instead of 0 to disable all wake events.
-		DllCall("PowrProf\SetSuspendState", "Int", 0, "Int", 0, "Int", 0)
-	}
-}
-Browser_Back::Send "{Volume_Down}"
-Browser_Forward::Send "{Volume_Up}"
-Browser_Home::Return
-Launch_Mail:: {
-	global last_clipboard
-	If (last_clipboard == Clipboard) {
-		ToolTip "已经转换过了。"
-	} Else {
-		last_clipboard := text_to_tex(Clipboard)
-		Clipboard := last_clipboard
-		ToolTip "将剪贴板文本转换为 LaTeX 格式。"
-	}
-	SetTimer RemoveToolTip, -1000
-}
-
 #^v:: {
 	SendText A_Clipboard
-}
-
-RemoveToolTip() {
-	ToolTip
 }

@@ -173,7 +173,7 @@ x() {
 alias dialog-hello='dialog --msgbox "Hello, world!" 6 24 # quite useless'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history | tail -n 1 | sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg"
-alias py='python -i -c "import os, sys, time, re, json, string, base64, struct, numpy as np, scipy, cv2, pandas as pd, matplotlib.pyplot as plt; from math import *; from typing import *; from numpy.typing import *"'
+alias py='python -i -c "import os, sys, time, re, json, string, base64, struct, numpy as np, scipy, cv2, pandas as pd, matplotlib.pyplot as plt; from pprint import pprint; from tqdm import tqdm, trange; from math import *; from bisect import *; from heapq import *; from copy import *; from collections import *; from itertools import *; from functools import *; from operator import *; from types import *; from typing import *; from numpy.typing import *; from builtins import pow"'
 alias pytf='python -i -c "import numpy as np, tensorflow as tf; tf.sign(0)"'
 tmproot() {
 	if [ "x$1" = "x-" ]
@@ -195,13 +195,12 @@ fix-my-permissions() {
 eread() {
 	[ -r "$1" ] && IFS=$'\r\n' read "$2" <"$1"
 }
-hash thefuck 2>/dev/null && eval $(thefuck --alias)
 
 # Environment complex.
 export EDITOR=vim
 export VISUAL=vim
 export SYSTEMD_PAGER=""
-export PATH=$HOME/dot-product/scripts:$PATH:$HOME/.local/bin:$HOME/.cargo/bin
+export PATH=$HOME/dot-product/scripts:$PATH:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.local/share/gem/ruby/3.0.0/bin:$HOME
 if false
 then
 	export XMODIFIERS=@im=ibus
@@ -217,12 +216,18 @@ fi
 if true
 then
 	# For Windows Subsystem for Linux.
-	#   sed -n "s/nameserver //p" /etc/resolv.conf
-	export DISPLAY=$HOSTNAME.local:0
+	#HOSTIP=$(sed -n "s/nameserver //p" /etc/resolv.conf)
+	HOSTIP=$(ip route show | grep -i default | awk '{ print $3 }')
+	# $HOSTNAME.local doesn't work any more.
+	export DISPLAY=$HOSTIP:0
 	export LIBGL_ALWAYS_INDIRECT=0
-	export http_proxy=http://$HOSTNAME.local:7890
+	export http_proxy=http://$HOSTIP:7890
 	# Setting https:// prevents curl from working, while wget is okay with it.
-	export https_proxy=http://$HOSTNAME.local:7890
+	export https_proxy=http://$HOSTIP:7890
+	# Not setting this causes localhost to be unusable inside WSL.
+	export no_proxy=127.0.0.1,localhost
+	git config --global http.proxy $http_proxy
+	git config --global https.proxy $https_proxy
 	alias clip="clip.exe"
 	alias explorer="explorer.exe"
 fi

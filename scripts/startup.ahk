@@ -1,21 +1,77 @@
-﻿#Warn
+﻿;===============================================================================
+; ■ startup.ahk
+;-------------------------------------------------------------------------------
+;   Various ways to aid keyboard input.
+;===============================================================================
+#Requires AutoHotkey v2.0
+#Warn
 SetWorkingDir A_ScriptDir
+FileEncoding "UTF-8-RAW"
 ; TODO... Menu, Tray, Icon, D:\Miscellaneous\Icons\classic_MyAHKScript.ico
 
-capslock_count := 0
-keyboard_gui := Gui("+AlwaysOnTop -Caption +Owner -Theme", "Symbol Palette")
-initialize_keyboard_gui()
+;-------------------------------------------------------------------------------
+; Utilities
+;-------------------------------------------------------------------------------
 
 ; Disable Win key while retaining the modifiying function.
 ~LWin::VKE8
 ~RWin::VKE8
+; Disable extra buttons on the mouse.
+XButton1::Return
+XButton2::Return
+
+#^v:: {
+	SendText A_Clipboard
+}
+
+no_hold() {
+	static count := Map()
+	count.Default := 0
+	If SubStr(A_ThisHotkey, -3) = " Up" {
+		count[SubStr(A_ThisHotkey, 1, -3)] := 0
+	} Else {
+		count[A_ThisHotkey]++
+		If count[A_ThisHotkey] > 1 {
+			Exit
+		}
+	}
+}
+
+;-------------------------------------------------------------------------------
+; Caps lock
+;-------------------------------------------------------------------------------
+
+set_next_input_language() {
+	WinExist("A")
+	PostMessage 0x50, 4, , ControlGetFocus()
+}
+
+toggle_ime_convmode() {
+	current_convmode := get_ime_convmode()
+	; 默认为英文状态，则转换模式为268435456。
+	If (current_convmode = 0 || current_convmode = 0x10000000) {
+		set_ime_convmode(1)
+	} Else {
+		set_ime_convmode(0)
+	}
+}
+
+set_ime_convmode(mode) {
+	SendMessage 0x0283 ; Message = WM_IME_CONTROL
+		, 0x0002 ; wParam = IMC_SETCONVERSIONMODE
+		, mode ; lParam = CONVERSIONMODE
+		, DllCall("imm32\ImmGetDefaultIMEWnd", "UInt", WinExist("A"))
+}
+
+get_ime_convmode() {
+	Return SendMessage(0x0283 ; Message = WM_IME_CONTROL
+		, 0x0001 ; wParam = IMC_GETCONVERSIONMODE
+		, 0 ; lParam = 0
+		, DllCall("imm32\ImmGetDefaultIMEWnd", "Uint", WinExist("A")))
+}
 
 CapsLock:: {
-	global capslock_count
-	capslock_count++
-	If (capslock_count > 1) {
-		Return
-	}
+	no_hold()
 	If (GetKeyState("CapsLock", "T")) {
 		SetCapsLockState false
 	} Else {
@@ -24,9 +80,60 @@ CapsLock:: {
 }
 
 CapsLock Up:: {
-	global capslock_count
-	capslock_count := 0
+	no_hold()
 }
+
+;-------------------------------------------------------------------------------
+; Alternate graphs
+;-------------------------------------------------------------------------------
+
+keyboard_data := [
+	[["×", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉", "₀", "−", "±", "",
+	"", "", "ς", "ε", "ρ", "τ", "υ", "θ", "ι", "ο", "π", "◀", "▶", "U+",
+	"", "α", "σ", "δ", "φ", "γ", "η", "ξ", "κ", "λ", "", "", "",
+	"", "ζ", "χ", "ψ", "ω", "β", "ν", "μ", "⟨", "⟩", "÷", "αβγ"],
+	["", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "⁰", "", "", "",
+	"", "", "Σ", "Ε", "Ρ", "Τ", "Υ", "Θ", "Ι", "Ο", "Π", "", "", "",
+	"", "Α", "Σ", "Δ", "Φ", "Γ", "Η", "Ξ", "Κ", "Λ", "", "", "",
+	"", "Ζ", "Χ", "Ψ", "Ω", "Β", "Ν", "Μ", "≤", "≥", "", "ΑΒΓ"]],
+	[["⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "", "", "",
+	"", "⑪", "⑫", "⑬", "⑭", "⑮", "⑯", "⑰", "⑱", "⑲", "⑳", "◀", "▶", "U+",
+	"", "㉑", "㉒", "㉓", "㉔", "㉕", "㉖", "㉗", "㉘", "㉙", "㉚", "", "",
+	"", "㉛", "㉜", "㉝", "㉞", "㉟", "㊱", "㊲", "㊳", "㊴", "㊵", "①②"],
+	["🄀", "⒈", "⒉", "⒊", "⒋", "⒌", "⒍", "⒎", "⒏", "⒐", "⒑", "", "", "",
+	"", "⒒", "⒓", "⒔", "⒕", "⒖", "⒗", "⒘", "⒙", "⒚", "⒛", "", "", "",
+	"", "⑴", "⑵", "⑶", "⑷", "⑸", "⑹", "⑺", "⑻", "⑼", "⑽", "", "",
+	"", "⑾", "⑿", "⒀", "⒁", "⒂", "⒃", "⒄", "⒅", "⒆", "⒇", "⒈⑵"]],
+	[["●", "◎", "⊙", "○", "■", "◆", "★", "□", "◇", "☆", "", "", "", "",
+	"", "↖", "↑", "↗", "◤", "▲", "◥", "◸", "△", "◹", "", "◀", "▶", "U+",
+	"", "←", "↓", "→", "◀", "", "▶", "◁", "", "▷", "", "", "",
+	"", "↙", "↓", "↘", "◣", "▼", "◢", "◺", "▽", "◿", "", "○△□"],
+	["", "", "", "", "", "", "", "", "", "", "", "", "", "",
+	"", "", "", "", "", "", "", "", "", "", "", "", "", "",
+	"", "", "", "", "", "", "", "", "", "", "", "", "",
+	"", "", "", "", "", "", "", "", "", "", "", ""]],
+	[["", "▁", "▂", "▃", "▄", "▅", "▅", "▆", "▇", "█", "▓", "▒", "░", "",
+	"", "▘", "▔", "▝", "▛", "▀", "▜", "▉", "▊", "▋", "▌", "◀", "▶", "U+",
+	"", "▏", "▞", "▕", "▌", "█", "▐", "▍", "▎", "▏", "▚", "", "",
+	"", "▖", "▁", "▗", "▙", "▄", "▟", "", "", "", "", "▞"],
+	["", "", "", "", "", "", "", "", "", "", "", "", "", "",
+	"", "", "", "", "", "", "", "", "", "", "", "", "", "",
+	"", "", "", "", "", "", "", "", "", "", "", "", "",
+	"", "", "", "", "", "", "", "", "", "", "", ""]],
+	[["╲", "─", "│", "╳", "━", "┃", "", "═", "║", "╭", "╮", "╰", "╯", "",
+	"", "┌", "┬", "┐", "┏", "┳", "┓", "╔", "╦", "╗", "", "◀", "▶", "U+",
+	"", "├", "┼", "┤", "┣", "╋", "┫", "╠", "╬", "╣", "", "", "",
+	"", "└", "┴", "┘", "┗", "┻", "┛", "╚", "╩", "╝", "╱", "┼╋╬"],
+	["", "", "", "", "", "", "", "", "", "", "", "", "", "",
+	"", "", "", "", "", "", "", "", "", "", "", "", "", "",
+	"", "", "", "", "", "", "", "", "", "", "", "", "",
+	"", "", "", "", "", "", "", "", "", "", "", ""]],
+]
+; WS_EX_TRANSPARENT makes mouse clicks pass through it. I don't know why, but it works.
+keyboard_gui := Gui("+AlwaysOnTop -Caption +Owner -Theme +E0x20", "Symbol Palette")
+inactive_style := "c123456 BackgroundABCDEF"
+active_style := "cABCDEF Background123456"
+initialize_keyboard_gui()
 
 multi_tap(characters) {
 	static count
@@ -75,59 +182,23 @@ multi_tap(characters) {
 <#+z::multi_tap("ẐŽ")
 <#z:: multi_tap("ẑž")
 
->!+a::Send "Α"
->!+b::Send "Β"
->!+c::Send "Ψ"
->!+d::Send "Δ"
->!+e::Send "Ε"
->!+f::Send "Φ"
->!+g::Send "Γ"
->!+h::Send "Η"
->!+i::Send "Ι"
->!+j::Send "Ξ"
->!+k::Send "Κ"
->!+l::Send "Λ"
->!+m::Send "Μ"
->!+n::Send "Ν"
->!+o::Send "Ο"
->!+p::Send "Π"
->!+q::Return
->!+r::Send "Ρ"
->!+s::Send "Σ"
->!+t::Send "Τ"
->!+u::Send "Θ"
->!+v::Send "Ω"
->!+w::Return
->!+x::Send "Χ"
->!+y::Send "Υ"
->!+z::Send "Ζ"
-
->!a::Send "α"
->!b::Send "β"
->!c::Send "ψ"
->!d::Send "δ"
->!e::Send "ε"
->!f::Send "φ"
->!g::Send "γ"
->!h::Send "η"
->!i::Send "ι"
->!j::Send "ξ"
->!k::Send "κ"
->!l::Send "λ"
->!m::Send "μ"
->!n::Send "ν"
->!o::Send "ο"
->!p::Send "π"
->!q::Return
->!r::Send "ρ"
->!s::Send "σ"
->!t::Send "τ"
->!u::Send "θ"
->!v::Send "ω"
->!w::Send "ς"
->!x::Send "χ"
->!y::Send "υ"
->!z::Send "ζ"
+~*RAlt:: {
+	no_hold()
+	Send "{Blind}{VKE8}"
+	keyboard_update()
+	keyboard_gui.Show("NA")
+}
+~*RAlt Up::{
+	no_hold()
+	keyboard_gui.Hide()
+}
+*>!Shift::
+*>!Shift Up::{
+	no_hold()
+	keyboard_update()
+}
+>![::keyboard_update(Mod(keyboard_active_category + keyboard_data.Length - 2, keyboard_data.Length) + 1)
+>!]::keyboard_update(Mod(keyboard_active_category, keyboard_data.Length) + 1)
 
 #NumpadSub::Send "−"
 #HotIf WinActive("ahk_exe LyX.exe")
@@ -215,443 +286,186 @@ multi_tap(characters) {
 #]::Send "〗"
 
 initialize_keyboard_gui() {
-	global keyboard_buttons
-	key_width := 48
-	key_height := 48
+	global keyboard_buttons, keyboard_categories, keyboard_active_category
+	key_width := 32
+	key_height := 32
 	keyboard_gui.MarginX := 0
 	keyboard_gui.MarginY := 0
-	keyboard_gui.SetFont("s18", "M+ 1c")
+	keyboard_gui.SetFont("s16", "Source Sans Pro")
+	keyboard_categories := []
+	category_width := key_width * 15 // keyboard_data.Length
+	For data in keyboard_data {
+		keyboard_categories.Push(keyboard_gui.AddText(
+			"x+0 y0 w" . category_width . " r1 Center " . inactive_style
+		))
+	}
 	keyboard_buttons := [
 		-1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
 		-1.5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.5,
 		-1.75, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2.25,
 		-2.25, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2.75,
-		-1.25, 1.25, 1.25, 6.25, 1.25, 1.25, 1.25, 1.25,
+		; -1.25, 1.25, 1.25, 6.25, 1.25, 1.25, 1.25, 1.25,
 	]
 	For index, width in keyboard_buttons {
-		keyboard_buttons[index] := keyboard_gui.AddButton(
+		keyboard_buttons[index] := keyboard_gui.AddText(
 			(width >= 0 ? "x+0 yp+0" : "x0 y+0")
 			. " w" . key_width * Abs(width) . " h" . key_height
+			. " Center Border +0x200 +0x80 " ; SS_CENTERIMAGE | SS_NOPREFIX
+			. inactive_style
 		)
-		keyboard_buttons[index].OnEvent("Click", button_handler)
 	}
 	keyboard_gui.Show("xCenter y" . key_height . " Hide")
-	keyboard_gui.Opt("+LastFound")
-	WinSetTransparent 192
+	WinSetTransparent 192, keyboard_gui
+	keyboard_active_category := 1
+	keyboard_update()
+	; Detect ahk_id instead of pure HWND so that hotkeys are only active while the window is visible.
+	HotIfWinExist "ahk_id " . keyboard_gui.Hwnd
+	hotkeys := Map(
+		"VKC0", 1, "1", 2, "2", 3, "3", 4, "4", 5, "5", 6, "6", 7, "7", 8, "8", 9, "9", 10, "0", 11, "VKBD", 12, "VKBB", 13,
+		"q", 16, "w", 17, "e", 18, "r", 19, "t", 20, "y", 21, "u", 22, "i", 23, "o", 24, "p", 25,
+		"a", 30, "s", 31, "d", 32, "f", 33, "g", 34, "h", 35, "j", 36, "k", 37, "l", 38, "VKBA", 39, "VKDE", 40,
+		"z", 43, "x", 44, "c", 45, "v", 46, "b", 47, "n", 48, "m", 49, "VKBC", 50, "VKBE", 51, "VKBF", 52,
+	)
+	For key, index in hotkeys {
+		Hotkey ">!" . key, (index => (*) => button_keydown(index))(index)
+		Hotkey ">!" . key . " Up", (index => (*) => button_keyup(index))(index)
+	}
+	HotIfWinExist
 }
 
-#HotIf WinExist(keyboard_gui) && False
-`::button_keydown(1)
-` Up::button_keyup(1)
-1::button_keydown(2)
-1 Up::button_keyup(2)
-2::button_keydown(3)
-2 Up::button_keyup(3)
-3::button_keydown(4)
-3 Up::button_keyup(4)
-4::button_keydown(5)
-4 Up::button_keyup(5)
-5::button_keydown(6)
-5 Up::button_keyup(6)
-6::button_keydown(7)
-6 Up::button_keyup(7)
-7::button_keydown(8)
-7 Up::button_keyup(8)
-8::button_keydown(9)
-8 Up::button_keyup(9)
-9::button_keydown(10)
-9 Up::button_keyup(10)
-0::button_keydown(11)
-0 Up::button_keyup(11)
--::button_keydown(12)
-VKBD Up::button_keyup(12)
-=::button_keydown(13)
-VKBB Up::button_keyup(13)
-q::button_keydown(16)
-q Up::button_keyup(16)
-w::button_keydown(17)
-w Up::button_keyup(17)
-e::button_keydown(18)
-e Up::button_keyup(18)
-r::button_keydown(19)
-r Up::button_keyup(19)
-t::button_keydown(20)
-t Up::button_keyup(20)
-y::button_keydown(21)
-y Up::button_keyup(21)
-u::button_keydown(22)
-u Up::button_keyup(22)
-i::button_keydown(23)
-i Up::button_keyup(23)
-o::button_keydown(24)
-o Up::button_keyup(24)
-p::button_keydown(25)
-p Up::button_keyup(25)
-[::button_keydown(26)
-[ Up::button_keyup(26)
-]::button_keydown(27)
-] Up::button_keyup(27)
-\::button_keydown(28)
-\ Up::button_keyup(28)
-a::button_keydown(30)
-a Up::button_keyup(30)
-s::button_keydown(31)
-s Up::button_keyup(31)
-d::button_keydown(32)
-d Up::button_keyup(32)
-f::button_keydown(33)
-f Up::button_keyup(33)
-g::button_keydown(34)
-g Up::button_keyup(34)
-h::button_keydown(35)
-h Up::button_keyup(35)
-j::button_keydown(36)
-j Up::button_keyup(36)
-k::button_keydown(37)
-k Up::button_keyup(37)
-l::button_keydown(38)
-l Up::button_keyup(38)
-`;::button_keydown(39)
-VKBA Up::button_keyup(39)
-'::button_keydown(40)
-VKDE Up::button_keyup(40)
-z::button_keydown(43)
-z Up::button_keyup(43)
-x::button_keydown(44)
-x Up::button_keyup(44)
-c::button_keydown(45)
-c Up::button_keyup(45)
-v::button_keydown(46)
-v Up::button_keyup(46)
-b::button_keydown(47)
-b Up::button_keyup(47)
-n::button_keydown(48)
-n Up::button_keyup(48)
-m::button_keydown(49)
-m Up::button_keyup(49)
-,::button_keydown(50)
-VKBC Up::button_keyup(50)
-.::button_keydown(51)
-VKBE Up::button_keyup(51)
-/::button_keydown(52)
-VKBF Up::button_keyup(52)
-#HotIf
-
-#F1:: {
-	show_symbol_palette([""
-		. "", "∣", "∥", "⟂", "", "", "", "", "", "", "", "∈", "∋", ""
-		, "", "=", "<", ">", "≤", "≥", "≲", "≳", "≦", "≧", "⩽", "⩾", "≃", ""
-		, "", "∼", "≺", "≻", "⪯", "⪰", "≼", "≽", "≾", "≿", "≅", "≆", ""
-		, "", "≈", "⊂", "⊃", "⊆", "⊇", "⫇", "⫈", "⫅", "⫆", "⪋", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-+#F1:: {
-	show_symbol_palette([""
-		. "", "∤", "∦", "⫽", "", "", "", "", "", "", "", "∉", "∌", ""
-		, "", "≠", "≮", "≯", "≰", "≱", "≴", "≵", "", "", "", "", "", ""
-		, "", "≁", "⊀", "⊁", "⪱", "⪲", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-#F2:: {
-	show_symbol_palette([""
-		. "", "¬", "∧", "∨", "⊕", "⊙", "⊼", "", "", "⊤", "⊥", "±", "∓", ""
-		, "", "∁", "∩", "∪", "∖", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-+#F2:: {
-	show_symbol_palette([""
-		. "", "¨", "¯", "<", "≤", "=", "≥", ">", "≠", "∨", "∧", "+", "×", ""
-		, "", "?", "⍵", "⍷", "⍴", "∼", "↑", "↓", "⍳", "⍜", "⋆", "←", "→", ""
-		, "", "⍺", "⌈", "⌊", "", "⍙", "⍢", "∘", "'", "⎕", "", "", ""
-		, "", "⊂", "⊃", "∩", "∪", "⊥", "⊤", "∣", "", "", "", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-#F3:: {
-	show_symbol_palette([""
-		. "⅟", "½", "↉", "⅓", "⅔", "¼", "¾", "⅕", "⅖", "⅗", "⅘", "⅙", "⅚", ""
-		, "", "∵", "∶", "°", "′", "″", "‴", "⁗", "", "", "", "", "", "∎"
-		, "", "∴", "∷", "⩵", "≔", "", "", "", "", "", "", "", ""
-		, "", "∠", "⋕", "⧣", "", "", "", "", "", "", "", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-+#F3:: {
-	show_symbol_palette([""
-		. "⅐", "⅛", "⅜", "⅝", "⅞", "⅑", "⅒", "", "⁺", "⁽", "⁾", "⁻", "⁼", ""
-		, "", "", "", "", "", "", "", "", "₊", "₍", "₎", "₋", "₌", ""
-		, "", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "⁰", "⁄", ""
-		, "", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉", "₀", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-#F4:: {
-	show_symbol_palette([""
-		. "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "", "", ""
-		, "", "", "ς", "ε", "ρ", "τ", "υ", "θ", "ι", "ο", "π", "", "", ""
-		, "", "α", "σ", "δ", "φ", "γ", "η", "ξ", "κ", "λ", "", "", ""
-		, "", "ζ", "χ", "ψ", "ω", "β", "ν", "μ", "", "", "", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-+#F4:: {
-	show_symbol_palette([""
-		. "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "", "", ""
-		, "", "", "Σ", "Ε", "Ρ", "Τ", "Υ", "Θ", "Ι", "Ο", "Π", "", "", ""
-		, "", "Α", "Σ", "Δ", "Φ", "Γ", "Η", "Ξ", "Κ", "Λ", "", "", ""
-		, "", "Ζ", "Χ", "Ψ", "Ω", "Β", "Ν", "Μ", "", "", "", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-#F5:: {
-	show_symbol_palette([""
-		. "⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "", "", ""
-		, "", "⑪", "⑫", "⑬", "⑭", "⑮", "⑯", "⑰", "⑱", "⑲", "⑳", "", "", ""
-		, "", "㉑", "㉒", "㉓", "㉔", "㉕", "㉖", "㉗", "㉘", "㉙", "㉚", "", ""
-		, "", "㉛", "㉜", "㉝", "㉞", "㉟", "㊱", "㊲", "㊳", "㊴", "㊵", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-+#F5:: {
-	show_symbol_palette([""
-		. "🄋", "➀", "➁", "➂", "➃", "➄", "➅", "➆", "➇", "➈", "➉", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "⓵", "⓶", "⓷", "⓸", "⓹", "⓺", "⓻", "⓼", "⓽", "⓾", "", ""
-		, "", "㊶", "㊷", "㊸", "㊹", "㊺", "㊻", "㊼", "㊽", "㊾", "㊿", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-#F6:: {
-	show_symbol_palette([""
-		. "⓿", "❶", "❷", "❸", "❹", "❺", "❻", "❼", "❽", "❾", "❿", "", "", ""
-		, "", "⓫", "⓬", "⓭", "⓮", "⓯", "⓰", "⓱", "⓲", "⓳", "⓴", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-+#F6:: {
-	show_symbol_palette([""
-		. "🄌", "➊", "➋", "➌", "➍", "➎", "➏", "➐", "➑", "➒", "➓", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-#F7:: {
-	show_symbol_palette([""
-		. "●", "◎", "⊙", "○", "■", "◆", "★", "□", "◇", "☆", "", "", "", ""
-		, "", "↖", "↑", "↗", "◤", "▲", "◥", "◸", "△", "◹", "░", "▒", "▓", "█"
-		, "", "←", "↓", "→", "◀", "", "▶", "◁", "", "▷", "", "", ""
-		, "", "↙", "↓", "↘", "◣", "▼", "◢", "◺", "▽", "◿", "", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-+#F7:: {
-	show_symbol_palette([""
-		. "", "▁", "▂", "▃", "▄", "▅", "▅", "▆", "▇", "█", "", "", "", ""
-		, "", "▘", "▔", "▝", "▛", "▀", "▜", "▉", "▊", "▋", "▌", "▍", "▎", "▏"
-		, "", "▏", "▞", "▕", "▌", "█", "▐", "", "▚", "", "", "", ""
-		, "", "▖", "▁", "▗", "▙", "▄", "▟", "", "", "", "", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-#F8:: {
-	show_symbol_palette([""
-		. "", "─", "│", "", "━", "┃", "", "═", "║", "", "", "", "", ""
-		, "", "┌", "┬", "┐", "┏", "┳", "┓", "╔", "╦", "╗", "╭", "╮", "╳", "╲"
-		, "", "├", "┼", "┤", "┣", "╋", "┫", "╠", "╬", "╣", "╰", "╯", ""
-		, "", "└", "┴", "┘", "┗", "┻", "┛", "╚", "╩", "╝", "╱", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-+#F8:: {
-	show_symbol_palette([""
-		. "", "⏜", "⏝", "⎴", "⎵", "⏞", "⏟", "⎪", "⎰", "", "", "", "", ""
-		, "", "⎛", "⎞", "⎡", "⎤", "⎧", "⎫", "⌠", "⎱", "", "", "", "", ""
-		, "", "⎜", "⎟", "⎢", "⎥", "⎨", "⎬", "⎮", "⎲", "", "", "", ""
-		, "", "⎝", "⎠", "⎣", "⎦", "⎩", "⎭", "⌡", "⎳", "", "", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-#F9:: {
-	show_symbol_palette([""
-		. "🄀", "⒈", "⒉", "⒊", "⒋", "⒌", "⒍", "⒎", "⒏", "⒐", "⒑", "", "", ""
-		, "", "⒒", "⒓", "⒔", "⒕", "⒖", "⒗", "⒘", "⒙", "⒚", "⒛", "", "", ""
-		, "", "⑴", "⑵", "⑶", "⑷", "⑸", "⑹", "⑺", "⑻", "⑼", "⑽", "", ""
-		, "", "⑾", "⑿", "⒀", "⒁", "⒂", "⒃", "⒄", "⒅", "⒆", "⒇", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-+#F9:: {
-	show_symbol_palette([""
-		. "‥", "⿰", "⿱", "⿲", "⿳", "⿴", "⿵", "⿶", "⿷", "⿸", "⿹", "⿺", "⿻", ""
-		, "", "︻", "︵", "﹇", "︷", "﹃", "﹁", "︱", "￤", "︳", "︴", "‖", "︰", ""
-		, "", "︼", "︶", "﹈", "︸", "﹄", "﹂", "￣", "﹉", "﹊", "﹋", "﹌", ""
-		, "", "︹", "︺", "︽", "︾", "︿", "﹀", "", "﹍", "﹎", "﹏", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-#F10:: {
-	show_symbol_palette([""
-		. "", "Ⅰ", "Ⅱ", "Ⅲ", "Ⅳ", "Ⅴ", "Ⅵ", "Ⅶ", "Ⅷ", "Ⅸ", "Ⅹ", "Ⅺ", "Ⅻ", ""
-		, "", "ⅰ", "ⅱ", "ⅲ", "ⅳ", "ⅴ", "ⅵ", "ⅶ", "ⅷ", "ⅸ", "ⅹ", "ⅺ", "ⅻ", ""
-		, "", "㈠", "㈡", "㈢", "㈣", "㈤", "㈥", "㈦", "㈧", "㈨", "㈩", "", ""
-		, "", "㊀", "㊁", "㊂", "㊃", "㊄", "㊅", "㊆", "㊇", "㊈", "㊉", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-+#F10:: {
-	show_symbol_palette([""
-		. "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "☰", "☱", "☲", "☳", "☴", "☵", "☶", "☷", "⚊", "⚋", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-#F11:: {
-	show_symbol_palette([""
-		. "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "§", "№", "℡", "〓", "℃", "℉", "ℓ", "", "", "", "♀", "♂", ""
-		, "", "〃", "々", "〆", "〒", "※", "", "", "", "", "", "", ""
-		, "", "•", "‣", "⁎", "⁑", "†", "‡", "⹋", "℮", "‧", "", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
-+#F11:: {
-	show_symbol_palette([""
-		. "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
+keyboard_update(index := keyboard_active_category) {
+	global keyboard_active_category
+	keyboard_categories[keyboard_active_category].Opt(inactive_style)
+	keyboard_categories[keyboard_active_category].Redraw()
+	keyboard_active_category := index
+	keyboard_categories[keyboard_active_category].Opt(active_style)
+	keyboard_categories[keyboard_active_category].Redraw()
+	shift := GetKeyState("LShift", "P") || GetKeyState("RShift", "P")
+	For category in keyboard_categories {
+		category.Text := keyboard_data[A_Index][shift + 1][-1]
+	}
+	For button in keyboard_buttons {
+		button.Text := keyboard_data[index][shift + 1][A_Index]
+	}
 }
 
+enable_blur(hWnd) {
+	; WindowCompositionAttribute
+	WCA_ACCENT_POLICY := 19
 
-#F21:: {
-	show_symbol_palette([""
-		. "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", "", "", "", "", "", "", "", ""
-		, "", "", "", "", " ", "", "", ""
-	. ""])
-}
+	; AccentState
+	ACCENT_DISABLED := 0,
+	ACCENT_ENABLE_GRADIENT := 1,
+	ACCENT_ENABLE_TRANSPARENTGRADIENT := 2
+	ACCENT_ENABLE_BLURBEHIND := 3
+	ACCENT_INVALID_STATE := 4
 
-#F12:: {
-	show_symbol_palette([""
-		. "``", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "⌫"
-		, "↹", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\"
-		, "⇬", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "↵"
-		, "⇧", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "⇧"
-		, "^", "⌘", "⌥", " ", "⌥", "⌘", "❖", "^"
-	. ""])
-}
-+#F12:: {
-	show_symbol_palette([""
-		. "``", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "⌫"
-		, "↹", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "\"
-		, "⇬", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "↵"
-		, "⇧", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "⇧"
-		, "^", "⌘", "⌥", " ", "⌥", "⌘", "❖", "^"
-	. ""])
+	AccentPolicy := Buffer(16)
+	NumPut("UInt", ACCENT_ENABLE_BLURBEHIND, AccentPolicy)
+
+	WindowCompositionAttributeData := Buffer(A_PtrSize * 3)
+	NumPut(
+		"UPtr", WCA_ACCENT_POLICY,
+		"UPtr", AccentPolicy.Ptr,
+		"UPtr", AccentPolicy.Size,
+		WindowCompositionAttributeData
+	)
+
+	DllCall("SetWindowCompositionAttribute", "Ptr", hWnd, "Ptr", WindowCompositionAttributeData.Ptr)
 }
 
 button_keydown(number) {
-	ControlClick "x1 y1", "key_button" . number, , , , "D"
-	button_event(number)
+	SendText keyboard_buttons[number].Text
+	keyboard_buttons[number].Opt(active_style)
+	keyboard_buttons[number].Redraw()
 }
 
 button_keyup(number) {
-	ControlClick "x1 y1", "key_button" . number, , , , "U"
+	keyboard_buttons[number].Opt(inactive_style)
+	keyboard_buttons[number].Redraw()
 }
 
-button_handler(control, info) {
-	button_event(SubStr(control.Name, 11))
-}
+;-------------------------------------------------------------------------------
+; (La)TeX math symbols
+;-------------------------------------------------------------------------------
 
-button_event(number) {
-	;GuiControlGet, symbol, , key_button%number%, Text
-	Send "%"
-}
+#Hotstring C O T
 
-show_symbol_palette(symbols) {
-	If (symbols.Length > 0) {
-		For index, symbol in symbols {
-			keyboard_buttons[index].Text := symbol
+
+;-------------------------------------------------------------------------------
+; Unicode search
+;-------------------------------------------------------------------------------
+
+unicode_data := Map()
+unicode_gui := Gui("+ToolWindow -Theme", "Unicode Palette")
+unicode_gui.SetFont("s12", "Source Sans Pro")
+unicode_search := unicode_gui.AddEdit("w600")
+unicode_list := unicode_gui.AddListView("w600 r16 -Multi -Hdr")
+unicode_gui.AddButton("xm+240 w120 Default", "⎀").OnEvent("Click", on_unicode_submit)
+initialize_unicode()
+
+initialize_unicode() {
+	f := FileRead("NamesList.txt")
+	f := StrSplit(f, "C0 controls`n", , 2)[2]
+	Loop Parse f, "`n" {
+		If RegExMatch(A_LoopField, "^$|^@|^\t?;") {
+			Continue
+		} Else If RegExMatch(A_LoopField, "^[0-9A-F]{4,6}\t") {
+			fields := StrSplit(A_LoopField, "`t", , 2)
+			codepoint := Integer("0x" . fields[1])
+			unicode_data[codepoint] := fields[2]
+		} Else {
+			unicode_data[codepoint] .= A_LoopField
 		}
-		keyboard_gui.Show("NA")
-	} Else {
-		keyboard_gui.Hide()
 	}
+
+	unicode_gui.OnEvent("Escape", (*) => unicode_gui.Hide())
+	unicode_search.OnEvent("Change", (*) => unicode_update())
+	unicode_list.InsertCol(1, "32")
+	unicode_list.InsertCol(2, "72")
+	unicode_list.InsertCol(3, "AutoHdr")
+	unicode_list.OnEvent("DoubleClick", on_unicode_submit)
+	unicode_update()
 }
 
-set_next_input_language() {
-	WinExist("A")
-	PostMessage 0x50, 4, , ControlGetFocus()
-}
-
-toggle_ime_convmode() {
-	current_convmode := get_ime_convmode()
-	; 默认为英文状态，则转换模式为268435456。
-	If (current_convmode = 0 || current_convmode = 0x10000000) {
-		set_ime_convmode(1)
-	} Else {
-		set_ime_convmode(0)
+unicode_update() {
+	needle := unicode_search.Text
+	filtered := []
+	Try {
+		unicode_data[Integer("0x" . needle)]
+		filtered.Push(Integer("0x" . needle))
 	}
+	For codepoint, info in unicode_data {
+		If needle == "" || InStr(info, needle, false) {
+			filtered.Push(codepoint)
+			If filtered.Length >= 16 {
+				Break
+			}
+		}
+	}
+
+	unicode_list.Opt("-Redraw")
+	unicode_list.Delete()
+	For codepoint in filtered {
+		unicode_list.Add(
+			A_Index == 1 ? "Select Focus" : "",
+			Chr(codepoint),
+			Format("U+{:04X}", codepoint),
+			unicode_data[codepoint],
+		)
+	}
+	unicode_list.Opt("+Redraw")
 }
 
-set_ime_convmode(mode) {
-	SendMessage 0x0283 ; Message = WM_IME_CONTROL
-		, 0x0002 ; wParam = IMC_SETCONVERSIONMODE
-		, mode ; lParam = CONVERSIONMODE
-		, DllCall("imm32\ImmGetDefaultIMEWnd", "UInt", WinExist("A"))
+on_unicode_submit(*) {
+	If unicode_list.GetNext() < 1 {
+		Return
+	}
+	unicode_gui.Hide()
+	SendText unicode_list.GetText(unicode_list.GetNext())
 }
 
-get_ime_convmode() {
-	Return SendMessage(0x0283 ; Message = WM_IME_CONTROL
-		, 0x0001 ; wParam = IMC_GETCONVERSIONMODE
-		, 0 ; lParam = 0
-		, DllCall("imm32\ImmGetDefaultIMEWnd", "Uint", WinExist("A")))
-}
-
-text_to_tex(str) {
-	; StrReplace不好用，因为它不知道区不区分大小写
-	str := RegExReplace(str, "“", "````")
-	str := RegExReplace(str, "”", "''")
-	str := RegExReplace(str, "‘", "``")
-	str := RegExReplace(str, "’", "'")
-	str := RegExReplace(str, "\bLaTeX\b", "\LaTeX{}")
-	str := RegExReplace(str, "TeX\b", "\TeX{}")
-	str := RegExReplace(str, "\bTeXbook\b", "\TeX book")
-	str := RegExReplace(str, "\bMETAFONT\b", "\MF{}")
-	str := RegExReplace(str, "\bMETAFONTbook\b", "\MF book")
-	str := RegExReplace(str, "−", "--")
-	str := RegExReplace(str, "—", "---")
-	str := RegExReplace(str, "i)\bPh\.\s?D\. ", "Ph.D.\ ")
-	str := RegExReplace(str, "\b(Miss|Ms|Mrs?|cf|v\.?s)\.\s", "$1.~")
-	str := RegExReplace(str, Chr(160), "~")
-	str := RegExReplace(str, "%", "\%")
-	str := RegExReplace(str, "i)(?:https?|s?ftps?|git|telnet)://[\w~!@#\$%\^&\*\(\)\[\]\{\}<>,\./\?=\+:;`"'-]{4,2083}", "\url{$0}")
-	str := RegExReplace(str, "(\w)\s&\s(\w)", "$1 \& $2")
-	str := RegExReplace(str, "$(\d)", "\$$$1")
-	str := RegExReplace(str, "#(\d)", "\#$1")
-	str := RegExReplace(str, "<em>(.+?)</em>", "\emph{$1}")
-	Return str
-}
-
-XButton1::Return
-XButton2::Return
-
-#^v:: {
-	SendText A_Clipboard
+!\:: {
+	unicode_gui.Show()
+	unicode_search.Focus()
 }

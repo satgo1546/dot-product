@@ -41,20 +41,20 @@ transform_selection(transform) {
 	old_clipboard := ClipboardAll()
 	A_Clipboard := ""
 	Send "^c"
-	If ClipWait(.1) {
-		If InStr(A_Clipboard, "`n", false) == StrLen(A_Clipboard) {
-			result := transform()
-		} Else {
-			result := transform(A_Clipboard)
-		}
+	If !ClipWait(.1) || InStr(A_Clipboard, "`n", false) == StrLen(A_Clipboard) || IsSpace(A_Clipboard) {
+		result := transform("") . "fail"
 	} Else {
-		result := transform()
+		before := RegExMatch(A_Clipboard, "^\s*\n", &match) ? match[] : ""
+		after := RegExMatch(A_Clipboard, "\r?\n\s*$", &match) ? match[]: ""
+		result := before . transform(SubStr(A_Clipboard, StrLen(before) + 1, -StrLen(after))) . after . "succ"
 	}
+	A_Clipboard := result
+	Send "^v"
+	Sleep 0.1
 	A_Clipboard := old_clipboard
 	old_clipboard := ""
-	SendText result
 }
-
+ 
 ;-------------------------------------------------------------------------------
 ; Caps lock
 ;-------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ CapsLock Up:: {
 
 keyboard_data := [
 	[["×", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉", "₀", "−", "±", unset,
-	unset, "", "ς", "ε", "ρ", "τ", "υ", "θ", "ι", "ο", "π", unset, unset, unset,
+	unset, "😾", "ς", "ε", "ρ", "τ", "υ", "θ", "ι", "ο", "π", unset, unset, unset,
 	unset, "α", "σ", "δ", "φ", "γ", "η", "ξ", "κ", "λ", "°", "′", unset,
 	unset, "ζ", "χ", "ψ", "ω", "β", "ν", "μ", "⟨", "⟩", "÷", "αβγ"],
 	["≈", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "⁰", "", "", unset,
@@ -360,11 +360,12 @@ button_keyup(number) {
 }
 
 ;-------------------------------------------------------------------------------
-; (La)TeX math symbols
+; Named symbols in HTML and (La)TeX
 ;-------------------------------------------------------------------------------
 
 #Hotstring C O T
-
+#Include html_entities.ahk
+#Include latex.ahk
 
 ;-------------------------------------------------------------------------------
 ; Unicode search

@@ -383,7 +383,7 @@ initialize_unicode() {
 	f := FileRead("NamesList.txt")
 	f := StrSplit(f, "C0 controls`n", , 2)[2]
 	Loop Parse f, "`n" {
-		If RegExMatch(A_LoopField, "^$|^@|^\t?;") {
+		If RegExMatch(A_LoopField, "^$|^@|^\t?;|^\tx ") {
 			Continue
 		} Else If RegExMatch(A_LoopField, "^[0-9A-F]{4,6}\t") {
 			fields := StrSplit(A_LoopField, "`t", , 2)
@@ -426,14 +426,12 @@ unicode_update() {
 	unicode_list.Opt("-Redraw")
 	unicode_list.Delete()
 	For codepoint in filtered {
-		If unicode_data.Has(codepoint) {
-			unicode_list.Add(
-				A_Index == 1 ? "Select Focus" : "",
-				Chr(codepoint),
-				Format("U+{:04X}", codepoint),
-				unicode_data[codepoint],
-			)
-		}
+		unicode_list.Add(
+			A_Index == 1 ? "Select Focus" : "",
+			Chr(codepoint),
+			Format("U+{:04X}", codepoint),
+			unicode_data.Has(codepoint) ? unicode_data[codepoint] : "???",
+		)
 	}
 	unicode_list.Opt("+Redraw")
 }

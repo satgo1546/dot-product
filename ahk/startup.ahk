@@ -409,8 +409,13 @@ unicode_update() {
 	Try {
 		filtered.Push(Integer("0x" . needle))
 	}
+	first_half_surrogate := 0x114514
 	Loop Parse needle {
-		If Ord(A_LoopField) >= 128 {
+		If Ord(A_LoopField) & 0xfc00 == 0xd800 {
+			first_half_surrogate := Ord(A_LoopField) & 0x3ff
+		} Else If Ord(A_LoopField) & 0xfc00 == 0xdc00 {
+			filtered.Push(0x10000 + (first_half_surrogate << 10 | Ord(A_LoopField) & 0x3ff))
+		} Else If Ord(A_LoopField) >= 128 {
 			filtered.Push(Ord(A_LoopField))
 		}
 	}

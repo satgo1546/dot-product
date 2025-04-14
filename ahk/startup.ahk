@@ -114,22 +114,16 @@ keyboard_data := [
 	unset, "", "Σ", "Ε", "Ρ", "Τ", "Υ", "Θ", "Ι", "Ο", "Π", unset, unset, unset,
 	unset, "Α", "Σ", "Δ", "Φ", "Γ", "Η", "Ξ", "Κ", "Λ", "", "″", unset,
 	unset, "Ζ", "Χ", "Ψ", "Ω", "Β", "Ν", "Μ", "≤", "≥", "", "ΑΒΓ"]],
-	[["⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "", "", unset,
-	unset, "⑪", "⑫", "⑬", "⑭", "⑮", "⑯", "⑰", "⑱", "⑲", "⑳", unset, unset, unset,
-	unset, "㉑", "㉒", "㉓", "㉔", "㉕", "㉖", "㉗", "㉘", "㉙", "㉚", "", unset,
-	unset, "㉛", "㉜", "㉝", "㉞", "㉟", "㊱", "㊲", "㊳", "㊴", "㊵", "①②"],
-	["🄀", "⒈", "⒉", "⒊", "⒋", "⒌", "⒍", "⒎", "⒏", "⒐", "⒑", "", "", unset,
-	unset, "⒒", "⒓", "⒔", "⒕", "⒖", "⒗", "⒘", "⒙", "⒚", "⒛", unset, unset, unset,
-	unset, "⑴", "⑵", "⑶", "⑷", "⑸", "⑹", "⑺", "⑻", "⑼", "⑽", "", unset,
-	unset, "⑾", "⑿", "⒀", "⒁", "⒂", "⒃", "⒄", "⒅", "⒆", "⒇", "⒈⑵"]],
+
 	[["●", "◎", "⊙", "○", "■", "◆", "★", "□", "◇", "☆", "", "", "", unset,
 	unset, "↖", "↑", "↗", "◤", "▲", "◥", "◸", "△", "◹", "", unset, unset, unset,
 	unset, "←", "↓", "→", "◀", "", "▶", "◁", "", "▷", "", "", unset,
 	unset, "↙", "↓", "↘", "◣", "▼", "◢", "◺", "▽", "◿", "", "○△□"],
-	["", "", "", "", "", "", "", "", "", "", "", "", "", "",
-	unset, "", "", "", "", "", "", "", "", "", "", "", "", "",
-	unset, "", "", "", "", "", "", "", "", "", "", "", "",
+	["", "", "", "", "", "", "", "", "", "", "", "", "", unset,
+	unset, "", "", "", "", "", "", "", "", "", "", unset, unset, unset,
+	unset, "", "", "", "", "", "", "", "", "", "", "", unset,
 	unset, "", "", "", "", "", "", "", "", "", "", ""]],
+
 	[["", "▁", "▂", "▃", "▄", "▅", "▅", "▆", "▇", "█", "▓", "▒", "░", unset,
 	unset, "▘", "▔", "▝", "▛", "▀", "▜", "▉", "▊", "▋", "▌", unset, unset, unset,
 	unset, "▏", "▞", "▕", "▌", "█", "▐", "▍", "▎", "▏", "▚", "", unset,
@@ -138,6 +132,7 @@ keyboard_data := [
 	unset, "", "", "", "", "", "", "", "", "", "", unset, unset, unset,
 	unset, "", "", "", "", "", "", "", "", "", "", "", unset,
 	unset, "", "", "", "", "", "", "", "", "", "", ""]],
+
 	[["╲", "─", "│", "╳", "━", "┃", "", "═", "║", "╭", "╮", "╰", "╯", unset,
 	unset, "┌", "┬", "┐", "┏", "┳", "┓", "╔", "╦", "╗", "", unset, unset, unset,
 	unset, "├", "┼", "┤", "┣", "╋", "┫", "╠", "╬", "╣", "", "", unset,
@@ -146,14 +141,29 @@ keyboard_data := [
 	unset, "", "", "", "", "", "", "", "", "", "", unset, unset, unset,
 	unset, "", "", "", "", "", "", "", "", "", "", "", unset,
 	unset, "", "", "", "", "", "", "", "", "", "", ""]],
-	[["", "<h1>", "<h2>", "<h3>", "<h4>", "<h5>", "<h6>", "", "", "", "", "<del>", "", unset,
-	unset, "<blockquote>", "<details>", "<summary>", "<ruby><rt></ruby>", "<table>", "<output>", "<ul>", "<em>", "<ol>", "<p>", unset, unset, unset,
-	unset, "<a ", "<span ", "<div ", "<figure>", "<img>", "<hr>", "", "<kbd>", "<li>", "<dl>", "&apos;", unset,
-	unset, "", "<s>", "<code>", "<var>", "<strong>", "", "<mark>", "<dt>", "<dd>", "", "</>"],
-	["", "<!---->", "</h2>", "</h3>", "</h4>", "</h5>", "<sup>", "&amp;", "", "", "", "<sub>", "<ins>", unset,
-	unset, "</blockquote>", "</details>", "</summary>", "", "", "</output>", "</ul>", "</em>", "</ol>", "</p>", unset, unset, unset,
-	unset, "</a>", "</span>", "</div>", "</figure>", "", "", "", "</kbd>", "</li>", "</dl>", "&quot;", unset,
-	unset, "", "</s>", "</code>", "</var>", "<b>", "", "</mark>", "&lt;", "&gt;", "", "</>"]],
+
+	; `v = selected text
+	; `a = cursor position
+	[["", "H1`n<h1>`v</h1>", "H2`n<h2>`v</h2>", "H3`n<h3>`v</h3>", "H4`n<h4>`v</h4>", "H5`n<h5>`v</h5>", "H6`n<h6>`v</h6>", "", "", "", "", "−`n<del>`v</del>", "", unset,
+	; ▼ Details
+	; ▶ Summary
+	; ｜漢字《かんじ》
+	unset, "❝`n<blockquote>`v</blockquote>", "▼`n<details>`v</details>", "▶`n<summary>`v</summary>", "|《`n<ruby>`v<rt>`a</ruby>", "<table>", "out`n<output>`v</output>", "•`n<ul>`v</ul>", "𝐼`n<em>`v</em>", "1.`n<ol>`v</ol>", "<p>", unset, unset, unset,
+	unset, "a`n<a `a>`v</a>", "span`n<span `a>`v</span>", "div`n<div `a>`v</div>", "fig`n<figure>`v</figure>", "img`n<img `a>", "<hr>", "", "kbd`n<kbd>`v</kbd>", "<li>", "dl`n<dl>`v</dl>", "'`n&apos;", unset,
+	unset, "", "Ꟊ`n<s>`v</s>", ">_`n<code>`v</code>", "𝑣`n<var>`v</var>", "𝐁`n<strong>`v</strong>", "", "◘`n<mark>`v</mark>", "<dt>", "<dd>", "", "</>"],
+	["", "<!--`n<!--`v-->", "", "", "", "", "¹²³`n<sup>`v</sup>", "&`n&amp;", "", "", "", "₁₂₃`n<sub>`v</sub>", "+`n<ins>`v</ins>", unset,
+	unset, "❛`n<q>`v</q>", "", "", "", "", "", "Ṵ`n<u>`v</u>", "𝐼`n<i>`v</i>", "", "", unset, unset, unset,
+	unset, "", "", "", "", "", "", "", "", "", "", "`"`n&quot;", unset,
+	unset, "", "", "", "", "𝐁`n<b>`v</b>", "", "", "<`n&lt;", ">`n&gt;", "", "</>"]],
+
+	[["⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "", "", unset,
+	unset, "⑪", "⑫", "⑬", "⑭", "⑮", "⑯", "⑰", "⑱", "⑲", "⑳", unset, unset, unset,
+	unset, "㉑", "㉒", "㉓", "㉔", "㉕", "㉖", "㉗", "㉘", "㉙", "㉚", "", unset,
+	unset, "㉛", "㉜", "㉝", "㉞", "㉟", "㊱", "㊲", "㊳", "㊴", "㊵", "①②"],
+	["🄀", "⒈", "⒉", "⒊", "⒋", "⒌", "⒍", "⒎", "⒏", "⒐", "⒑", "", "", unset,
+	unset, "⒒", "⒓", "⒔", "⒕", "⒖", "⒗", "⒘", "⒙", "⒚", "⒛", unset, unset, unset,
+	unset, "⑴", "⑵", "⑶", "⑷", "⑸", "⑹", "⑺", "⑻", "⑼", "⑽", "", unset,
+	unset, "⑾", "⑿", "⒀", "⒁", "⒂", "⒃", "⒄", "⒅", "⒆", "⒇", "⒈⑵"]],
 
 	[["", "𝟏", "𝟐", "𝟑", "𝟒", "𝟓", "𝟔", "𝟕", "𝟖", "𝟗", "𝟎", "", "", unset,
 	unset, "𝐪", "𝐰", "𝐞", "𝐫", "𝐭", "𝐲", "𝐮", "𝐢", "𝐨", "𝐩", unset, unset, unset,
@@ -166,7 +176,7 @@ keyboard_data := [
 
 	[["", "", "", "", "", "", "", "", "", "", "", "", "", unset,
 	unset, "𝑞", "𝑤", "𝑒", "𝑟", "𝑡", "𝑦", "𝑢", "𝑖", "𝑜", "𝑝", unset, unset, unset,
-	unset, "𝑎", "𝑠", "𝑑", "𝑓", "𝑔", "h", "𝑗", "𝑘", "𝑙", "", "", unset,
+	unset, "𝑎", "𝑠", "𝑑", "𝑓", "𝑔", "ℎ", "𝑗", "𝑘", "𝑙", "", "", unset,
 	unset, "𝑧", "𝑥", "𝑐", "𝑣", "𝑏", "𝑛", "𝑚", "", "", "", "𝑎𝑏𝑐"],
 	["", "", "", "", "", "", "", "", "", "", "", "", "", unset,
 	unset, "𝑄", "𝑊", "𝐸", "𝑅", "𝑇", "𝑌", "𝑈", "𝐼", "𝑂", "𝑃", unset, unset, unset,
@@ -334,8 +344,8 @@ initialize_keyboard_gui() {
 		"z", 43, "x", 44, "c", 45, "v", 46, "b", 47, "n", 48, "m", 49, "VKBC", 50, "VKBE", 51, "VKBF", 52,
 	)
 	For key, index in hotkeys {
-		Hotkey ">!" . key, (index => (*) => button_keydown(index))(index)
-		Hotkey ">!" . key . " Up", (index => (*) => button_keyup(index))(index)
+		Hotkey "*>!" . key, (index => (*) => button_keydown(index))(index)
+		Hotkey "*>!" . key . " Up", (index => (*) => button_keyup(index))(index)
 	}
 	HotIfWinExist
 }
@@ -365,7 +375,12 @@ keyboard_update(index := keyboard_active_category) {
 		category.Text := keyboard_data[A_Index][shift + 1][-1]
 	}
 	For button in keyboard_buttons {
-		button.Text := keyboard_data[index][shift + 1].Get(A_Index, default[shift + 1][A_Index])
+		configuration := StrSplit(keyboard_data[index][shift + 1].Get(A_Index, default[shift + 1][A_Index]), "`n", , 2)
+		If configuration.Length < 1 {
+			configuration.Push("")
+		}
+		button.Text := configuration[1]
+		button.custom_data := configuration[-1]
 	}
 }
 
@@ -395,7 +410,26 @@ enable_blur(hWnd) {
 }
 
 button_keydown(number) {
-	SendText keyboard_buttons[number].Text
+	text := keyboard_buttons[number].custom_data
+	If text {
+		v := InStr(text, "`v", , , -1)
+		a := InStr(text, "`a")
+		If v || a {
+			original_clipboard := ClipboardAll()
+			A_Clipboard := ""
+			Send "^x"
+			ClipWait 0.5
+			SendText StrReplace(StrReplace(text, "`a", ""), "`v", A_Clipboard)
+			If a {
+				Send "{Left " . (StrLen(text) - a) . "}"
+			}
+			Sleep 0.5
+			A_Clipboard := original_clipboard
+			original_clipboard := ""
+		} Else {
+			SendText text
+		}
+	}
 	keyboard_buttons[number].Opt(active_style)
 	keyboard_buttons[number].Redraw()
 }

@@ -43,15 +43,20 @@ def write_file():
     if file.filename == "":
         return "filename needed", 400
     file.save(os.path.join("C:\\", file.filename))
-    return f"done writing {file.filename}"
+    return f"done writing <tt>{file.filename}</tt>"
 
 
 subdomains: dict[str, str] = {}
 
 
+@app.route("/", subdomain="<subdomain>")
 @app.route("/<path:path>", subdomain="<subdomain>")
-def serve_dir(subdomain, path):
-    print(subdomain, subdomains[subdomain], path)
+def serve_dir(subdomain, path=""):
+    if not path or path.endswith("/"):
+        path += "index.html"
+    print(subdomain, subdomains.get(subdomain), path)
+    if subdomain not in subdomains:
+        return f"unknown subdomain <tt>{subdomain}</tt>"
     return send_from_directory(subdomains[subdomain], path)
 
 

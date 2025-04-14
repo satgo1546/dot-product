@@ -4,6 +4,9 @@
 	signingkey = 2AE5A66FF1D92739
 [push]
 	default = simple
+	autoSetupRemote = true
+[pull]
+	rebase = true
 [credential]
 	helper = store
 [color]
@@ -32,22 +35,33 @@
 	last = log -1 HEAD
 [core]
 	editor = vim
-	excludesfile = D:\\Miscellaneous\\gitignore
 	eol = lf
 	safecrlf = warn
 	autocrlf = input
 	fscache = true
+	excludesfile = ~/.gitignore
+[rerere]
+	enabled = true
+	autoupdate = true
 [merge]
 	renormalize = true
+[rebase]
+	autoSquash = true
+	autoStash = true
+	updateRefs = true
 [help]
-	autoCorrect = 5
+	autoCorrect = prompt
 [gpg]
 	program = gpg2
 [http]
-	proxy = http://originator.local:7890
+	proxy = http://127.0.0.1:7890
 [https]
-	proxy = http://originator.local:7890
+	proxy = http://127.0.0.1:7890
 [diff]
+	algorithm = histogram
+	colorMoved = plain
+	mnemonicPrefix = true
+	renames = true
 	tool = difftastic
 [difftool]
 	prompt = false
@@ -55,5 +69,14 @@
 	cmd = difft "$LOCAL" "$REMOTE"
 [pager]
 	difftool = true
+[branch]
+	sort = -committerdate
+[tag]
+	sort = version:refname
 [init]
 	defaultBranch = main
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f

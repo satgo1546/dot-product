@@ -54,7 +54,12 @@ transform_selection(transform) {
 	A_Clipboard := old_clipboard
 	old_clipboard := ""
 }
- 
+
+tempfile() {
+	filename := RegExReplace(EnvGet("TEMP"), "\$") . "\ahktemp-" . Random() . ".txt"
+	Return filename
+}
+
 ;-------------------------------------------------------------------------------
 ; Caps lock
 ;-------------------------------------------------------------------------------
@@ -417,13 +422,19 @@ button_keydown(number) {
 		If v || a {
 			original_clipboard := ClipboardAll()
 			A_Clipboard := ""
-			Send "^x"
-			ClipWait 0.5
-			SendText StrReplace(StrReplace(text, "`a", ""), "`v", A_Clipboard)
-			If a {
-				Send "{Left " . (StrLen(text) - a) . "}"
+			Send "^c"
+			ClipWait 0.1
+			; Code editors copy the entire line if selection is collapsed.
+			; There is no portable way to detect it.
+			If A_Clipboard == "" || InStr(A_Clipboard, "`n") == StrLen(A_Clipboard) {
+				SendText StrReplace(StrReplace(text, "`a"), "`v")
+				Send "{Left " . (StrLen(text) - v - (v < a)) . "}"
+			} Else {
+				SendText StrReplace(StrReplace(text, "`a"), "`v", A_Clipboard)
+				If a {
+					Send "{Left " . (StrLen(text) - a) . "}"
+				}
 			}
-			Sleep 0.5
 			A_Clipboard := original_clipboard
 			original_clipboard := ""
 		} Else {
@@ -448,6 +459,7 @@ button_keyup(number) {
 #HotIf !WinActive("ahk_exe winword.exe")
 #Include latex.ahk
 #HotIf
+#Include emoji.ahk
 
 ;-------------------------------------------------------------------------------
 ; Unicode search
@@ -490,6 +502,9 @@ unicode_update() {
 	filtered := []
 	Try {
 		filtered.Push(Integer("0x" . needle))
+		If filtered[-1] >= 0x110000 {
+			filtered.Pop()
+		}
 	}
 	first_half_surrogate := 0x114514
 	Loop Parse needle {
@@ -497,7 +512,7 @@ unicode_update() {
 			first_half_surrogate := Ord(A_LoopField) & 0x3ff
 		} Else If Ord(A_LoopField) & 0xfc00 == 0xdc00 {
 			filtered.Push(0x10000 + (first_half_surrogate << 10 | Ord(A_LoopField) & 0x3ff))
-		} Else If Ord(A_LoopField) >= 128 {
+		} Else If Ord(A_LoopField) < 32 || Ord(A_LoopField) >= 128 {
 			filtered.Push(Ord(A_LoopField))
 		}
 	}
@@ -535,3 +550,66 @@ on_unicode_submit(*) {
 	unicode_gui.Show()
 	unicode_search.Focus()
 }
+
+;-------------------------------------------------------------------------------
+; Text transform
+;-------------------------------------------------------------------------------
+
+transform_gui := Gui("+ToolWindow -Theme +AlwaysOnTop", "Text Transform")
+transform_gui.SetFont("s12", "Source Han Sans")
+transform_gui.OnEvent("Escape", (*) => transform_gui.Hide())
+transform_text := transform_gui.AddEdit("r16 w600")
+transform_button := transform_gui.AddButton("xm+240 w120 Default", "𝒯")
+transform_button.OnEvent("Click", on_transform_submit)
+
+#t:: {
+	old_clipboard := ClipboardAll()
+	A_Clipboard := ""
+	Send "^c"
+	ClipWait 0.1
+	transform_text.Text := A_Clipboard
+	transform_text.Enabled := false
+	transform_gui.Show()
+	transform_button.Focus()
+	A_Clipboard := old_clipboard
+	old_clipboard := ""
+	input_file := tempfile()
+	output_file := tempfile()
+	FileAppend transform_text.Text, input_file, "UTF-8-RAW"
+	RunWait Format('"{}" /c pandoc -f gfm+hard_line_breaks -t html --preserve-tabs=true --sandbox=true --wrap=preserve --no-highlight --mathml {} -o {}', A_ComSpec, input_file, output_file), , "Hide"
+	transform_text.Text := FileRead(output_file, "UTF-8-RAW")
+	If !InStr(transform_text.Text, "<p>", , 4) {
+		transform_text.Text := RegExReplace(transform_text.Text, "^<p>|</p>\n$")
+	}
+	transform_text.Text := StrReplace(transform_text.Text, " />", ">")
+	transform_text.Text := StrReplace(transform_text.Text, ' type="1">', ">")
+	; https://leancrew.com/all-this/2025/05/mathml-with-pandoc/
+	transform_text.Text := StrReplace(transform_text.Text, ' xmlns="http://www.w3.org/1998/Math/MathML">', ">")
+	transform_text.Text := StrReplace(transform_text.Text, ' display="inline">', ">")
+	transform_text.Text := RegExReplace(transform_text.Text, "</(?:li|dt|dd|th|td|tr|thead|tbody)>")
+	transform_text.Text := RegExReplace(transform_text.Text, "</p>`r`n(</?(?:p|ul|ol|dl|div|blockquote)\b|$)", "`r`n$1")
+	transform_text.Enabled := true
+	FileDelete input_file
+	FileDelete output_file
+}
+
+on_transform_submit(*) {
+	old_clipboard := ClipboardAll()
+	A_Clipboard := transform_text.Text
+	transform_gui.Hide()
+	Sleep 100
+	Send "^v"
+	Sleep 100
+	A_Clipboard := old_clipboard
+	old_clipboard := ""
+}
+
+; parse_clipboard() {
+	; mybuffer := Buffer(100)
+	; len := DllCall("GetClipboardFormatNameW", "UInt", 0xc23d, "Ptr", mybuffer, "Int", 50)
+	; name := StrGet(mybuffer, len, "UTF-16")
+	; MsgBox(name)
+; f := FileOpen(A_Desktop "\CompanyLogo.clip", "w")
+; f.RawWrite(ClipboardAll())
+; f.Close()
+; }

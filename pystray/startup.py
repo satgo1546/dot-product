@@ -46,7 +46,9 @@ def write_file():
     return f"done writing <tt>{file.filename}</tt>"
 
 
-subdomains: dict[str, str] = {}
+subdomains: dict[str, str] = {
+    "site": r"\\wsl.localhost\Arch\home\satgo\satgo1546.github.io\_site",
+}
 
 
 @app.route("/", subdomain="<subdomain>")
@@ -108,9 +110,10 @@ tray = pystray.Icon(
     Image.open("icon.png"),
     "localhost:1546",
     pystray.Menu(
+        pystray.MenuItem("打开仪表盘(&D)", lambda: webbrowser.open("http://localhost:1546/")),
         pystray.MenuItem(
-            "打开仪表盘(&O)",
-            lambda: webbrowser.open("http://localhost:1546/"),
+            "打开网站(&O)",
+            lambda: webbrowser.open("http://site.localhost:1546/"),
             default=True,
         ),
         pystray.MenuItem("显示消息框", lambda: messagebox.showinfo("标题", f"正文")),

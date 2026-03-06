@@ -3,6 +3,27 @@ default partial alphanumeric_keys modifier_keys
 xkb_symbols "custom" {
 	name[Group1] = "Yet another user-defined custom layout";
 
+	// /usr/include/X11/keysymdef.h
+	// /usr/include/X11/XF86keysym.h
+
+	// keys with ascii / escape code representation
+	// { "ESC" , '\e' }, { "TAB" , '\t' }, { "BKSP", '\b' }, { "RTRN", '\n' },
+	// { "LSGT", '\\' }, { "TLDE", '~'  }, { "BKSL", '#'  }, { "SPCE", ' '  },
+
+	// Control (modifier) keys -> 0xCX
+	// { "CAPS", 0xC0 },
+	// { "LFSH", 0xC1 }, { "LCTL", 0xC2 }, { "LWIN", 0xC3 }, { "LALT", 0xC4 },
+	// { "RTSH", 0xC5 }, { "RCTL", 0xC6 }, { "RWIN", 0xC7 }, { "RALT", 0xC8 },
+	// { "MENU", 0xC9 },
+
+	// // Arrow keys -> 0xAX
+	// { "UP"  , 0xA0 }, { "RGHT", 0xA1 }, { "DOWN", 0xA2 }, { "LEFT", 0xA3 },
+
+	// // Extra keys -> 0xEX
+	// { "PRSC", 0xE0 }, { "SCLK", 0xE1 }, { "PAUS", 0xE2 },
+	// { "INS" , 0xE3 }, { "HOME", 0xE4 }, { "PGUP", 0xE5 },
+	// { "DELE", 0xE6 }, { "END" , 0xE7 }, { "PGDN", 0xE8 },
+
 	key <TLDE> { [ grave, asciitilde,  multiply, U2013       ] }; // ` ~ × –
 	key <AE01> { [ 1,     exclam,      U2081, onesuperior    ] }; // 1 !
 	key <AE02> { [ 2,     at,          U2082, twosuperior    ] }; // 2 @
@@ -17,7 +38,7 @@ xkb_symbols "custom" {
 	key <AE11> { [ minus, underscore,  U2212                 ] }; // - _ −
 	key <AE12> { [ equal, plus,        U2248, plusminus      ] }; // = + ≈ ±
 
-	key <AD01> { [ q,            Q,          U1F63E                       ] }; // q Q 😾
+	key <AD01> { [ q,            Q,          U1F63E,        U1F416        ] }; // q Q 😾 🐖
 	key <AD02> { [ w,            W,          U03DB,         U03DA         ] }; // w W ϛ Ϛ
 	key <AD03> { [ e,            E,          Greek_epsilon, Greek_EPSILON ] }; // e E ε Ε
 	key <AD04> { [ r,            R,          Greek_rho,     Greek_RHO     ] }; // p P ρ Ρ
@@ -56,6 +77,11 @@ xkb_symbols "custom" {
 
 	key <BKSL> { [ backslash, bar,   grave, asciitilde ] }; // \ |
 	key <LSGT> { [ U230A,     U230B, U2308, U2309      ] }; // ⌊ ⌋ ⌈ ⌉
+
+	key <LEFT> { [ Left,      Left,  XF86Back,  XF86Calculator       ] };
+	key <UP>   { [ Up,        Up,    XF86AudioLowerVolume, U4E01      ] };
+	key <DOWN> { [ Down,      Down,  XF86AudioRaiseVolume, U4E02      ] };
+	key <RGHT> { [ Right,     Right, XF86Forward, XF86AudioPlay      ] };
 
 	include "level3(ralt_switch)"
 };

@@ -40,14 +40,14 @@ def write_file():
     if "file" not in request.files:
         return "file needed", 400
     file = request.files["file"]
-    if file.filename == "":
+    if not file.filename:
         return "filename needed", 400
     file.save(os.path.join("C:\\", file.filename))
     return f"done writing <tt>{file.filename}</tt>"
 
 
 subdomains: dict[str, str] = {
-    "site": r"\\wsl.localhost\Arch\home\satgo\satgo1546.github.io\_site",
+    "site": r"/home/satgo/satgo1546.github.io/_site",
 }
 
 
@@ -87,11 +87,11 @@ def open_subdomain():
 
 def reload_script():
     tray.stop()
-    subprocess.Popen(
-        [sys.executable, *sys.argv],
-        start_new_session=True,
-        creationflags=subprocess.DETACHED_PROCESS,
-    )
+    args = [sys.executable, __file__, *sys.argv[1:]]
+    if sys.platform == "win32":
+        subprocess.Popen(args, creationflags=subprocess.DETACHED_PROCESS)
+    else:
+        subprocess.Popen(args, start_new_session=True)
     os._exit(114)
     os.execv(sys.executable, ["python"] + sys.argv)
 
@@ -101,7 +101,7 @@ if len(sys.argv) > 1:
         requests.get("http://localhost:1546/open", {"path": path}, timeout=1)
     exit()
 
-time.sleep(0.5)
+time.sleep(0.1919)
 server = threading.Thread(target=lambda: app.run(host="::1", port=1546))
 server.start()
 

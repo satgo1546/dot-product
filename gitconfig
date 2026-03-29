@@ -15,23 +15,11 @@
 	ui = auto
 [alias]
 	co = checkout
-	com = checkout master
-	cos = checkout satgo1546-dev
-	cog = checkout gh-pages
-	cob = checkout bobcao3-dev
 	mg = merge --allow-unrelated-histories
-	mgm = merge master
-	mgs = merge satgo1546-dev
-	mgg = merge gh-pages
-	mgb = merge bobcao3-dev
-	br = branch
-	ci = commit
+	ci = commit --allow-empty-message
 	st = status -sb
 	dup = clone --depth=1 --no-single-branch --recursive --shallow-submodules
 	graph = log --all --graph --abbrev-commit --pretty=tformat:'%>|(15)%Cred%h %C(auto)%d%Creset %<|(66,trunc)%s %Cgreen%>(7)%ar %Cblue%an'
-	undo-commit = reset HEAD~
-	undo-merge = reset --hard ORIG_HEAD
-	unstage = reset HEAD --
 	last = log -1 HEAD
 [core]
 	editor = vim
@@ -40,11 +28,15 @@
 	autocrlf = input
 	fscache = true
 	excludesfile = ~/.gitignore
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only
 [rerere]
 	enabled = true
 	autoupdate = true
 [merge]
 	renormalize = true
+	conflictStyle = zdiff3
 [rebase]
 	autoSquash = true
 	autoStash = true
@@ -58,17 +50,12 @@
 [https]
 	proxy = http://127.0.0.1:7890
 [diff]
-	algorithm = histogram
-	colorMoved = plain
 	mnemonicPrefix = true
 	renames = true
-	tool = difftastic
-[difftool]
-	prompt = false
-[difftool "difftastic"]
-	cmd = difft "$LOCAL" "$REMOTE"
-[pager]
-	difftool = true
+[delta]
+	navigate = true
+	line-numbers = true
+	hyperlinks = true
 [branch]
 	sort = -committerdate
 [tag]

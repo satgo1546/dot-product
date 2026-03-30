@@ -35,6 +35,11 @@ def serve_wsl(path):
     return send_from_directory(r"\\wsl.localhost\Arch", path)
 
 
+@app.route("/root/<path:path>")
+def serve_root(path):
+    return send_from_directory("/", path)
+
+
 @app.route("/write", methods=["GET", "POST"])
 def write_file():
     if "file" not in request.files:
@@ -102,7 +107,7 @@ if len(sys.argv) > 1:
     exit()
 
 time.sleep(0.1919)
-server = threading.Thread(target=lambda: app.run(host="::1", port=1546))
+server = threading.Thread(target=lambda: app.run(host="::1", port=1546), daemon=True)
 server.start()
 
 tray = pystray.Icon(
@@ -116,7 +121,7 @@ tray = pystray.Icon(
             lambda: webbrowser.open("http://site.localhost:1546/"),
             default=True,
         ),
-        pystray.MenuItem("显示消息框", lambda: messagebox.showinfo("标题", f"正文")),
+        pystray.MenuItem("显示消息框", lambda: messagebox.showinfo("标题", "正文")),
         pystray.MenuItem("重新加载脚本(&R)", reload_script),
         pystray.MenuItem("退出(&X)", lambda: (tray.stop(), os._exit(114))),
     ),

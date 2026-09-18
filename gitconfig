@@ -27,7 +27,7 @@
 	safecrlf = warn
 	autocrlf = input
 	fscache = true
-	excludesfile = ~/.gitignore
+	excludesfile = ~/.config/git/ignore
 	pager = delta
 [interactive]
 	diffFilter = delta --color-only
@@ -45,10 +45,6 @@
 	autoCorrect = prompt
 [gpg]
 	program = gpg2
-[http]
-	proxy = http://127.0.0.1:7890
-[https]
-	proxy = http://127.0.0.1:7890
 [diff]
 	mnemonicPrefix = true
 	renames = true

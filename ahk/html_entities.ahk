@@ -1,6 +1,6 @@
 ; HTML entities are frozen. There will never be a new named entity.
 ; https://html.spec.whatwg.org/multipage/named-characters.html
-; Mappings to ASCII characters and without trailing semicolons are removed.
+; Mappings to ASCII characters and those without trailing semicolons are removed.
 ; The table is otherwise not modified.
 ; Beware of trailing spaces and zero-width characters.
 ::&nvlt;::<⃒

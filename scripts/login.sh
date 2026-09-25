@@ -6,3 +6,4 @@ mkdir /run/user/1000/qq
 mkdir /run/user/1000/qq/Pic
 mkdir /run/user/1000/qq/Video
 mkdir /run/user/1000/qq/Ptt
+python $HOME/dot-product/scripts/login.py

@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import subprocess
+from zipfile import ZipFile
 
 from PySide6.QtCore import ClassInfo, QEvent, Qt, Slot
 from PySide6.QtDBus import QDBusConnection
@@ -31,22 +32,34 @@ if not os.path.exists(t):
 
 import frizbee
 
-data = {}
-with open("NamesList.txt", encoding="utf-8") as f:
-    f = f.read()
+DIR = os.path.expanduser("~/.cache/pystray")
+if not os.path.exists(DIR + "/UCD.zip"):
+    os.makedirs(DIR, exist_ok=True)
+    subprocess.run(["aria2c", "--dir", DIR, "https://www.unicode.org/Public/latest/ucd/UCD.zip"], check=True)
+
+with ZipFile(DIR + "/UCD.zip") as zip:
+    with zip.open("UnicodeData.txt") as f:
+        f = f.read().decode()
+    unicode_data = {}
+    for line in f.splitlines():
+        fields = line.split(';')
+        fields.append(fields[1])
+        unicode_data[int(fields[0], 16)] = fields
+
+    with zip.open('NamesList.txt') as f:
+        f = f.read().decode()
 _, _, f = f.partition("C0 controls\n")
 codepoint = None
 for line in f.splitlines():
     if re.match(r"$|@|\t?;|\t[x~#] ", line):
         continue
     if re.match(r"[0-9A-F]{4,6}\t", line):
-        parts = line.split("\t", 1)
-        codepoint = int(parts[0], 16)
-        data[codepoint] = parts[1]
-    elif codepoint is not None:
-        data[codepoint] += re.sub(r"^\t", " ", line)
-codepoint_list = list(data.keys())
-haystacks = frizbee.Haystacks(data.values())
+        codepoint, _, name = line.partition("\t")
+        codepoint = int(codepoint, 16)
+    elif codepoint in unicode_data:
+        unicode_data[codepoint][-1] += " " + line.lstrip('\t')
+codepoint_list = list(unicode_data.keys())
+haystacks = frizbee.Haystacks(x[-1] for x in unicode_data.values())
 
 
 @ClassInfo(**{"D-Bus Interface": "e.e"})
@@ -123,9 +136,13 @@ class UnicodePalette(QDialog):
         self.table.setRowCount(0)
         self.table.setRowCount(len(filtered))
         for i, codepoint in enumerate(filtered):
-            self.table.setItem(i, 0, QTableWidgetItem(chr(codepoint)))
+            char = chr(codepoint)
+            data = unicode_data.get(codepoint) or "?????????????????"
+            if data[2][0] == "M":
+                char = '◌' + char
+            self.table.setItem(i, 0, QTableWidgetItem(char))
             self.table.setItem(i, 1, QTableWidgetItem(f"U+{codepoint:04X}"))
-            self.table.setItem(i, 2, QTableWidgetItem(data.get(codepoint, "???")))
+            self.table.setItem(i, 2, QTableWidgetItem(data[-1]))
         if filtered:
             self.table.selectRow(0)
 
@@ -133,10 +150,10 @@ class UnicodePalette(QDialog):
         i = self.table.currentRow()
         if i < 0:
             return ""
-        item = self.table.item(i, 0)
+        item = self.table.item(i, 1)
         if item is None:
             return ""
-        return item.text()
+        return ''.join(chr(int(x, 16)) for x in item.text().split("U+") if x)
 
     def submit(self, *_):
         if c := self.get_selected_character():

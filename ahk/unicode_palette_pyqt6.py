@@ -19,30 +19,40 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
 )
 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-def load_unicode_data():
-    data = {}
-    with open("NamesList.txt", encoding="utf-8") as f:
-        f = f.read()
-    _, _, f = f.partition("C0 controls\n")
-    codepoint = None
-    for line in f.splitlines():
-        if re.match(r"$|@|\t?;|\tx ", line):
-            continue
-        if re.match(r"[0-9A-F]{4,6}\t", line):
-            parts = line.split("\t", 1)
-            codepoint = int(parts[0], 16)
-            data[codepoint] = parts[1]
-        elif codepoint is not None:
-            data[codepoint] += re.sub(r"^\t", " ", line)
-    return data
+# adapted from https://pip.wtf/
+t = os.path.abspath(".pip_wtf." + os.path.basename(__file__))
+sys.path = [p for p in sys.path if "-packages" not in p] + [t]
+os.environ["PATH"] = t + os.path.sep + "bin" + os.pathsep + os.environ["PATH"]
+os.environ["PYTHONPATH"] = os.pathsep.join(sys.path)
+if not os.path.exists(t):
+    subprocess.run([sys.executable, "-m", "pip", "install", "-t", t, "frizbee==0.13.0"], check=True)
+
+import frizbee
+
+data = {}
+with open("NamesList.txt", encoding="utf-8") as f:
+    f = f.read()
+_, _, f = f.partition("C0 controls\n")
+codepoint = None
+for line in f.splitlines():
+    if re.match(r"$|@|\t?;|\tx ", line):
+        continue
+    if re.match(r"[0-9A-F]{4,6}\t", line):
+        parts = line.split("\t", 1)
+        codepoint = int(parts[0], 16)
+        data[codepoint] = parts[1]
+    elif codepoint is not None:
+        data[codepoint] += re.sub(r"^\t", " ", line)
+codepoint_list = list(data.keys())
+haystacks = frizbee.Haystacks(data.values())
 
 
 @ClassInfo(**{"D-Bus Interface": "e.e"})
 class UnicodePalette(QDialog):
     def __init__(self):
         super().__init__()
-        self.data = load_unicode_data()
         self.setWindowTitle("Unicode Palette")
         self.setWindowFlag(Qt.WindowType.Tool)
         self.resize(600, 600)
@@ -95,18 +105,15 @@ class UnicodePalette(QDialog):
             if o < 32 or o >= 128:
                 filtered.append(o)
 
-        for codepoint, info in self.data.items():
-            if needle.casefold() in info.casefold():
-                filtered.append(codepoint)
-                if len(filtered) >= 16:
-                    break
+        for match in frizbee.Matcher.from_query(needle, max_items=16 - len(filtered)).match_list(haystacks):
+            filtered.append(codepoint_list[match.index])
 
         self.table.setRowCount(0)
         self.table.setRowCount(len(filtered))
         for i, codepoint in enumerate(filtered):
             self.table.setItem(i, 0, QTableWidgetItem(chr(codepoint)))
             self.table.setItem(i, 1, QTableWidgetItem(f"U+{codepoint:04X}"))
-            self.table.setItem(i, 2, QTableWidgetItem(self.data.get(codepoint, "???")))
+            self.table.setItem(i, 2, QTableWidgetItem(data.get(codepoint, "???")))
         if filtered:
             self.table.selectRow(0)
 

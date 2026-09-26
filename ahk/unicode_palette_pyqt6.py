@@ -49,7 +49,7 @@ with ZipFile(DIR + "/UCD.zip") as zip:
     unicode_data = {}
     for line in f.splitlines():
         fields = line.split(';')
-        fields.append(fields[1])
+        fields.append("")
         unicode_data[int(fields[0], 16)] = fields
 
     with zip.open('NamesList.txt') as f:
@@ -78,16 +78,19 @@ for character in lxml.etree.parse(DIR + "/unicode.xml").iterfind('./charlist/cha
     data = unicode_data.get(codepoint)
     if data is None:
         continue
+    text = {}
     for node in character:
         if not node.text:
             continue
         if node.tag in ("latex", "varlatex", "mathlatex", "AMS"):
-            data[-1] += " " + node.text.rstrip()
+            text[node.text.rstrip()] = None
         elif node.tag == "Wolfram":
-            data[-1] += f" \\[{node.text}]"
+            text[f"\\[{node.text}]"] = None
+    if text:
+        data[-1] += " " + " ".join(text.keys())
 
 codepoint_list = list(unicode_data.keys())
-haystacks = frizbee.Haystacks(x[-1] for x in unicode_data.values())
+haystacks = frizbee.Haystacks(x[1].lower() + x[-1].upper() for x in unicode_data.values())
 
 
 @ClassInfo(**{"D-Bus Interface": "e.e"})
@@ -158,7 +161,7 @@ class UnicodePalette(QDialog):
             if o < 32 or o >= 128:
                 filtered.append(o)
 
-        for match in frizbee.Matcher.from_query(needle, max_items=16 - len(filtered)).match_list(haystacks):
+        for match in frizbee.Matcher.from_query(needle.casefold(), max_items=16 - len(filtered)).match_list(haystacks):
             filtered.append(codepoint_list[match.index])
 
         self.table.setRowCount(0)
@@ -166,11 +169,13 @@ class UnicodePalette(QDialog):
         for i, codepoint in enumerate(filtered):
             char = chr(codepoint)
             data = unicode_data.get(codepoint) or "?????????????????"
-            if data[2][0] == "M":
+            if data[2][0] == "C":
+                char = ''
+            elif data[2][0] == "M":
                 char = '◌' + char
             self.table.setItem(i, 0, QTableWidgetItem(char))
             self.table.setItem(i, 1, QTableWidgetItem(f"U+{codepoint:04X}"))
-            self.table.setItem(i, 2, QTableWidgetItem(data[-1]))
+            self.table.setItem(i, 2, QTableWidgetItem(data[1] + data[-1]))
         if filtered:
             self.table.selectRow(0)
 

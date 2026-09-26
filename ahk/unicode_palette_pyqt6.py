@@ -4,7 +4,7 @@ import re
 import sys
 import subprocess
 
-from PySide6.QtCore import ClassInfo, Qt, Slot
+from PySide6.QtCore import ClassInfo, QEvent, Qt, Slot
 from PySide6.QtDBus import QDBusConnection
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
@@ -83,11 +83,23 @@ class UnicodePalette(QDialog):
         layout.addWidget(self.table)
         layout.addWidget(buttons)
 
+        self.search.installEventFilter(self)
         self.search.textChanged.connect(self.update_table)
         self.search.returnPressed.connect(self.submit)
         self.table.cellDoubleClicked.connect(self.submit)
 
         self.update_table()
+
+    def eventFilter(self, obj, event):
+        if (
+            event.type() == QEvent.Type.KeyPress
+            and event.modifiers() == Qt.KeyboardModifier.NoModifier
+            and event.key() in (Qt.Key.Key_Up, Qt.Key.Key_Down)
+            and self.table.rowCount()
+        ):
+            self.table.selectRow((self.table.currentRow() + (event.key() == Qt.Key.Key_Down) - (event.key() == Qt.Key.Key_Up)) % self.table.rowCount())
+            return True
+        return super().eventFilter(obj, event)
 
     def update_table(self):
         needle = self.search.text()

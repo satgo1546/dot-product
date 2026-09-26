@@ -7,7 +7,7 @@ from zipfile import ZipFile
 
 import lxml.etree
 from PySide6.QtCore import ClassInfo, QEvent, Qt, Slot
-from PySide6.QtDBus import QDBusConnection
+from PySide6.QtDBus import QDBusConnection, QDBusInterface, QDBusMessage
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -22,6 +22,11 @@ from PySide6.QtWidgets import (
 )
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+session_bus = QDBusConnection.sessionBus()
+if not session_bus.registerService("io.github.satgo1546.UnicodePalette"):
+    # dbus-send --session --print-reply --dest=io.github.satgo1546.UnicodePalette /window e.e.Show
+    sys.exit(int(QDBusInterface("io.github.satgo1546.UnicodePalette", "/window", "e.e", session_bus).call("Show").type() != QDBusMessage.MessageType.ReplyMessage))
 
 # adapted from https://pip.wtf/
 t = os.path.abspath(".pip_wtf." + os.path.basename(__file__))
@@ -202,10 +207,5 @@ app = QApplication(sys.argv)
 app.setQuitOnLastWindowClosed(False)
 app.setWindowIcon(QIcon("icon.png"))
 window = UnicodePalette()
-session_bus = QDBusConnection.sessionBus()
-if not session_bus.registerService("io.github.satgo1546.UnicodePalette"):
-    sys.exit(1)
 session_bus.registerObject("/window", window, QDBusConnection.RegisterOption.ExportAllSlots)
 sys.exit(app.exec())
-
-# dbus-send --session --print-reply --dest=io.github.satgo1546.UnicodePalette /window e.e.Show

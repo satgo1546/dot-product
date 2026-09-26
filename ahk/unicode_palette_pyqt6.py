@@ -5,6 +5,7 @@ import sys
 import subprocess
 from zipfile import ZipFile
 
+import lxml.etree
 from PySide6.QtCore import ClassInfo, QEvent, Qt, Slot
 from PySide6.QtDBus import QDBusConnection
 from PySide6.QtGui import QIcon
@@ -33,8 +34,8 @@ if not os.path.exists(t):
 import frizbee
 
 DIR = os.path.expanduser("~/.cache/pystray")
+os.makedirs(DIR, exist_ok=True)
 if not os.path.exists(DIR + "/UCD.zip"):
-    os.makedirs(DIR, exist_ok=True)
     subprocess.run(["aria2c", "--dir", DIR, "https://www.unicode.org/Public/latest/ucd/UCD.zip"], check=True)
 
 with ZipFile(DIR + "/UCD.zip") as zip:
@@ -58,6 +59,28 @@ for line in f.splitlines():
         codepoint = int(codepoint, 16)
     elif codepoint in unicode_data:
         unicode_data[codepoint][-1] += " " + line.lstrip('\t')
+
+
+if not os.path.exists(DIR + "/unicode.xml"):
+    # https://www.w3.org/TR/xml-entity-names/
+    subprocess.run(["aria2c", "--dir", DIR, "https://github.com/w3c/xml-entities/raw/refs/heads/gh-pages/unicode.xml"], check=True)
+
+for character in lxml.etree.parse(DIR + "/unicode.xml").iterfind('./charlist/character'):
+    codepoint = character.attrib["dec"]
+    if not codepoint.isdigit():
+        continue
+    codepoint = int(codepoint)
+    data = unicode_data.get(codepoint)
+    if data is None:
+        continue
+    for node in character:
+        if not node.text:
+            continue
+        if node.tag in ("latex", "varlatex", "mathlatex", "AMS"):
+            data[-1] += " " + node.text.rstrip()
+        elif node.tag == "Wolfram":
+            data[-1] += f" \\[{node.text}]"
+
 codepoint_list = list(unicode_data.keys())
 haystacks = frizbee.Haystacks(x[-1] for x in unicode_data.values())
 
@@ -185,4 +208,4 @@ if not session_bus.registerService("io.github.satgo1546.UnicodePalette"):
 session_bus.registerObject("/window", window, QDBusConnection.RegisterOption.ExportAllSlots)
 sys.exit(app.exec())
 
-# gdbus call --session --dest io.github.satgo1546.UnicodePalette --object-path /window --method e.e.Show
+# dbus-send --session --print-reply --dest=io.github.satgo1546.UnicodePalette /window e.e.Show

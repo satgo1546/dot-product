@@ -37,7 +37,7 @@ with open("NamesList.txt", encoding="utf-8") as f:
 _, _, f = f.partition("C0 controls\n")
 codepoint = None
 for line in f.splitlines():
-    if re.match(r"$|@|\t?;|\tx ", line):
+    if re.match(r"$|@|\t?;|\t[x~#] ", line):
         continue
     if re.match(r"[0-9A-F]{4,6}\t", line):
         parts = line.split("\t", 1)

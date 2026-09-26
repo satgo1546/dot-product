@@ -32,10 +32,10 @@ with ZipFile(DIR + "/UCD.zip") as zip:
                     continue
                 elif unicode_data[codepoint][2][0] == "M":
                     char = "◌" + char
-            lines.append(f"{codepoint:04X}\t{char}\t{name}")
+            lines.append(f"{codepoint:04X}\t{char}\t{name}\t")
         elif codepoint is not None:
             #lines[-1] += line
-            #lines[-1] += " " + line.lstrip('\t')
+            lines[-1] += " " + line.lstrip('\t')
             pass
     with open(DIR + "/names.txt", 'w') as f:
         print('\n'.join(lines), file=f)
